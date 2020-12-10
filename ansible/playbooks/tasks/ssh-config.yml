@@ -19,8 +19,8 @@
 
   - name: ssh banner
     copy:
-      src: "etc/banner"
-      dest: "{{ ssh_banner }}"
+      src: "etc/rockybanner"
+      dest: "/etc/rockybanner"
       owner: root
       group: root
     notify: restart_ssh

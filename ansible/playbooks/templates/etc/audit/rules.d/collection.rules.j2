@@ -1,0 +1,97 @@
+# Ignore CWD logs
+-a exclude,always -F msgtype=CWD
+
+-a always,exit -F arch=b64 -S adjtimex -S settimeofday -k time-change
+-a always,exit -F arch=b32 -S adjtimex -S settimeofday -S stime -k time-change
+-a always,exit -F arch=b64 -S clock_settime -F a0=0x0 -F key=time-change
+-a always,exit -F arch=b32 -S clock_settime -F a0=0x0 -F key=time-change
+-w /etc/localtime -p wa -k time-change
+
+## Records when events occur that modify user and group passwords and ID's
+{% for y in audit_identity_list %}
+-w {{ y }} -p wa -k identity
+{% endfor %}
+
+## Records changes to network environment files or system calls
+-a always,exit -F arch=b64 -S sethostname -S setdomainname -k system-locale
+-a always,exit -F arch=b32 -S sethostname -S setdomainname -k system-locale
+-w /etc/issue -p wa -k system-locale
+-w /etc/issue.net -p wa -k system-locale
+-w /etc/hosts -p wa -k system-locale
+-w /etc/hostname -p wa -k system-locale
+-w /etc/sysconfig/network -p wa -k system-locale
+-a always,exit -F dir=/etc/NetworkManager/ -F perm=wa -F key=system-locale
+
+## Monitors SELinux Mandatory Access Controls
+-w /etc/selinux/ -p wa -k MAC-policy
+-w /usr/share/selinux/ -p wa -k MAC-policy
+
+## Monitors login/logout/failed login events
+# To be fair, these are normally logged in /var/log/secure
+{% for y in audit_logins %}
+-w {{ y }} -p wa -k logins
+{% endfor %}
+
+## Monitor session initiation events
+## This will track file changes within sessions
+{% for y in audit_session %}
+-w {{ y }} -p wa -k session
+{% endfor %}
+
+## Monitor changes for files for UID's above {{ audit_auid }}
+# You can take this out if you are on a non-PCI system
+-a always,exit -F arch=b64 -S chmod -S fchmod -S fchmodat -F auid>={{ audit_auid }} -F auid!=4294967295 -k perm_mod
+-a always,exit -F arch=b32 -S chmod -S fchmod -S fchmodat -F auid>={{ audit_auid }} -F auid!=4294967295 -k perm_mod
+-a always,exit -F arch=b64 -S chown -S fchown -S fchownat -S lchown -F auid>={{ audit_auid }} -F auid!=4294967295 -k perm_mod
+-a always,exit -F arch=b32 -S chown -S fchown -S fchownat -S lchown -F auid>={{ audit_auid }} -F auid!=4294967295 -k perm_mod
+-a always,exit -F arch=b64 -S setxattr -S lsetxattr -S fsetxattr -S removexattr -S lremovexattr -S fremovexattr -F auid>={{ audit_auid }} -F auid!=4294967295 -k perm_mod
+-a always,exit -F arch=b32 -S setxattr -S lsetxattr -S fsetxattr -S removexattr -S lremovexattr -S fremovexattr -F auid>={{ audit_auid }} -F auid!=4294967295 -k perm_mod
+-a always,exit -F arch=b32 -S creat -S open -S openat -S open_by_handle_at -S truncate -S ftruncate -F exit=-EPERM -F auid>={{ audit_auid }} -F auid!=4294967295 -k access
+-a always,exit -F arch=b64 -S creat -S open -S openat -S open_by_handle_at -S truncate -S ftruncate -F exit=-EACCES -F auid>={{ audit_auid }} -F auid!=4294967295 -k access
+-a always,exit -F arch=b32 -S creat -S open -S openat -S open_by_handle_at -S truncate -S ftruncate -F exit=-EACCES -F auid>={{ audit_auid }} -F auid!=4294967295 -k access
+-a always,exit -F arch=b64 -S creat -S open -S openat -S open_by_handle_at -S truncate -S ftruncate -F exit=-EPERM -F auid>={{ audit_auid }} -F auid!=4294967295 -k access
+
+## Monitors mounting events for users
+# You can probably take these out
+-a always,exit -F arch=b64 -S mount -F auid>={{ audit_auid }} -F auid!=4294967295 -k mounts
+-a always,exit -F arch=b32 -S mount -F auid>={{ audit_auid }} -F auid!=4294967295 -k mounts
+## Collect file deletion events by a user
+-a always,exit -F arch=b64 -S rmdir -S unlink -S unlinkat -S rename -S renameat -F auid>={{ audit_auid }} -F auid!=4294967295 -k delete
+-a always,exit -F arch=b32 -S rmdir -S unlink -S unlinkat -S rename -S renameat -F auid>={{ audit_auid }} -F auid!=4294967295 -k delete
+## Collect changes to System Administration Scope
+# Note: This only records /etc/sudoers and doesn't watch /etc/sudoers.d
+-w /etc/sudoers -p wa -k scope
+-w /etc/sudoers.d -p wa -k scope
+## Collect System Administrator Actions (sudolog)
+-w /var/log/sudo.log -p wa -k actions
+## Collect Kernel Module Loading and Unloading
+-w /sbin/kmod -p x -k modules
+-w /sbin/insmod -p x -k modules
+-w /sbin/rmmod -p x -k modules
+-w /sbin/modprobe -p x -k modules
+-a always,exit -F arch=b64 -S init_module,finit_module -S delete_module -k modules
+-a always,exit -F arch=b32 -S init_module,finit_module -S delete_module -k modules
+
+{% for y in audit_suid_list %}
+-a always,exit -F path={{ y }} -F perm=x -F auid>={{ audit_auid }} -F auid!=4294967295 -k privileged
+{% endfor %}
+
+# Is someone messing with our audit logs?
+-w /var/log/audit/ -k audit-logs
+
+-a always,exit -F dir=/var/log/audit/ -F perm=r -F auid>=1000 -F auid!=4294967295 -F key=audit-logs
+-a always,exit -F path=/usr/sbin/ausearch -F perm=x -F key=audit-logs
+-a always,exit -F path=/usr/sbin/aureport -F perm=x -F key=audit-logs
+-a always,exit -F path=/usr/sbin/aulast -F perm=x -F key=audit-logs
+-a always,exit -F path=/usr/sbin/aulastlogin -F perm=x -F key=audit-logs
+-a always,exit -F path=/usr/sbin/auvirt -F perm=x -F key=audit-logs
+
+# Privilege elevation
+-a always,exit -F arch=b64 -S setuid -Fa0=0 -F exe={{ bin_su }} -F key=privileged
+-a always,exit -F arch=b32 -S setuid -Fa0=0 -F exe={{ bin_su }} -F key=privileged
+-a always,exit -F arch=b64 -S setresuid -F a0=0 -F exe={{ bin_sudo }} -F key=privileged
+-a always,exit -F arch=b32 -S setresuid -F a0=0 -F exe={{ bin_sudo }} -F key=privileged
+-a always,exit -F arch=b64 -S execve -C uid!=euid -F euid=0 -F key=privileged
+-a always,exit -F arch=b32 -S execve -C uid!=euid -F euid=0 -F key=privileged
+
+-e 2

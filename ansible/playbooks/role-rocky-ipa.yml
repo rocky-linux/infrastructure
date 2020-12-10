@@ -7,6 +7,10 @@
   vars_files:
   - vars/encpass.yml
 
+  # This is to try to avoid the handler issue in pre/post tasks
+  handlers:
+    - include: handlers/main.yml
+
   pre_tasks:
     - name: Check if ansible cannot be run here
       stat:

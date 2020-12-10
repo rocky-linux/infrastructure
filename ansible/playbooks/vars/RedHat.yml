@@ -150,5 +150,5 @@ syslog_packages:
 ntp_packages:
   - chrony
 
-legacy_ntp_packages:
-  - ntp
+bin_su: /usr/bin/su
+bin_sudo: /usr/bin/sudo
