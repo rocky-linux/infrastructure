@@ -1,0 +1,21 @@
+---
+- name: Standard System Configuration Variables
+  block:
+    - name: Loading Variables from OS Common
+      include_vars: "{{ item }}"
+      with_items:
+        - "{{ ansible_distribution }}.yml"
+
+    - name: Create overrides if we're an IPA Replica
+      include_vars: "{{ item }}"
+      with_first_found:
+        - "ipaserver.yml"
+      when: "'ipaservers' in group_names"
+
+    - name: Check if system is EFI
+      stat:
+        path: "/sys/firmware/efi"
+      register: efi_installed
+
+  always:
+    - debug: msg="Variables are now loaded"

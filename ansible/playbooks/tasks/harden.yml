@@ -1,0 +1,135 @@
+---
+# Initial hardening ideas from CIS
+- name: create combined sysctl-dict if overwrites are defined
+  set_fact:
+    sysctl_config: '{{ sysctl_config | combine(sysctl_overwrite) }}'
+  when: sysctl_overwrite | default()
+
+- name: sysctl hardening
+  sysctl:
+    name: '{{ item.key }}'
+    value: '{{ item.value }}'
+    state: present
+    ignoreerrors: yes
+    sysctl_set: yes
+    sysctl_file: /etc/sysctl.d/99-ansible.conf
+  with_dict: '{{ sysctl_config }}'
+  tags:
+    - harden
+    - kernel
+
+- name: security limits
+  copy:
+    dest: "/etc/security/limits.d/cis.conf"
+    content: |
+      * hard core 0
+
+- name: Standard login settings
+  block:
+    - name: useradd defaults
+      lineinfile:
+        line: "INACTIVE=30"
+        regexp: "^INACTIVE=.*"
+        path: "/etc/login.defs"
+      tags:
+        - harden
+
+    - name: login defs maximum days
+      replace:
+        path: /etc/login.defs
+        regexp: '(PASS_MAX_DAYS).*\d+'
+        replace: '\1\t{{ login_max_days }}'
+      tags:
+        - harden
+
+    - name: login defs minimum days
+      replace:
+        path: /etc/login.defs
+        regexp: '(PASS_MIN_DAYS).*\d+'
+        replace: '\1\t{{ login_min_days }}'
+      tags:
+        - harden
+
+    - name: login defs minimum length
+      replace:
+        path: /etc/login.defs
+        regexp: '(PASS_MIN_LEN).*\d+'
+        replace: '\1\t{{ login_min_len }}'
+      tags:
+        - harden
+
+    - name: login defs warn age
+      replace:
+        path: /etc/login.defs
+        regexp: '(PASS_WARN_AGE).*\d+'
+        replace: '\1\t{{ login_warn_age }}'
+      tags:
+        - harden
+
+    - name: cron directories permissions
+      file:
+        path: '{{ item }}'
+        owner: root
+        group: root
+        mode: '0700'
+        state: directory
+      loop: '{{ login_cron_directories }}'
+      tags:
+        - harden
+
+    - name: Create cron/at allows
+      file:
+        path: '{{ item }}'
+        owner: root
+        group: root
+        mode: '0600'
+        state: touch
+      loop: '{{ login_cron_allows }}'
+      tags:
+        - harden
+
+    - name: Remove cron/at denies
+      file:
+        path: '{{ item }}'
+        state: absent
+      loop: '{{ login_cron_denies }}'
+      tags:
+        - harden
+
+- name: Remove packages not allowed by CIS
+  package:
+    name: "{{ remove_packages }}"
+    state: absent
+
+- name: Auditd
+  block:
+    - name: Ensure auditd is installed
+      package:
+        name: audit
+        state: present
+      tags:
+        - harden
+    
+    - name: Ensure auditd buffer is OK
+      replace:
+        path: /etc/audit/rules.d/audit.rules
+        regexp: '-b \d+'
+        replace: '-b {{ audit_buffer }}'
+      notify:
+        - regenerate auditd rules
+      tags:
+        - harden
+    
+    - name: Ensure collection audit rules are available
+      template:
+        src: "etc/audit/rules.d/collection.rules.j2"
+        dest: "/etc/audit/rules.d/collection.rules"
+        owner: root
+        group: root
+        backup: yes
+      notify:
+        - regenerate auditd rules
+        - restart auditd
+      tags:
+        - harden
+

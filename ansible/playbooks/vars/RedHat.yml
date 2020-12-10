@@ -1,0 +1,154 @@
+# Variables for our common module for RedHat
+---
+
+remove_packages:
+  - nc
+  - wireshark
+  - prelink
+  - talk
+  - talk-server
+  - rsh
+  - tftp
+  - tftp-server
+  - lftp
+
+# sysctl settings
+sysctl_config:
+  net.ipv4.ip_forward: 0
+  net.ipv4.conf.all.rp_filter: 1
+  net.ipv4.conf.default.rp_filter: 1
+  net.ipv4.conf.all.accept_source_route: 0
+  net.ipv4.conf.default.accept_source_route: 0
+  net.ipv4.conf.all.log_martians: 1
+  net.ipv4.conf.default.log_martians: 1
+  net.ipv4.icmp_echo_ignore_broadcasts: 1
+  net.ipv4.icmp_ignore_bogus_error_responses: 1
+  net.ipv4.tcp_syncookies: 1
+  net.ipv4.conf.all.accept_redirects: 0
+  net.ipv4.conf.default.accept_redirects: 0
+  net.ipv4.conf.all.send_redirects: 0
+  net.ipv4.conf.default.send_redirects: 0
+  net.ipv4.conf.all.secure_redirects: 0
+  net.ipv4.conf.default.secure_redirects: 0
+  net.ipv6.conf.all.accept_redirects: 0
+  net.ipv6.conf.default.accept_redirects: 0
+  net.ipv6.conf.all.forwarding: 0
+  net.ipv6.conf.all.accept_ra: 0
+  net.ipv6.conf.default.accept_ra: 0
+  net.ipv6.conf.all.accept_source_route: 0
+  net.ipv6.conf.default.accept_source_route: 0
+  kernel.randomize_va_space: 2
+  fs.suid_dumpable: 0
+
+# login.defs
+login_umask: 077
+login_create_home: "yes"
+login_encrypt_method: SHA512
+login_md5_crypt_enab: "no"
+login_max_days: 84
+login_min_days: 7
+login_min_len: 14
+login_warn_age: 7
+login_dcredit: -1
+login_lcredit: -1
+login_ucredit: -1
+login_ocredit: -1
+login_cron_directories:
+  - /etc/cron.hourly
+  - /etc/cron.daily
+  - /etc/cron.weekly
+  - /etc/cron.monthly
+  - /etc/cron.d
+login_cron_allows:
+  - /etc/cron.allow
+  - /etc/at.allow
+login_cron_denies:
+  - /etc/cron.deny
+  - /etc/at.deny
+
+# modprobe
+modprobe_unused_filesystems:
+  - dccp
+  - sctp
+  - bluetooth
+  - freevxfs
+  - cramfs
+  - jffs2
+  - hfs
+  - hfsplus
+  - squashfs
+  - udf
+  - tipc
+  - usb_storage
+  - vfat
+
+# auditd
+audit_package: audit
+audit_auid: 1000
+audit_buffer: 8192
+audit_identity_list:
+  - /etc/group
+  - /etc/passwd
+  - /etc/gshadow
+  - /etc/shadow
+  - /etc/security/opasswd
+audit_logins:
+  - /var/log/faillog
+  - /var/log/lastlog
+  - /var/log/tallylog
+  - /var/log/faillock/
+  - /var/log/wtmp
+  - /var/log/btmp
+audit_session:
+  - /var/run/utmp
+audit_suid_list:
+  - /usr/libexec/sssd/proxy_child
+  - /usr/libexec/sssd/ldap_child
+  - /usr/libexec/sssd/krb5_child
+  - /usr/libexec/sssd/selinux_child
+  - /usr/libexec/dbus-1/dbus-daemon-launch-helper
+  - /usr/libexec/utempter/utempter
+  - /usr/libexec/openssh/ssh-keysign
+  - /usr/lib/polkit-1/polkit-agent-helper-1
+  - /usr/sbin/usernetctl
+  - /usr/sbin/postqueue
+  - /usr/sbin/unix_chkpwd
+  - /usr/sbin/postdrop
+  - /usr/sbin/pam_timestamp_check
+  - /usr/sbin/netreport
+  - /usr/sbin/mount.nfs
+  - /usr/bin/su
+  - /usr/bin/ksu
+  - /usr/bin/write
+  - /usr/bin/newgrp
+  - /usr/bin/chage
+  - /usr/bin/mount
+  - /usr/bin/ssh-agent
+  - /usr/bin/sudo
+  - /usr/bin/passwd
+  - /usr/bin/gpasswd
+  - /usr/bin/at
+  - /usr/bin/wall
+  - /usr/bin/chsh
+  - /usr/bin/locate
+  - /usr/bin/chfn
+  - /usr/bin/umount
+  - /usr/bin/crontab
+  - /usr/bin/pkexec
+
+disable_svc:
+  - cups
+  - nfs-server
+  - avahi-daemon
+
+enable_svc:
+  - postfix
+
+syslog_packages:
+  - rsyslog
+
+ntp_packages:
+  - chrony
+
+legacy_ntp_packages:
+  - ntp

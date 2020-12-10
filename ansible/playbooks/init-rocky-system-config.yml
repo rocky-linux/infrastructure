@@ -17,8 +17,14 @@
         msg: "/etc/no-ansible exists - skipping run on this node"
 
   tasks:
+    - name: Loading Variables from OS Common
+      include: tasks/variable_loader_common.yml
+
     - name: Configure SSH
       include: tasks/ssh-config.yml
+
+    - name: Configure harden settings
+      include: tasks/harden.yml
 
   post_tasks:
     - name: Touching run file that ansible has ran here
