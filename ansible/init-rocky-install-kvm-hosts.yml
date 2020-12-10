@@ -1,0 +1,55 @@
+---
+# Creates a standalone KVM hosts
+# Created: @SherifNagy
+# Modified to current standards: @nazunalika
+- name: Configure KVM host
+  hosts: kvmhosts
+  become: true
+
+  pre_tasks:
+    - name: Check if ansible cannot be run here
+      stat:
+        path: /etc/no-ansible
+      register: no_ansible
+
+    - name: Verify if we can run ansible
+      assert:
+        that:
+          - "not no_ansible.stat.exists"
+        msg: "/etc/no-ansible exists - skipping run on this node"
+
+  tasks:
+    - name: Check for CPU Virtualization
+      shell: "lscpu | grep -i virtualization"
+      register: result
+      failed_when: "result.rc != 0"
+
+    # Install KVM packages
+    - name: Installing KVM Packages
+      package:
+        name: "{{ item }}"
+        state: present
+      with_items:
+        - qemu-kvm
+        - libvirt
+        - libvirt-python
+        - libguestfs-tools
+        - virt-install
+
+    - name: Enable and Start libvirtd
+      systemd:
+        name: libvirtd
+        state: started
+        enabled: yes
+
+    - name: Verify KVM module is loaded
+      shell: "lsmod | grep -i kvm"
+      register: result
+      failed_when: "result.rc != 0"
+
+  post_tasks:
+    - name: Touching run file that ansible has ran here
+      file:
+        path: /var/log/ansible.run
+        state: touch
+

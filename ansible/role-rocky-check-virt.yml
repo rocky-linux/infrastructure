@@ -1,6 +1,0 @@
----
-# Check virtualization is enabled
-- name: Check for CPU Virtualization
-  shell: "lscpu | grep -i virtualization"
-  register: result
-  failed_when: "result.rc != 0"

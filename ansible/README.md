@@ -24,7 +24,9 @@ vars       -> Global variables that are called with vars_files go here. This
 init-* -> Starting infrastructure playbooks that run solo or import other
           playbooks that start with import-
 import -> Playbooks that should be imported from the top level playbooks
-role-* -> These playbooks call roles specifically for infrastructure tasks
+role-* -> These playbooks call roles specifically for infrastructure tasks.
+          Playbooks that do not call a role should be named init or adhoc based
+          on their usage.
 adhoc  -> These playbooks are one-off playbooks that can be used on the CLI or
           in AWX
 ```
