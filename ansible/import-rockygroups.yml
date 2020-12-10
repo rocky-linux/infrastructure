@@ -1,4 +1,5 @@
 ---
+# Creates the first set of groups for the IdM Infrastructure
 - name: "Creating Mandatory Groups"
   ipagroup:
     ipaadmin_password: "{{ ipaadmin_password }}"

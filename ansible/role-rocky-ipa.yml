@@ -1,4 +1,6 @@
 ---
+# Creates the first server for an IPA infrastructure
+# Variables for the infrastructure are in inventory/ipainventory
 - name: Configure IPA server
   hosts: ipaserver
   become: true

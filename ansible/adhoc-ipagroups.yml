@@ -1,8 +1,6 @@
 ---
 # This playbook is meant to be used with callable variables, like adhoc or AWX.
-# However, adhoc, it works fine as long as you mention all required variables.
-#
-# What: Creates groups in the idm infrastructure
+# What: Creates groups in the idm infrastructure based on the variables provided.
 
 - name: Create our initial users
   hosts: ipaserver

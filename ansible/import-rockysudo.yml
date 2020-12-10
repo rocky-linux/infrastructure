@@ -1,4 +1,6 @@
 ---
+# Currently only one SUDO role should be created, and that is for the
+# rocky linux admins
 - name: "Creating SUDO Role for Rocky Admins"
   ipasudorule:
     ipaadmin_password: "{{ ipaadmin_password }}"

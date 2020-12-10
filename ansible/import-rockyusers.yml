@@ -1,4 +1,7 @@
 ---
+# Creates the first set of users for the IdM Infrastructure. This
+# should create both regular and admin accounts for separation of
+# privilege.
 - name: "Creating Initial Accounts"
   ipauser:
     ipaadmin_password: "{{ ipaadmin_password }}"
