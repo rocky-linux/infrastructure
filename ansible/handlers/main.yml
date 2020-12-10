@@ -1,0 +1,10 @@
+---
+- name: restart_ssh
+  service:
+    name: sshd
+    state: restarted
+
+- name: restart_httpd
+  service:
+    name: httpd
+    state: restarted

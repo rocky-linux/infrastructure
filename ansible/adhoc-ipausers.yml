@@ -1,0 +1,40 @@
+---
+# This playbook is meant to be used with callable variables, like adhoc or AWX.
+# However, adhoc, it works fine as long as you mention all required variables.
+# 
+# What: Creates users in the idm infrastructure
+
+- name: Create a User
+  hosts: ipaserver
+  become: false
+  vars_files:
+  - vars/encpass.yml
+
+  tasks:
+    - name: "Checking for user variables"
+      assert:
+        that:
+          - ipaadmin_password | mandatory
+          - ipaName | mandatory
+          - ipaFirst | mandatory
+          - ipaLast | mandatory
+          - ipaEmail | mandatory
+          - ipaPassword | mandatory
+          - ipaTitle | mandatory
+        success_msg: "Required variables provided"
+        fail_msg: "We are missing user information or ipa admin password"
+
+    - name: "Creating User Account"
+      ipauser:
+        ipaadmin_password: "{{ ipaadmin_password }}"
+        name: "{{ ipaName }}"
+        first: "{{ ipaFirst }}"
+        last: "{{ ipaLast }}"
+        email: "{{ ipaEmail }}"
+        password: "{{ ipaPassword }}"
+        title: "{{ ipaTitle }}"
+        loginshell: "{{ ipaLoginshell|default('/sbin/nologin', True) }}"
+        update_password: on_create
+      tags:
+        - users
+

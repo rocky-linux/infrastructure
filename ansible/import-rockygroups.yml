@@ -1,0 +1,11 @@
+---
+- name: "Creating Mandatory Groups"
+  ipagroup:
+    ipaadmin_password: "{{ ipaadmin_password }}"
+    name: "{{ item.group }}"
+    description: "{{ item.description }}"
+    nonposix: no
+  loop: "{{ ipagroups }}"
+  tags:
+    - groups
+

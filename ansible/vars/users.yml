@@ -1,0 +1,16 @@
+---
+users:
+  - name: label
+    first: Louis
+    last: Abel
+    email: label@rockylinux.org
+    password: ThisIsNotMyPassword1!
+    title: Infrastructure IdM Engineer
+    loginshell: /bin/bash
+  - name: label2
+    first: Louis
+    last: Abel
+    email: label@rockylinux.org
+    password: ThisIsNotMyPassword1!
+    title: Infrastructure IdM Engineer - Admin
+    loginshell: /bin/bash

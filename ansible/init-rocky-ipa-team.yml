@@ -1,0 +1,28 @@
+---
+# This builds out the initial users and groups for the rocky linux infra
+- name: Create our initial users
+  hosts: ipaserver
+  become: false
+  vars_files:
+  - vars/encpass.yml
+  - vars/users.yml
+  - vars/groups.yml
+
+  tasks:
+    - name: "Checking for user variables"
+      assert:
+        that:
+          - ipaadmin_password | mandatory
+          - users | mandatory
+          - ipagroups | mandatory
+        success_msg: "Required variables provided"
+        fail_msg: "We are missing users or ipa admin password"
+
+    - name: "Start users"
+      include: import-rockyusers.yml
+
+    - name: "Start groups"
+      include: import-rockygroups.yml
+
+    - name: "Start sudo for admins"
+      include: import-rockysudo.yml

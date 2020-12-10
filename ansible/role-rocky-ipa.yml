@@ -1,0 +1,11 @@
+---
+- name: Configure IPA server
+  hosts: ipaserver
+  become: true
+  vars_files:
+  - vars/encpass.yml
+
+  roles:
+  - role: ipaserver
+    state: present
+

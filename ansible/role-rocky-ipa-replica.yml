@@ -1,0 +1,29 @@
+---
+- name: Configure IPA server
+  hosts: ipareplicas
+  become: true
+  vars_files:
+  - vars/encpass.yml
+
+  pre_tasks:
+    - name: Check if ansible cannot be run here
+      stat:
+        path: /etc/no-ansible
+      register: no_ansible
+
+    - name: Verify if we can run ansible
+      assert:
+        that:
+          - "not no_ansible.stat.exists"
+        msg: "/etc/no-ansible exists - skipping run on this node"
+
+  roles:
+  - role: ipareplica
+    state: present
+
+  post_tasks:
+    - name: Touching run file that ansible has ran here
+      file:
+        path: /var/log/ansible.run
+        state: touch
+

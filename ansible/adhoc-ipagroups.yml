@@ -1,0 +1,32 @@
+---
+# This playbook is meant to be used with callable variables, like adhoc or AWX.
+# However, adhoc, it works fine as long as you mention all required variables.
+#
+# What: Creates groups in the idm infrastructure
+
+- name: Create our initial users
+  hosts: ipaserver
+  become: false
+  vars_files:
+  - vars/encpass.yml
+
+  tasks:
+    - name: "Checking for user variables"
+      assert:
+        that:
+          - ipaadmin_password | mandatory
+          - ipaGroup | mandatory
+          - ipaDescription | mandatory
+          - ipaPosix | mandatory
+        success_msg: "Required variables provided"
+        fail_msg: "We are missing group information or ipa admin password"
+
+    - name: "Creating Mandatory Groups"
+      ipagroup:
+        ipaadmin_password: "{{ ipaadmin_password }}"
+        name: "{{ ipaGroup }}"
+        description: "{{ ipaDescription }}"
+        nonposix: "{{ ipaPosix }}"
+      tags:
+        - groups
+

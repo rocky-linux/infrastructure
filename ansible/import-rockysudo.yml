@@ -1,0 +1,11 @@
+---
+- name: "Creating SUDO Role for Rocky Admins"
+  ipasudorule:
+    ipaadmin_password: "{{ ipaadmin_password }}"
+    name: All_RockyAdmins
+    description: Rocky Linux infrastructure and operations sudo access
+    group:
+      - rockyadm
+    hostcat: all
+    cmdcat: all
+

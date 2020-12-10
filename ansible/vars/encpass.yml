@@ -1,0 +1,8 @@
+---
+# You must set this up using ansible-vault
+ipaadmin_password: !vault |
+          $ANSIBLE_VAULT;1.1;AES256
+          REDACTED
+ipadm_password: !vault |
+          $ANSIBLE_VAULT;1.1;AES256
+          REDACTED
