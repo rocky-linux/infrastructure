@@ -21,6 +21,9 @@
 - name: security limits
   copy:
     dest: "/etc/security/limits.d/cis.conf"
+    user: root
+    group: root
+    mode: '0644'
     content: |
       * hard core 0
 
@@ -109,27 +112,29 @@
         state: present
       tags:
         - harden
-    
+
     - name: Ensure auditd buffer is OK
       replace:
         path: /etc/audit/rules.d/audit.rules
         regexp: '-b \d+'
         replace: '-b {{ audit_buffer }}'
       notify:
-        - regenerate auditd rules
+        - regenerate_auditd_rules
       tags:
         - harden
-    
-    - name: Ensure collection audit rules are available
-      template:
-        src: "etc/audit/rules.d/collection.rules.j2"
-        dest: "/etc/audit/rules.d/collection.rules"
-        owner: root
-        group: root
-        backup: yes
-      notify:
-        - regenerate auditd rules
-        - restart auditd
-      tags:
-        - harden
+
+# Leaving this out for now as we don't know the implications of the audit rules
+# on build systems yet. 
+#    - name: Ensure collection audit rules are available
+#      template:
+#        src: "etc/audit/rules.d/collection.rules.j2"
+#        dest: "/etc/audit/rules.d/collection.rules"
+#        owner: root
+#        group: root
+#        backup: yes
+#      notify:
+#        - regenerate_auditd rules
+#        - restart_auditd
+#      tags:
+#        - harden
 

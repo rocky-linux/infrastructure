@@ -35,4 +35,7 @@
       file:
         path: /var/log/ansible.run
         state: touch
+        mode: '0644'
+        user: root
+        group: root
 

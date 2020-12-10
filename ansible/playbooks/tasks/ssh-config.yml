@@ -23,6 +23,7 @@
       dest: "/etc/rockybanner"
       owner: root
       group: root
+      mode: '0644'
     notify: restart_ssh
 
   - name: Remove dsa keys
