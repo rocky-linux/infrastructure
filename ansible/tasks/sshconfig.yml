@@ -1,0 +1,79 @@
+- name: Install pam_krb5 on systems earlier than CentOS 8
+  yum:
+    name: pam_krb5
+    state: latest
+  when: ansible_facts.distribution == "CentOS" and ansible_facts.distribution_major_version < "8"
+- name: Update authconfig settings
+  command:
+    cmd: "authconfig --{{item}} --update"
+  loop:
+     - "enablemkhomedir"
+     - "enablekrb5"
+- name: Add lines to ssh_config
+  lineinfile:
+    line: "{{item}} yes"
+    regexp: '\s*#*\s*{{item}} (yes|no)'
+    insertafter: EOF
+    path: "/etc/ssh/ssh_config"
+  loop:
+     - "GSSAPIDelegateCredentials"
+     - "GSSAPIAuthentication"
+- name: Add GSSAPITrustDNS to ssh_config for CentOS 6
+  lineinfile:
+    line: "{{item}} yes"
+    regexp: '\s*#*\s*{{item}} (yes|no)'
+    insertafter: EOF
+    path: "/etc/ssh/ssh_config"
+  loop:
+     - "GSSAPITrustDNS"
+  when: ansible_facts.distribution == "CentOS" and ansible_facts.distribution_major_version == "6"
+- name: Remove GSSAPITrustDNS from ssh_config for other distributions
+  lineinfile:
+    line: "{{item}} yes"
+    regexp: '\s*#*\s*{{item}} (yes|no)'
+    insertafter: EOF
+    path: "/etc/ssh/ssh_config"
+    state: absent
+  loop:
+     - "GSSAPITrustDNS"
+  when: ansible_facts.distribution == "CentOS" and ansible_facts.distribution_major_version != "6"
+- name: Update krb5 config
+  lineinfile:
+    line: "{{item}} = true"
+    regexp: '\s*#*\s*{{item}} = (true|false)'
+    insertafter: ".*libdefaults.*"
+    path: "/etc/krb5.conf"
+  loop:
+     - "dns_canonicalize_hostname"
+     - "rdns"
+- name: Add lines to sshd_config
+  lineinfile:
+    line: "{{item}} yes"
+    regexp: '\s*#*\s*{{item}} (yes|no)'
+    insertafter: EOF
+    path: "/etc/ssh/sshd_config"
+  loop:
+     - "GSSAPICleanupCredentials"
+     - "GSSAPIAuthentication"
+- name: Update sshd_config to Protocol 2
+  lineinfile:
+    line: "Protocol 2"
+    regexp: '\s*#*\s*Protocol.*'
+    insertafter: EOF
+    path: "/etc/ssh/sshd_config"
+- name: Deploy SSH banner
+  block:
+  - copy:
+      dest: "{{bannerfile}}"
+      group: root
+      owner: root
+      mode: "0644"
+      src: sshbanner
+  - lineinfile:
+      line: "Banner {{bannerfile}}"
+      regexp: '\s*#*\s*Banner.*'
+      insertafter: EOF
+      path: "/etc/ssh/sshd_config"
+  rescue:
+  - debug:
+      msg: "Unable to deploy updated banner file"
