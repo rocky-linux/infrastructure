@@ -7,7 +7,40 @@
   vars_files:
   - vars/encpass.yml
 
+  pre_tasks:
+    - name: Check if ansible cannot be run here
+      stat:
+        path: /etc/no-ansible
+      register: no_ansible
+
+    - name: Verify if we can run ansible
+      assert:
+        that:
+          - "not no_ansible.stat.exists"
+        msg: "/etc/no-ansible exists - skipping run on this node"
+
+    - name: Ensure 'dns=none' is set for Network Manager to avoid DNS servers being changed
+      ini_file:
+        path: /etc/NetworkManager/NetworkManager.conf
+        state: present
+        no_extra_spaces: yes
+        section: main
+        option: dns
+        value: none
+        owner: root
+        group: root
+        mode: 0644
+        backup: yes
+      notify:
+        - reload_networkmanager
+
   roles:
   - role: ipaserver
     state: present
+
+  post_tasks:
+    - name: Touching run file that ansible has ran here
+      file:
+        path: /var/log/ansible.run
+        state: touch
 
