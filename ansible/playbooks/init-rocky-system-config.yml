@@ -1,0 +1,28 @@
+---
+# Basic system configuration. All hardening should also be imported here.
+- name: Configure system
+  hosts: all
+  become: true
+
+  pre_tasks:
+    - name: Check if ansible cannot be run here
+      stat:
+        path: /etc/no-ansible
+      register: no_ansible
+
+    - name: Verify if we can run ansible
+      assert:
+        that:
+          - "not no_ansible.stat.exists"
+        msg: "/etc/no-ansible exists - skipping run on this node"
+
+  tasks:
+    - name: Configure SSH
+      include: tasks/ssh-config.yml
+
+  post_tasks:
+    - name: Touching run file that ansible has ran here
+      file:
+        path: /var/log/ansible.run
+        state: touch
+

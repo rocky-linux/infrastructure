@@ -36,7 +36,7 @@
 
     - name: Ensure resolv.conf is pointing to main master
       template:
-        src: templates/resolv.conf.j2
+        src: etc/resolv.conf.j2
         dest: /etc/resolv.conf
         owner: root
         group: root
