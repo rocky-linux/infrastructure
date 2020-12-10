@@ -8,3 +8,8 @@
   service:
     name: httpd
     state: restarted
+
+- name: reload_networkmanager
+  service:
+    name: NetworkManager
+    state: reloaded

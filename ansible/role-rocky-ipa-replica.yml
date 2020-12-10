@@ -19,6 +19,32 @@
           - "not no_ansible.stat.exists"
         msg: "/etc/no-ansible exists - skipping run on this node"
 
+    - name: Ensure 'dns=none' is set for Network Manager
+      ini_file:
+        path: /etc/NetworkManager/NetworkManager.conf
+        state: present
+        no_extra_spaces: yes
+        section: main
+        option: dns
+        value: none
+        owner: root
+        group: root
+        mode: 0644
+        backup: yes
+      notify:
+        - reload_networkmanager
+
+    - name: Ensure resolv.conf is pointing to main master
+      template:
+        src: templates/resolv.conf.j2
+        dest: /etc/resolv.conf
+        owner: root
+        group: root
+        mode: 0644
+        backup: yes
+      notify:
+        - reload_networkmanager
+
   roles:
   - role: ipareplica
     state: present

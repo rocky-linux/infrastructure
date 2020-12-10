@@ -34,6 +34,7 @@ ipareplica_setup_firewalld=yes
 ipareplica_setup_ca=yes
 ipareplica_setup_kra=yes
 ipareplica_setup_dns=yes
+ipa_dns_master=10.100.1.110
 
 [ipaclients]
 build-a-box.rockylinux.org ansible_host=10.100.1.112
