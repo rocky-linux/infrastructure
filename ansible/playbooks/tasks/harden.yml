@@ -33,7 +33,7 @@
 
 - name: Standard login settings
   block:
-    - name: owneradd defaults
+    - name: useradd defaults
       lineinfile:
         line: "INACTIVE=30"
         regexp: "^INACTIVE=.*"
@@ -177,7 +177,7 @@
         group: root
         backup: true
       notify:
-        - regenerate_auditd rules
+        - regenerate_auditd_rules
         - restart_auditd
       tags:
         - harden
