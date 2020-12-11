@@ -15,5 +15,10 @@ See a place for improvement? See an error or bug? Have your own scripts or playb
 
 ## Branches
 
-The main branch is currently the only branch. It is currently in discussion how the branches should be configured to not commit to main full time.
+Note: This is in the idea phase
+
+The main branch is the top level branch that should, in most circumstances, not take direct changes. There are currently two branches:
+
+* main
+* develop
 
