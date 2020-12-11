@@ -4,6 +4,7 @@
     name: openssh-server
     state: present
 
+# TODO: Prepare for /etc/ssh/sshd_config.d/* style of configuration
 - name: ssh configuration - global
   block:
     - name: ssh configuration - base
@@ -29,7 +30,6 @@
     group: root
     mode: '0644'
   notify: restart_ssh
-
 
 - name: Remove dsa keys
   file:
