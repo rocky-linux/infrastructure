@@ -1,0 +1,21 @@
+---
+# https://github.com/ibiqlik/action-yamllint
+name: YAMLlint
+
+on:
+  push:
+    paths:
+      - '**.yml'
+      - '**.yaml'
+
+jobs:
+  yamllint:
+    runs-on: ubuntu-latest
+    timeout-minutes: 1
+
+    steps:
+      - name: Git checkout
+        uses: actions/checkout@v2
+
+      - name: yamllint
+        uses: ibiqlik/action-yamllint@v3
