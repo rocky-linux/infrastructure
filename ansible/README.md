@@ -91,6 +91,9 @@ At a minimum, there should be `pre_tasks` and `post_tasks` that can judge whethe
       file:
         path: /var/log/ansible.run
         state: touch
+        mode: '0644'
+        owner: root
+        group: root
 ```
 
 ### Comments

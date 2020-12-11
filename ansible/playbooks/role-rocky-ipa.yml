@@ -1,6 +1,11 @@
 ---
 # Creates the first server for an IPA infrastructure
 # Variables for the infrastructure are in inventory/ipainventory
+# Recommended specs for the IPA systems, that scale based on number of objects:
+# CPU: 2 cores
+# Memory: 4GB
+# Storage: 10G /var/lib/dirsrv
+# System fully up to date
 - name: Configure IPA server
   hosts: ipaserver
   become: true
@@ -48,5 +53,5 @@
         path: /var/log/ansible.run
         state: touch
         mode: '0644'
-        user: root
+        owner: root
         group: root

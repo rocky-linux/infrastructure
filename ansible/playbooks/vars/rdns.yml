@@ -2,9 +2,15 @@
 rdns:
   - 0.1.10.in-addr.arpa.
   - 2.1.10.in-addr.arpa.
+  - 4.1.10.in-addr.arpa.
+  - 6.1.10.in-addr.arpa.
   - 8.1.10.in-addr.arpa.
+  - 10.1.10.in-addr.arpa.
   - 14.1.10.in-addr.arpa.
   - 0.16.10.in-addr.arpa.
   - 2.16.10.in-addr.arpa.
+  - 4.16.10.in-addr.arpa.
+  - 6.16.10.in-addr.arpa.
   - 8.16.10.in-addr.arpa.
+  - 10.16.10.in-addr.arpa.
   - 14.16.10.in-addr.arpa.
