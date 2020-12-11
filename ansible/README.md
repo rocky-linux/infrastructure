@@ -1,12 +1,12 @@
 # Ansible
 
-Ansible playbooks, roles, modules, etc will come here. Documentation to come soon.
+Ansible playbooks, roles, modules, etc will come here. This wiki will reflect the layout, structure, and potential standards that should be followed when making playbooks and roles.
 
-Each playbook should have comments or a name descripter that explains what the playbook does or how it is used. If not available, README-... files can be used in place.
+Each playbook should have comments or a name descriptor that explains what the playbook does or how it is used. If not available, README-... files can be used in place, especially in the case of adhoc playbooks that take input. Documentation for each playbook/role does not have to be on this wiki. Comments or README's should be sufficient.
 
 ## Management Node Structure
 
-Loosely copied from the CentOS ansible infrastructure. This structure is represented in this repository.
+Loosely copied from the CentOS ansible infrastructure.
 
 ```
 .
@@ -92,6 +92,10 @@ At a minimum, there should be `pre_tasks` and `post_tasks` that can judge whethe
         path: /var/log/ansible.run
         state: touch
 ```
+
+### Comments
+
+Each playbook should have comments or a name descriptor that explains what the playbook does or how it is used. If not available, README-... files can be used in place, especially in the case of adhoc playbooks that take input. Documentation for each playbook/role does not have to be on this wiki. Comments or README's should be sufficient.
 
 ### Roles
 
