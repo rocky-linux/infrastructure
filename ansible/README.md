@@ -97,6 +97,10 @@ At a minimum, there should be `pre_tasks` and `post_tasks` that can judge whethe
 
 Each playbook should have comments or a name descriptor that explains what the playbook does or how it is used. If not available, README-... files can be used in place, especially in the case of adhoc playbooks that take input. Documentation for each playbook/role does not have to be on this wiki. Comments or README's should be sufficient.
 
+### Tags
+
+Ensure that you use relevant tags where necessary for your tasks.
+
 ### Roles
 
 If you are using roles that are not part of this repository in the `roles` directory, you will need to list them in the `requirements.yml`. For example, we use the IPA role.

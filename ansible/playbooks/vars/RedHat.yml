@@ -1,6 +1,13 @@
 # Variables for our common module for RedHat
 ---
 
+bin_su: /usr/bin/su
+bin_sudo: /usr/bin/sudo
+kernel_boot_options: audit=1
+grub_config_path_link: /etc/grub2.cfg
+grub_config_path_efi: /etc/grub2-efi.cfg
+
+# Removing TFTP for now because there will likely be tftp/pxe servers
 remove_packages:
   - nc
   - wireshark
@@ -8,8 +15,6 @@ remove_packages:
   - talk
   - talk-server
   - rsh
-  - tftp
-  - tftp-server
   - lftp
 
 # sysctl settings
@@ -149,6 +154,3 @@ syslog_packages:
 
 ntp_packages:
   - chrony
-
-bin_su: /usr/bin/su
-bin_sudo: /usr/bin/sudo

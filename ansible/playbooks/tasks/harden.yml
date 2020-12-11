@@ -1,35 +1,39 @@
 ---
 # Initial hardening ideas from CIS
-- name: create combined sysctl-dict if overwrites are defined
-  set_fact:
-    sysctl_config: '{{ sysctl_config | combine(sysctl_overwrite) }}'
-  when: sysctl_overwrite | default()
+- name: sysctl hardening and limits
+  block:
+    - name: create combined sysctl-dict if overwrites are defined
+      set_fact:
+        sysctl_config: '{{ sysctl_config | combine(sysctl_overwrite) }}'
+      when: sysctl_overwrite | default()
 
-- name: sysctl hardening
-  sysctl:
-    name: '{{ item.key }}'
-    value: '{{ item.value }}'
-    state: present
-    ignoreerrors: true
-    sysctl_set: true
-    sysctl_file: /etc/sysctl.d/99-ansible.conf
-  with_dict: '{{ sysctl_config }}'
-  tags:
-    - harden
-    - kernel
+    - name: sysctl
+      sysctl:
+        name: '{{ item.key }}'
+        value: '{{ item.value }}'
+        state: present
+        ignoreerrors: true
+        sysctl_set: true
+        sysctl_file: /etc/sysctl.d/99-ansible.conf
+      with_dict: '{{ sysctl_config }}'
+      tags:
+        - harden
+        - kernel
 
-- name: security limits
-  copy:
-    dest: "/etc/security/limits.d/cis.conf"
-    user: root
-    group: root
-    mode: '0644'
-    content: |
-      * hard core 0
+    - name: security limits
+      copy:
+        dest: "/etc/security/limits.d/cis.conf"
+        owner: root
+        group: root
+        mode: '0644'
+        content: |
+          * hard core 0
+      tags:
+        - harden
 
 - name: Standard login settings
   block:
-    - name: useradd defaults
+    - name: owneradd defaults
       lineinfile:
         line: "INACTIVE=30"
         regexp: "^INACTIVE=.*"
@@ -99,10 +103,52 @@
       tags:
         - harden
 
+    - name: pwquality - minlen
+      lineinfile:
+        line: "minlen = 14"
+        regexp: "^# minlen =.*"
+        path: "/etc/security/pwquality.conf"
+      tags:
+        - harden
+
+    - name: pwquality - dcredit
+      lineinfile:
+        line: "dcredit = -1"
+        regexp: "^# dcredit =.*"
+        path: "/etc/security/pwquality.conf"
+      tags:
+        - harden
+
+    - name: pwquality - ucredit
+      lineinfile:
+        line: "ucredit = -1"
+        regexp: "^# ucredit =.*"
+        path: "/etc/security/pwquality.conf"
+      tags:
+        - harden
+
+    - name: pwquality - lcredit
+      lineinfile:
+        line: "lcredit = -1"
+        regexp: "^# lcredit =.*"
+        path: "/etc/security/pwquality.conf"
+      tags:
+        - harden
+
+    - name: pwquality - ocredit
+      lineinfile:
+        line: "ocredit = -1"
+        regexp: "^# ocredit =.*"
+        path: "/etc/security/pwquality.conf"
+      tags:
+        - harden
+
 - name: Remove packages not allowed by CIS
   package:
     name: "{{ remove_packages }}"
     state: absent
+  tags:
+    - harden
 
 - name: Auditd
   block:
@@ -123,17 +169,151 @@
       tags:
         - harden
 
-# Leaving this out for now as we don't know the implications of the audit rules
-# on build systems yet.
-#    - name: Ensure collection audit rules are available
-#      template:
-#        src: "etc/audit/rules.d/collection.rules.j2"
-#        dest: "/etc/audit/rules.d/collection.rules"
-#        owner: root
-#        group: root
-#        backup: yes
-#      notify:
-#        - regenerate_auditd rules
-#        - restart_auditd
-#      tags:
-#        - harden
+    - name: Ensure collection audit rules are available
+      template:
+        src: "etc/audit/rules.d/collection.rules.j2"
+        dest: "/etc/audit/rules.d/collection.rules"
+        owner: root
+        group: root
+        backup: true
+      notify:
+        - regenerate_auditd rules
+        - restart_auditd
+      tags:
+        - harden
+
+- name: Disable Services
+  service:
+    name: "{{ item }}"
+    enabled: false
+    state: stopped
+  with_items: "{{ disable_svc }}"
+  register: service_check
+  failed_when: service_check is failed and not 'Could not find the requested service' in service_check.msg
+  tags:
+    - services
+    - harden
+
+- name: modprobe settings
+  block:
+    - name: remove vfat from filesystem list if we are EFI
+      set_fact:
+        modprobe_unused_filesystems: "{{ modprobe_unused_filesystems | difference('vfat') }}"
+      when:
+        - efi_installed.stat.isdir is defined
+        - efi_installed.stat.isdir
+      tags:
+        - efi
+
+    - name: disable unused filesystems
+      lineinfile:
+        dest: "/etc/modprobe.d/cis.conf"
+        owner: root
+        group: root
+        mode: "0644"
+        line: "install {{ item }} /bin/true"
+      with_items: "{{ modprobe_unused_filesystems }}"
+      tags:
+        - harden
+
+- name: Set init umask
+  lineinfile:
+    dest: /etc/sysconfig/init
+    state: present
+    regexp: ^umask
+    line: "umask 027"
+  tags:
+    - harden
+
+- name: cis sudoers configuration
+  copy:
+    dest: /etc/sudoers.d/cis
+    owner: root
+    group: root
+    mode: '0440'
+    content: |
+      Defaults use_pty
+      Defaults logfile="/var/log/sudo.log"
+    tags:
+      - harden
+
+- name: Remove packages not allowed by CIS
+  package:
+    name: "{{ remove_packages }}"
+    state: absent
+  tags:
+    - harden
+
+- name: grub and kernel
+  block:
+    - name: Reset grub link if we are EFI
+      set_fact:
+        grub_config_path_link: "{{ grub_config_path_efi }}"
+      when: efi_installed.stat.isdir is defined and efi_installed.stat.isdir and grub_config_path_efi is defined
+      tags:
+        - efi
+
+    - name: grub.d directory
+      file:
+        name: /etc/default/grub.d
+        owner: root
+        group: root
+        mode: '0755'
+        state: directory
+        recurse: true
+      tags:
+        - grub
+        - kernel
+        - harden
+
+    - name: Append /etc/default/grub file
+      lineinfile:
+        path: /etc/default/grub
+        line: for x in $(ls /etc/default/grub.d) ; do source /etc/default/grub.d/$x ; done
+        state: present
+      tags:
+        - grub
+        - kernel
+        - harden
+
+    - name: Append /etc/default/grub file
+      lineinfile:
+        path: /etc/default/grub
+        line: for x in $(ls /etc/default/grub.d) ; do source /etc/default/grub.d/$x ; done
+        state: present
+      tags:
+        - grub
+        - kernel
+        - harden
+
+    - name: Grub command line defaults
+      copy:
+        dest: "/etc/default/grub.d/99-rocky.cfg"
+        owner: root
+        group: root
+        mode: '0644'
+        content: 'GRUB_CMDLINE_LINUX_DEFAULT="$GRUB_CMDLINE_LINUX_DEFAULT {{ kernel_boot_options }}"'
+      tags:
+        - grub
+        - kernel
+        - harden
+
+    - name: Grub command line defaults
+      template:
+        src: etc/default/grub.d/99-aoc.cfg.j2
+        dest: /etc/default/grub.d/99-aoc.cfg
+        owner: root
+        group: root
+        mode: '0644'
+        backup: true
+      tags:
+        - grub
+        - kernel
+        - harden
+
+    - name: rebuild grub
+      command: /usr/sbin/grub2-mkconfig -o {{ grub_config_path_link }}
+      tags:
+        - grub
+        - kernel
+        - harden
