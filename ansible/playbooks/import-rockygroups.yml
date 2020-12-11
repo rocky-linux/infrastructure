@@ -5,8 +5,7 @@
     ipaadmin_password: "{{ ipaadmin_password }}"
     name: "{{ item.group }}"
     description: "{{ item.description }}"
-    nonposix: no
+    nonposix: false
   loop: "{{ ipagroups }}"
   tags:
     - groups
-

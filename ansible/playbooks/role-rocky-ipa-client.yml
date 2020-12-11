@@ -20,13 +20,14 @@
         msg: "/etc/no-ansible exists - skipping run on this node"
 
   roles:
-  - role: ipaclient
-    state: present
-
+    - role: ipaclient
+      state: present
 
   post_tasks:
     - name: Touching run file that ansible has ran here
       file:
         path: /var/log/ansible.run
         state: touch
-
+        mode: '0644'
+        user: root
+        group: root

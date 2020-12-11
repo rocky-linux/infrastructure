@@ -25,7 +25,7 @@
       include: tasks/variable_loader_common.yml
 
     - name: Configure SSH
-      include: tasks/ssh-config.yml
+      include: tasks/ssh_config.yml
 
     - name: Configure harden settings
       include: tasks/harden.yml
@@ -38,4 +38,3 @@
         mode: '0644'
         user: root
         group: root
-

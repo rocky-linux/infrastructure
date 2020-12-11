@@ -1,6 +1,6 @@
 ---
 # This playbook is meant to be used with callable variables, like adhoc or AWX.
-# What: Creates groups in the idm infrastructure based on the variables provided.
+# What: Creates groups in the idm infrastructure based on the variables provided
 
 - name: Create our initial users
   hosts: ipaserver
@@ -27,4 +27,3 @@
         nonposix: "{{ ipaPosix }}"
       tags:
         - groups
-

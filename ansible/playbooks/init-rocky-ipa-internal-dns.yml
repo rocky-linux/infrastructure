@@ -5,6 +5,7 @@
   become: false
   vars_files:
   - vars/encpass.yml
+  - vars/rdns.yml
 
   tasks:
     - name: "Checking for user variables"
@@ -14,9 +15,8 @@
         success_msg: "Required variables provided"
         fail_msg: "We are missing ipa admin password"
 
-    - name: "Start users"
+    - name: "Create Reverse Domains"
       ipadnszone:
         ipaadmin_password: '{{ ipaadmin_password }}'
         name: '{{ internal_domain }}'
-      with_items:
-        - dev.rockylinux.org
+      with_items: '{{ rdns }}'

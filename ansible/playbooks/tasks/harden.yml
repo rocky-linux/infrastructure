@@ -10,8 +10,8 @@
     name: '{{ item.key }}'
     value: '{{ item.value }}'
     state: present
-    ignoreerrors: yes
-    sysctl_set: yes
+    ignoreerrors: true
+    sysctl_set: true
     sysctl_file: /etc/sysctl.d/99-ansible.conf
   with_dict: '{{ sysctl_config }}'
   tags:
@@ -124,7 +124,7 @@
         - harden
 
 # Leaving this out for now as we don't know the implications of the audit rules
-# on build systems yet. 
+# on build systems yet.
 #    - name: Ensure collection audit rules are available
 #      template:
 #        src: "etc/audit/rules.d/collection.rules.j2"
@@ -137,4 +137,3 @@
 #        - restart_auditd
 #      tags:
 #        - harden
-

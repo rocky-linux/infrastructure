@@ -27,14 +27,14 @@
       ini_file:
         path: /etc/NetworkManager/NetworkManager.conf
         state: present
-        no_extra_spaces: yes
+        no_extra_spaces: true
         section: main
         option: dns
         value: none
         owner: root
         group: root
         mode: 0644
-        backup: yes
+        backup: true
       notify:
         - reload_networkmanager
 
@@ -45,17 +45,19 @@
         owner: root
         group: root
         mode: 0644
-        backup: yes
+        backup: true
       notify:
         - reload_networkmanager
 
   roles:
-  - role: ipareplica
-    state: present
+    - role: ipareplica
+      state: present
 
   post_tasks:
     - name: Touching run file that ansible has ran here
       file:
         path: /var/log/ansible.run
         state: touch
-
+        mode: '0644'
+        user: root
+        group: root

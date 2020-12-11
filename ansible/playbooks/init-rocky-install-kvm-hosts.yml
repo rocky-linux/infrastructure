@@ -40,7 +40,7 @@
       systemd:
         name: libvirtd
         state: started
-        enabled: yes
+        enabled: true
 
     - name: Verify KVM module is loaded
       shell: "lsmod | grep -i kvm"
@@ -52,4 +52,6 @@
       file:
         path: /var/log/ansible.run
         state: touch
-
+        mode: '0644'
+        user: root
+        group: root

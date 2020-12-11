@@ -1,6 +1,5 @@
 ---
 # This playbook is meant to be used with callable variables, like adhoc or AWX.
-# 
 # What: Creates users in the idm infrastructure based on the variables provided.
 
 - name: Create a User
@@ -36,4 +35,3 @@
         update_password: on_create
       tags:
         - users
-

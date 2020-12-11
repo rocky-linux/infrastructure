@@ -23,28 +23,30 @@
           - "not no_ansible.stat.exists"
         msg: "/etc/no-ansible exists - skipping run on this node"
 
-    - name: Ensure 'dns=none' is set for Network Manager to avoid DNS servers being changed
+    - name: Ensure 'dns=none' is set for Network Manager to avoid change
       ini_file:
         path: /etc/NetworkManager/NetworkManager.conf
         state: present
-        no_extra_spaces: yes
+        no_extra_spaces: true
         section: main
         option: dns
         value: none
         owner: root
         group: root
         mode: 0644
-        backup: yes
+        backup: true
       notify:
         - reload_networkmanager
 
   roles:
-  - role: ipaserver
-    state: present
+    - role: ipaserver
+      state: present
 
   post_tasks:
     - name: Touching run file that ansible has ran here
       file:
         path: /var/log/ansible.run
         state: touch
-
+        mode: '0644'
+        user: root
+        group: root
