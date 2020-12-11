@@ -1,0 +1,51 @@
+- name: 'install dhcpd, tftp'
+  package:
+    name:
+      - dhcp-server
+      - tftp-server
+      - nginx
+
+- name: dhcpd.conf
+  template:
+    src: dhcpd.conf.j2
+    dest: '/etc/dhcp/dhcpd.conf'
+    mode: '0644'
+  notify: 'restart dhcpd'
+
+- name: 'Ensure dhcpd is running'
+  service:
+    name: dhcpd
+    state: started
+    enabled: true
+
+- name: 'Ensure nginx is running'
+  service:
+    name: nginx
+    state: started
+    enabled: true
+
+- name: Enable tftp server socket
+  systemd:
+    name: tftp.socket
+    state: started
+    enabled: true
+
+- name: 'Create UEFI PXE-boot configuration directory'
+  file:
+    path: '/var/lib/tftpboot/uefi'
+    state: directory
+
+- name: 'Download GRUB EFI binary'
+  get_url:
+    dest: '/var/lib/tftpboot/uefi/grubx64.efi'
+    url: '{{ centos_8_kickstart_mirror | mandatory }}/EFI/BOOT/grubx64.efi'
+
+- name: 'Download CentOS 8 kernel'
+  get_url:
+    dest: '/var/lib/tftpboot/ks-centos-8-vmlinuz'
+    url:  '{{ centos_8_kickstart_mirror }}/images/pxeboot/vmlinuz'
+
+- name: 'Download CentOS 8 initrd'
+  get_url:
+    dest: '/var/lib/tftpboot/ks-centos-8-initrd.img'
+    url:  '{{ centos_8_kickstart_mirror }}/images/pxeboot/initrd.img'
