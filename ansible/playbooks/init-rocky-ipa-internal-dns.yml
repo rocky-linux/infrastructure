@@ -20,4 +20,3 @@
         ipaadmin_password: '{{ ipaadmin_password }}'
         name: '{{ item }}'
       with_items: '{{ rdns }}'
-

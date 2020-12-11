@@ -38,7 +38,7 @@
         value: none
         owner: root
         group: root
-        mode: 0644
+        mode: '0644'
         backup: true
       notify:
         - reload_networkmanager
