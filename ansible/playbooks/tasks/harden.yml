@@ -175,6 +175,7 @@
         dest: "/etc/audit/rules.d/collection.rules"
         owner: root
         group: root
+        mode: '600'
         backup: true
       notify:
         - regenerate_auditd_rules
@@ -222,6 +223,11 @@
     state: present
     regexp: ^umask
     line: "umask 027"
+    create: yes
+    owner: root
+    group: root
+    mode: '0644'
+  when: ansible_distribution_major_version == '7'
   tags:
     - harden
 
