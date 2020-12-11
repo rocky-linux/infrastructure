@@ -210,7 +210,7 @@
         dest: "/etc/modprobe.d/cis.conf"
         owner: root
         group: root
-        mode: "0644"
+        mode: '0644'
         line: "install {{ item }} /bin/true"
       with_items: "{{ modprobe_unused_filesystems }}"
       tags:
