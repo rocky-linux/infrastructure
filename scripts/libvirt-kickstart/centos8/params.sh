@@ -2,4 +2,4 @@ export MIRROR="https://mirror.phx1.us.spryservers.net/centos/8.3.2011/BaseOS/x86
 export KICKSTART_FILE="centos8/kickstart.cfg"
 export OS_VARIANT="rhel8.2"
 export EXTRA_ARGS=""
-export DISK_SIZE="20"
+export DISK_SIZE="30"
