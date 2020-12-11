@@ -36,8 +36,11 @@ Loosely copied from the CentOS ansible infrastructure. This structure is represe
 What each folder represents
 
 ```
-files      -> As the name implies, non-templated files go here
-group_vars -> Group Variables go here if they are not fulfilled in an inventory
+files      -> As the name implies, non-templated files go here. Files that are
+              dropped somewhere on the file system should be laid out in a way
+              that represents the file system (eg. ./etc/sysconfig/)
+group_vars -> Group Variables go here if they are not fulfilled in an inventory.
+              Recommended that group_vars be used over inventory vars.
 host_vars  -> Host variables go here
 inventory  -> All static inventories go here
 roles      -> Custom roles can go here
@@ -51,21 +54,24 @@ vars       -> Global variables that are called with vars_files go here. This
 ```
 init-* -> Starting infrastructure playbooks that run solo or import other
           playbooks that start with import-
+adhoc  -> These playbooks are one-off playbooks that can be used on the CLI or
+          in AWX. These are typically for basic tasks.
 import -> Playbooks that should be imported from the top level playbooks
 role-* -> These playbooks call roles specifically for infrastructure tasks.
           Playbooks that do not call a role should be named init or adhoc based
           on their usage.
-adhoc  -> These playbooks are one-off playbooks that can be used on the CLI or
-          in AWX
 ```
 
 ## Designing Playbooks
 
 ### Pre flight and post flight
 
-At a minimum, there should be `pre_tasks` and `post_tasks` that can judge whether ansible has been can or has been run on a system. Some playbooks will not necessarily need this (eg if you're running an adhoc playbook to create a user). But operations done on a host should at least have these in the playbook.
+At a minimum, there should be `pre_tasks` and `post_tasks` that can judge whether ansible has been can or has been run on a system. Some playbooks will not necessarily need this (eg if you're running an adhoc playbook to create a user). But operations done on a host should at least have these in the playbook, with an optional handlers include.
 
 ```
+  handlers:
+    - include: handlers/main.yml
+
   pre_tasks:
     - name: Check if ansible cannot be run here
       stat:
@@ -86,8 +92,6 @@ At a minimum, there should be `pre_tasks` and `post_tasks` that can judge whethe
         path: /var/log/ansible.run
         state: touch
 ```
-
-If you need to use handlers, you will need to include them in the playbook.
 
 ### Roles
 
