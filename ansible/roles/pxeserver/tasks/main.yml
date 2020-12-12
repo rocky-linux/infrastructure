@@ -1,3 +1,4 @@
+---
 - name: 'install dhcpd, tftp'
   package:
     name:
@@ -43,9 +44,9 @@
 - name: 'Download CentOS 8 kernel'
   get_url:
     dest: '/var/lib/tftpboot/ks-centos-8-vmlinuz'
-    url:  '{{ centos_8_kickstart_mirror }}/images/pxeboot/vmlinuz'
+    url: '{{ centos_8_kickstart_mirror }}/images/pxeboot/vmlinuz'
 
 - name: 'Download CentOS 8 initrd'
   get_url:
     dest: '/var/lib/tftpboot/ks-centos-8-initrd.img'
-    url:  '{{ centos_8_kickstart_mirror }}/images/pxeboot/initrd.img'
+    url: '{{ centos_8_kickstart_mirror }}/images/pxeboot/initrd.img'
