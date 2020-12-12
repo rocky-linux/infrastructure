@@ -1,0 +1,41 @@
+---
+
+- hosts: localhost
+  connection: local
+  vars:
+    force_purge: false
+    installation_dir: roles
+    installation_prefix: ../
+  pre_tasks:
+# example prepare ansible box for execution
+#    - name: install required pip modules on the host running ansible
+#      pip:
+#        name:
+#          - jmespath
+#          - netaddr
+#          - python-consul
+#          - pyvmomi
+#          - python-ldap
+#          - twine
+
+    - name: Remove existing vendor roles
+      file:
+        path: "{{ installation_prefix }}{{ installation_dir }}"
+        state: absent
+      when: force_purge | bool
+
+    - name: Install all vendor roles
+      command: >
+        ansible-galaxy install
+        {{ ( force_purge | bool ) | ternary('--force','') }}
+        --role-file {{ installation_prefix }}roles/requirements.yml
+        --roles-path {{ installation_prefix }}{{ installation_dir }}
+
+    - name: cleanup old ssh known_hosts
+      file:
+        path: "../config/known_hosts"
+        state: absent
+    - file:
+        path: "../config/known_hosts"
+        state: touch
+
