@@ -18,18 +18,23 @@
 #          - python-ldap
 #          - twine
 
-    - name: Remove existing public roles and collections
+    - name: Remove existing public roles
       file:
         path: "{{ installation_prefix }}{{ installation_dir }}"
         state: absent
       when: force_purge | bool
 
-    - name: Install all public roles and collections
+    - name: Install all public roles
       command: >
         ansible-galaxy install
         {{ ( force_purge | bool ) | ternary('--force','') }}
         --role-file {{ installation_prefix }}roles/requirements.yml
         --roles-path {{ installation_prefix }}{{ installation_dir }}
+
+    - name: Install needed collections
+      command: >
+        ansible-galaxy install
+        -r {{ installation_prefix }}roles/collections.yml
 
     - name: cleanup old ssh known_hosts
       file:

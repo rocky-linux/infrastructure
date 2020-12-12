@@ -1,0 +1,5 @@
+---
+
+collections:
+  # community ansible collection (needed for freeipa)
+  - name: community.general
