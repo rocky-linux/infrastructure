@@ -1,0 +1,14 @@
+---
+
+ipaserver_domain = rockylinux.org
+ipaserver_realm = ROCKYLINUX.ORG
+ipaserver_setup_dns = true
+ipaserver_setup_kra = true
+ipaserver_auto_forwarders = true
+ipaserver_no_host_dns = true
+ipaserver_hostname = ipa001.rockylinux.org
+ipaserver_allow_zone_overlap = true
+ipaserver_setup_firewalld = true
+ipaclient_no_ntp = true
+ipaclient_mkhomedir = true
+ipaserver_reverse_zones = ["1.100.10.in-addr.arpa."]

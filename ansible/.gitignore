@@ -1,0 +1,11 @@
+#keep tmp folder empty
+tmp/*
+!tmp/Readme.md
+
+#keep folder holding public roles empty
+roles/public/*
+!roles/public/Readme.md
+
+#keep fodler holding ansible collections empty
+collections/*
+!README.md

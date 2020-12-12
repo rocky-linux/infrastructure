@@ -1,0 +1,6 @@
+---
+
+ipaclient_domain = rockylinux.org
+ipaadmin_principal = admin
+ipaclient_no_ntp = true
+ipaclient_mkhomedir = true
