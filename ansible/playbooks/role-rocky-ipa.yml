@@ -43,8 +43,8 @@
         - reload_networkmanager
 
   roles:
-  - role: freeipa.ansible_freeipa.ipaserver
-    state: present
+    - role: freeipa.ansible_freeipa.ipaserver
+      state: present
 
   post_tasks:
     - name: Touching run file that ansible has ran here
