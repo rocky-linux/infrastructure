@@ -22,8 +22,11 @@ jobs:
           echo '[defaults]' > ansible.cfg
           echo 'collections_paths = ./collections' >> ansible.cfg
 
-      - name: Install requirements
-        run: ansible-galaxy install -r ansible/playbooks/requirements.yml
+      - name: Install role requirements
+        run: ansible-galaxy role install -r ansible/playbooks/requirements.yml
+
+      - name: Install collection requirements
+        run: ansible-galaxy collection install -r ansible/playbooks/requirements.yml
 
       - name: Ansible Lint
         uses: ansible/ansible-lint-action@master
