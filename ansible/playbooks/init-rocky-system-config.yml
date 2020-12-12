@@ -30,7 +30,7 @@
     - name: Configure harden settings
       include: tasks/harden.yml
 
-    - name: Configure PAM and SSSD
+    - name: Configure PAM
       include: tasks/authentication.yml
 
   post_tasks:
