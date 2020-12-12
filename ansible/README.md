@@ -13,19 +13,23 @@ Loosely copied from the CentOS ansible infrastructure.
 ├── ansible.cfg
 ├── files -> playbooks/files
 ├── handlers -> playbooks/handlers
-├── inventory
+├── inventories
+│   ├── production
+│   |   ├── group_vars
+│   |   ├── host_vars
+│   |   hosts
+│   ├── staging
+│   ├── devellopment
 ├── pkistore
 ├── playbooks
 │   ├── files
-│   ├── group_vars
-│   ├── host_vars
 │   ├── handlers
 │   ├── tasks
 │   ├── templates
 │   ├── vars
-│   └── requirements.yml
-├── roles
+├── roles/local
 │   └── <role-name>
+|   └── requirements.yml
 ├── tasks -> playbooks/tasks
 ├── templates -> playbooks/templates
 └── vars -> playbooks/vars

@@ -1,0 +1,14 @@
+---
+
+ipaadmin_principal = admin
+ipaclient_no_ntp = true
+ipaclient_mkhomedir = true
+ipaserver_realm = ROCKYLINUX.ORG
+ipaserver_hostname = ipa002.rockylinux.org
+ipareplica_domain = rockylinux.org
+ipareplica_auto_forwarders = true
+ipareplica_setup_firewalld = true
+ipareplica_setup_ca = true
+ipareplica_setup_kra = true
+ipareplica_setup_dns = true
+ipa_dns_master = 10.100.1.110
