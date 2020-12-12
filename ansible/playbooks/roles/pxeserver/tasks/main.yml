@@ -1,23 +1,9 @@
 ---
-- name: 'install dhcpd, tftp'
+- name: 'install tftp, nginx for serving kickstart configuration'
   package:
     name:
-      - dhcp-server
       - tftp-server
       - nginx
-
-- name: dhcpd.conf
-  template:
-    src: dhcpd.conf.j2
-    dest: '/etc/dhcp/dhcpd.conf'
-    mode: '0644'
-  notify: 'restart dhcpd'
-
-- name: 'Ensure dhcpd is running'
-  service:
-    name: dhcpd
-    state: started
-    enabled: true
 
 - name: 'Ensure nginx is running'
   service:
