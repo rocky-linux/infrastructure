@@ -213,6 +213,8 @@
         group: root
         mode: '0644'
         line: "install {{ item }} /bin/true"
+        state: present
+        create: true
       with_items: "{{ modprobe_unused_filesystems }}"
       tags:
         - harden
@@ -223,7 +225,7 @@
     state: present
     regexp: ^umask
     line: "umask 027"
-    create: yes
+    create: true
     owner: root
     group: root
     mode: '0644'
@@ -240,8 +242,8 @@
     content: |
       Defaults use_pty
       Defaults logfile="/var/log/sudo.log"
-    tags:
-      - harden
+  tags:
+    - harden
 
 - name: Remove packages not allowed by CIS
   package:
@@ -282,16 +284,6 @@
         - kernel
         - harden
 
-    - name: Append /etc/default/grub file
-      lineinfile:
-        path: /etc/default/grub
-        line: for x in $(ls /etc/default/grub.d) ; do source /etc/default/grub.d/$x ; done
-        state: present
-      tags:
-        - grub
-        - kernel
-        - harden
-
     - name: Grub command line defaults
       copy:
         dest: "/etc/default/grub.d/99-rocky.cfg"
@@ -299,19 +291,6 @@
         group: root
         mode: '0644'
         content: 'GRUB_CMDLINE_LINUX_DEFAULT="$GRUB_CMDLINE_LINUX_DEFAULT {{ kernel_boot_options }}"'
-      tags:
-        - grub
-        - kernel
-        - harden
-
-    - name: Grub command line defaults
-      template:
-        src: etc/default/grub.d/99-aoc.cfg.j2
-        dest: /etc/default/grub.d/99-aoc.cfg
-        owner: root
-        group: root
-        mode: '0644'
-        backup: true
       tags:
         - grub
         - kernel
