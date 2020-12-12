@@ -5,6 +5,7 @@ NET_NAME="libvirt-network"
 TYPE="centos8"
 CPUS="1"
 RAM="2048"
+LIBVIRT_DATA_DIR="/var/lib/libvirt/images"
 
 usage() {
 	echo "$0 [-t centos8] [-c CPUs] [-m RAM] vmhost vm.fqdn.example.com"
@@ -81,7 +82,7 @@ echo virt-install --connect \""$CONN"\" \
 	--vcpus \""$CPUS"\" \
 	--ram \""$RAM"\" \
 	--os-variant "$OS_VARIANT" \
-	--disk \""path=/var/lib/libvirt/images/${NAME}_root.qcow2,size=$DISK_SIZE,format=qcow2,bus=virtio"\" \
+	--disk \""path=${LIBVIRT_DATA_DIR}/${NAME}_root.qcow2,size=$DISK_SIZE,format=qcow2,bus=virtio"\" \
 	--network \""$NETWORK"\" \
 	--location \""$MIRROR"\" \
 	--initrd-inject \""$KICKSTART_FILE"\" \
