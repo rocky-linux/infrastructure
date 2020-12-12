@@ -42,9 +42,8 @@
       notify:
         - reload_networkmanager
 
-  roles:
-    - role: community.general.ipa_role
-      state: present
+  collections:
+    - community.general.ipa_role
 
   post_tasks:
     - name: Touching run file that ansible has ran here
