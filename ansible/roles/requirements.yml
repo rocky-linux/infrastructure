@@ -2,6 +2,9 @@
 
 roles:
   - name: geerlingguy.mysql
+  # monitoring
+  - name: cloudalchemy.node-exporter
+  - name: cloudalchemy.prometheus
 
 collections:
   # freeipa

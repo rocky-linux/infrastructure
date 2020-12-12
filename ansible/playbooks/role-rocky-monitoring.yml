@@ -1,0 +1,32 @@
+---
+# Creates the first monitoring server
+# Reccommended specs
+# CPU: 2 cores
+# Memory: 2GB
+# Storage: a piece of string
+- name: Install Prometheus
+  hosts: monitoringserver
+  become: true
+
+  pre_tasks:
+    - name: Verify if we can run ansible
+      assert:
+        that:
+          - "not no_ansible.stat.exists"
+        msg: "/etc/no-ansible exists - skipping run on this node"
+    - name: Install SELinux packages
+      package:
+        name: python3-policycoreutils.noarch
+        state: latest
+
+  role:
+    - role: cloudalchemy.prometheus
+
+  post_tasks:
+    - name: Touching run file that ansible has ran here
+      file:
+        path: /var/log/ansible.run
+        state: touch
+        mode: '0644'
+        owner: root
+        group: root
