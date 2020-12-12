@@ -175,7 +175,7 @@
         dest: "/etc/audit/rules.d/collection.rules"
         owner: root
         group: root
-        mode: '600'
+        mode: '0600'
         backup: true
       notify:
         - regenerate_auditd_rules
@@ -207,15 +207,12 @@
         - efi
 
     - name: disable unused filesystems
-      lineinfile:
+      template:
+        src: "etc/modprobe.d/cis.conf.j2"
         dest: "/etc/modprobe.d/cis.conf"
-        owner: root
-        group: root
+        owner: 'root'
+        group: 'root'
         mode: '0644'
-        line: "install {{ item }} /bin/true"
-        state: present
-        create: true
-      with_items: "{{ modprobe_unused_filesystems }}"
       tags:
         - harden
 
