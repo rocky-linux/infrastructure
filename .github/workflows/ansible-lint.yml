@@ -1,0 +1,31 @@
+---
+# https://github.com/ansible/ansible-lint-action
+name: Ansible Lint
+
+on:
+  push:
+    paths:
+      - '**.yml'
+      - '**.yaml'
+
+jobs:
+  ansible-lint:
+    runs-on: ubuntu-latest
+    timeout-minutes: 7
+
+    steps:
+      - name: Git checkout
+        uses: actions/checkout@v2
+
+      - name: Add installed collections in Ansible configuration
+        run: |
+          echo '[defaults]' > ansible.cfg
+          echo 'collections_paths = ./collections' >> ansible.cfg
+
+      - name: Install requirements
+        run: ansible-galaxy collection install -r ansible/playbooks/requirements.yml -p collections
+
+      - name: Ansible Lint
+        uses: ansible/ansible-lint-action@master
+        with:
+          args: "--exclude .github"

@@ -20,7 +20,7 @@
         fail_msg: "We are missing group information or ipa admin password"
 
     - name: "Creating Mandatory Groups"
-      ipagroup:
+      freeipa.ansible_freeipa.ipagroup:
         ipaadmin_password: "{{ ipaadmin_password }}"
         name: "{{ ipaGroup }}"
         description: "{{ ipaDescription }}"
