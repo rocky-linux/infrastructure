@@ -33,6 +33,7 @@
 
 - name: 'Create UEFI PXE-boot configuration directory'
   file:
+    mode: '0755'
     path: '/var/lib/tftpboot/uefi'
     state: directory
 
