@@ -1,37 +1,42 @@
 ---
-- name: Ensure SSH is installed - it should be
+- name: Ensure SSH server is installed
   package:
     name: openssh-server
     state: present
 
+- name: Ensure SSH daemon is enabled
+  service:
+    name: sshd
+    enabled: true
+
 # TODO: Prepare for /etc/ssh/sshd_config.d/* style of configuration
-- name: ssh configuration - global
+- name: SSH daemon configuration - global
   block:
-    - name: ssh configuration - base
+    - name: SSH daemon configuration - base
       template:
         src: "etc/ssh/{{ ansible_distribution }}-{{ ansible_distribution_major_version }}-sshd_config.j2"
-        dest: /etc/ssh/sshd_config
+        dest: "/etc/ssh/sshd_config"
         owner: root
         group: root
         mode: '0600'
         validate: /usr/sbin/sshd -t -f %s
         backup: true
-      notify: restart_ssh
+      notify: restart_sshd
   rescue:
     - name: Print errors for configuration and validation
       debug:
-        msg: "Error in configuration or template"
+        msg: "Error in SSH daemon configuration or template"
 
-- name: ssh banner
+- name: SSH banner
   copy:
     src: "etc/rockybanner"
     dest: "/etc/rockybanner"
     owner: root
     group: root
     mode: '0644'
-  notify: restart_ssh
+  notify: restart_sshd
 
-- name: Remove dsa keys
+- name: Remove DSA keys
   file:
     path: "{{ item }}"
     state: absent
