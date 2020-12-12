@@ -4,4 +4,4 @@ roles:
 
 collections:
   # community ansible collection (needed for freeipa)
-  - name: community.general
+  - name: freeipa.ansible_freeipa
