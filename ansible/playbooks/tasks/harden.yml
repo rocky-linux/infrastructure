@@ -175,7 +175,7 @@
         dest: "/etc/audit/rules.d/collection.rules"
         owner: root
         group: root
-        mode: '600'
+        mode: '0600'
         backup: true
       notify:
         - regenerate_auditd_rules
