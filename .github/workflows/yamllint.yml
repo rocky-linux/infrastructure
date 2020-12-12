@@ -1,6 +1,6 @@
 ---
 # https://github.com/ibiqlik/action-yamllint
-name: YAMLlint
+name: YAML Lint
 
 on:
   push:
