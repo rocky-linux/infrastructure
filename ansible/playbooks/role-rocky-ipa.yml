@@ -43,7 +43,7 @@
         - reload_networkmanager
 
   roles:
-    - role: ipaserver
+    - role: community.general.ipa_role
       state: present
 
   post_tasks:
