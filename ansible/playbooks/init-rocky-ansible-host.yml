@@ -39,10 +39,14 @@
         -r {{ installation_prefix }}roles/requirements.yml
         -p {{ installation_prefix }}{{ collection_installation_dir }}
 
-    - name: cleanup old ssh known_hosts
+    - name: cleanup old ssh known_hosts - remove
       file:
         path: "../tmp/known_hosts"
         state: absent
-    - file:
+        mode: "0644"
+
+    - name: cleanup old ssh known_hosts - blank
+      file:
         path: "../tmp/known_hosts"
         state: touch
+        mode: "0644"
