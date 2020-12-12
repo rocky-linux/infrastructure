@@ -2,7 +2,7 @@
 # Currently only one SUDO role should be created, and that is for the
 # rocky linux admins
 - name: "Creating SUDO Role for Rocky Admins"
-  ipasudorule:
+  freeipa.ansible_freeipa.ipasudorule:
     ipaadmin_password: "{{ ipaadmin_password }}"
     name: All_RockyAdmins
     description: Rocky Linux infrastructure and operations sudo access

@@ -19,7 +19,7 @@
           - "not no_ansible.stat.exists"
         msg: "/etc/no-ansible exists - skipping run on this node"
 
-    - name: Check if we can see LDAP srv records
+#    - name: Check if we can see LDAP srv records
 
 
   roles:

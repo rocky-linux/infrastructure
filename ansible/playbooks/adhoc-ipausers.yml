@@ -23,7 +23,7 @@
         fail_msg: "We are missing user information or ipa admin password"
 
     - name: "Creating User Account"
-      ipauser:
+      freeipa.ansible_freeipa.ipauser:
         ipaadmin_password: "{{ ipaadmin_password }}"
         name: "{{ ipaName }}"
         first: "{{ ipaFirst }}"

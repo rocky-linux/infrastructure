@@ -30,6 +30,9 @@
     - name: Configure harden settings
       include: tasks/harden.yml
 
+    - name: Configure PAM and SSSD
+      include: tasks/authentication.yml
+
   post_tasks:
     - name: Touching run file that ansible has ran here
       file:

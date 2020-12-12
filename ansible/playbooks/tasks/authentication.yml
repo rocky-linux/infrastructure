@@ -1,0 +1,3 @@
+---
+# Configures PAM and SSSD post-ipa client installation. It is recommended that
+# that we use a custom authselect profile and build it out from there.
