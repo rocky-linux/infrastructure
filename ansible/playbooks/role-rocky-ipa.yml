@@ -43,7 +43,7 @@
         - reload_networkmanager
 
   roles:
-  - role: ipaserver
+  - role: freeipa.ansible_freeipa.ipaserver
     state: present
 
   post_tasks:
@@ -56,6 +56,6 @@
         group: root
 
     - name: "Turn on reverse zone syncing"
-      ipadnsconfig:
+      freeipa.ansible_freeipa.ipadnsconfig:
         ipaadmin_password: '{{ ipaadmin_password }}'
         allow_sync_ptr: true
