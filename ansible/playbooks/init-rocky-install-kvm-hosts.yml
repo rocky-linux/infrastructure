@@ -20,8 +20,9 @@
 
   tasks:
     - name: Check for CPU Virtualization
-      shell: "lscpu | grep -i virtualization"
+      shell: "set -o pipefail; lscpu | grep -i virtualization"
       register: result
+      changed_when: false
       failed_when: "result.rc != 0"
 
     # Install KVM packages
@@ -43,8 +44,9 @@
         enabled: true
 
     - name: Verify KVM module is loaded
-      shell: "lsmod | grep -i kvm"
+      shell: "set -o pipefail; lsmod | grep -i kvm"
       register: result
+      changed_when: false
       failed_when: "result.rc != 0"
 
   post_tasks:

@@ -3,7 +3,7 @@
 # should create both regular and admin accounts for separation of
 # privilege.
 - name: "Creating Initial Accounts"
-  ipauser:
+  freeipa.ansible_freeipa.ipauser:
     ipaadmin_password: "{{ ipaadmin_password }}"
     name: "{{ item.name }}"
     first: "{{ item.first }}"

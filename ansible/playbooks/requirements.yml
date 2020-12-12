@@ -1,3 +1,4 @@
 ---
-- src: freeipa.ansible_freeipa
-- src: community.general
+collections:
+  - freeipa.ansible_freeipa
+  - community.general
