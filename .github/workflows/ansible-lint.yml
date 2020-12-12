@@ -23,7 +23,7 @@ jobs:
           echo 'collections_paths = ./collections' >> ansible.cfg
 
       - name: Install requirements
-        run: ansible-galaxy collection install -r ansible/playbooks/requirements.yml -p collections
+        run: ansible-galaxy install -r ansible/playbooks/requirements.yml
 
       - name: Ansible Lint
         uses: ansible/ansible-lint-action@master

@@ -2,3 +2,6 @@
 collections:
   - freeipa.ansible_freeipa
   - community.general
+
+roles:
+  - name: geerlingguy.mysql
