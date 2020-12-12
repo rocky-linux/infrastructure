@@ -37,7 +37,6 @@
         ansible-galaxy collection install
         {{ ( force_purge | bool ) | ternary('--force-with-deps','') }}
         -r {{ installation_prefix }}roles/requirements.yml
-        -p {{ installation_prefix }}{{ collection_installation_dir }}
 
     - name: cleanup old ssh known_hosts
       file:
