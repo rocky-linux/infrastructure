@@ -3,8 +3,8 @@
 - hosts: localhost
   connection: local
   vars:
-    force_purge: false
-    installation_dir: roles
+    force_purge: true
+    installation_dir: roles/vendor
     installation_prefix: ../
   pre_tasks:
 # example prepare ansible box for execution
