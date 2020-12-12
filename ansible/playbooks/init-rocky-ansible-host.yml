@@ -4,7 +4,7 @@
   connection: local
   vars:
     force_purge: true
-    installation_dir: roles/vendor
+    installation_dir: roles/public
     installation_prefix: ../
   pre_tasks:
 # example prepare ansible box for execution
@@ -18,13 +18,13 @@
 #          - python-ldap
 #          - twine
 
-    - name: Remove existing vendor roles
+    - name: Remove existing public roles and collections
       file:
         path: "{{ installation_prefix }}{{ installation_dir }}"
         state: absent
       when: force_purge | bool
 
-    - name: Install all vendor roles
+    - name: Install all public roles and collections
       command: >
         ansible-galaxy install
         {{ ( force_purge | bool ) | ternary('--force','') }}
