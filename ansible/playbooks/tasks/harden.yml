@@ -103,7 +103,7 @@
       tags:
         - harden
 
-# TODO: Use pamd module to establish password policy
+    # TODO: Use pamd module to establish password policy
     - name: pwquality - minlen
       lineinfile:
         line: "minlen = 14"
