@@ -1,0 +1,7 @@
+#keep tmp folder empty
+tmp/*
+!tmp/Readme.md
+
+#keep fodler holding public roles and collections empty
+roles/public/*
+!roles/public/Readme.md
