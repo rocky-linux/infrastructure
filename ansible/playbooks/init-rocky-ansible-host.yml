@@ -5,7 +5,7 @@
   vars:
     force_purge: true
     roles_installation_dir: roles/public
-    collection_installation_dir: tmp
+    collection_installation_dir: collections
     installation_prefix: ../
   pre_tasks:
 # example prepare ansible box for execution
@@ -37,6 +37,7 @@
         ansible-galaxy collection install
         {{ ( force_purge | bool ) | ternary('--force-with-deps','') }}
         -r {{ installation_prefix }}roles/requirements.yml
+        -p {{ installation_prefix }}{{ collection_installation_dir }}
 
     - name: cleanup old ssh known_hosts
       file:
