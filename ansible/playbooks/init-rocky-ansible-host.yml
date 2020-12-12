@@ -33,9 +33,9 @@
 
     - name: cleanup old ssh known_hosts
       file:
-        path: "../config/known_hosts"
+        path: "../tmp/known_hosts"
         state: absent
     - file:
-        path: "../config/known_hosts"
+        path: "../tmp/known_hosts"
         state: touch
 
