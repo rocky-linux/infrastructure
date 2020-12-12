@@ -28,13 +28,15 @@
       command: >
         ansible-galaxy install
         {{ ( force_purge | bool ) | ternary('--force','') }}
-        --role-file {{ installation_prefix }}roles/requirements.yml
+        --role-file {{ installation_prefix }}roles/roles.yml
         --roles-path {{ installation_prefix }}{{ installation_dir }}
 
     - name: Install needed collections
       command: >
         ansible-galaxy install
-        -r {{ installation_prefix }}roles/collections.yml
+        {{ ( force_purge | bool ) | ternary('--force','') }}
+        --role-file {{ installation_prefix }}roles/collections.yml
+        --roles-path {{ installation_prefix }}{{ installation_dir }}
 
     - name: cleanup old ssh known_hosts
       file:
