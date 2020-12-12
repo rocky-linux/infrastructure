@@ -33,9 +33,9 @@
 
     - name: Install needed collections
       command: >
-        ansible-galaxy install
+        ansible-galaxy collection install
         {{ ( force_purge | bool ) | ternary('--force','') }}
-        --role-file {{ installation_prefix }}roles/collections.yml
+        -r {{ installation_prefix }}tmp/collections.yml
         --roles-path {{ installation_prefix }}{{ installation_dir }}
 
     - name: cleanup old ssh known_hosts
