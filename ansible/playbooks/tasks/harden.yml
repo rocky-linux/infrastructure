@@ -7,15 +7,15 @@
         sysctl_config: '{{ sysctl_config | combine(sysctl_overwrite) }}'
       when: sysctl_overwrite | default()
 
-    - name: sysctl
+    - name: Kernel parameters
       sysctl:
-        name: '{{ item.key }}'
-        value: '{{ item.value }}'
+        name: "{{ item.key }}"
+        value: "{{ item.value }}"
         state: present
         ignoreerrors: true
         sysctl_set: true
         sysctl_file: /etc/sysctl.d/99-ansible.conf
-      with_dict: '{{ sysctl_config }}'
+      with_dict: "{{ sysctl_config }}"
       tags:
         - harden
         - kernel
@@ -103,6 +103,7 @@
       tags:
         - harden
 
+    # TODO: Use pamd module to establish password policy
     - name: pwquality - minlen
       lineinfile:
         line: "minlen = 14"
@@ -188,7 +189,7 @@
     name: "{{ item }}"
     enabled: false
     state: stopped
-  with_items: "{{ disable_svc }}"
+  loop: "{{ disable_svc }}"
   register: service_check
   failed_when: service_check is failed and not 'Could not find the requested service' in service_check.msg
   tags:
@@ -230,15 +231,13 @@
   tags:
     - harden
 
-- name: cis sudoers configuration
+- name: CIS sudoers configuration
   copy:
-    dest: /etc/sudoers.d/cis
+    src: "etc/sudoers.d/cis"
+    dest: "/etc/sudoers.d/cis"
     owner: root
     group: root
     mode: '0440'
-    content: |
-      Defaults use_pty
-      Defaults logfile="/var/log/sudo.log"
   tags:
     - harden
 

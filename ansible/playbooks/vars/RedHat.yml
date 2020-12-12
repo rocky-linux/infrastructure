@@ -19,7 +19,7 @@ remove_packages:
 
 # security limits
 limits:
-  - { domain: '*', limit_type: hard, limit_item: core, value: 0 }
+  - {domain: '*', limit_type: hard, limit_item: core, value: 0}
 
 # sysctl settings
 sysctl_config:
