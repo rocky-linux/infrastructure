@@ -5,3 +5,4 @@ roles:
 collections:
   # freeipa
   - name: freeipa.ansible_freeipa
+    version: 0.3.1
