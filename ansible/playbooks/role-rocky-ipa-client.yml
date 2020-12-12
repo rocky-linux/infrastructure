@@ -1,6 +1,6 @@
 ---
 # Configures an IPA client for the Rocky infrastructure
-# Variables are in inventory/ipainventory
+
 - name: Configure IPA client
   hosts: ipaclients
   become: true

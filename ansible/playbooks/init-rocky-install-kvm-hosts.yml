@@ -3,7 +3,7 @@
 # Created: @SherifNagy
 # Modified to current standards: @nazunalika
 - name: Configure KVM host
-  hosts: kvmhosts
+  hosts: kvm
   become: true
 
   pre_tasks:

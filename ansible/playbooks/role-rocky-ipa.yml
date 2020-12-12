@@ -1,6 +1,5 @@
 ---
 # Creates the first server for an IPA infrastructure
-# Variables for the infrastructure are in inventory/ipainventory
 # Recommended specs for the IPA systems, that scale based on number of objects:
 # CPU: 2 cores
 # Memory: 4GB
