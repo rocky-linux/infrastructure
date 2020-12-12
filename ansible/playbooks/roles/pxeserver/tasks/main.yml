@@ -45,17 +45,19 @@
     path: '/var/lib/tftpboot/uefi'
     state: directory
 
-- name: 'Download GRUB EFI binary'
+# Are there better ways to get these same files into the tftpboot directory?
+# Downloading things from the internet feels wrong...
+- name: 'Download CentOS 8 UEFI boot files into the tftpboot directory'
   get_url:
-    dest: '/var/lib/tftpboot/uefi/grubx64.efi'
-    url: '{{ centos_8_kickstart_mirror | mandatory }}/EFI/BOOT/grubx64.efi'
-
-- name: 'Download CentOS 8 kernel'
-  get_url:
-    dest: '/var/lib/tftpboot/ks-centos-8-vmlinuz'
-    url: '{{ centos_8_kickstart_mirror }}/images/pxeboot/vmlinuz'
-
-- name: 'Download CentOS 8 initrd'
-  get_url:
-    dest: '/var/lib/tftpboot/ks-centos-8-initrd.img'
-    url: '{{ centos_8_kickstart_mirror }}/images/pxeboot/initrd.img'
+    mode: '0644'
+    url: '{{ centos_8_kickstart_mirror | mandatory }}/{{ item.value }}'
+    dest: '/var/lib/tftpboot/{{ item.key }}'
+  loop: "{{ bootfiles | dict2items }}"
+  vars:
+    bootfiles:
+      # values are relative to the value of the mirror
+      'uefi/BOOTX64.EFI': 'EFI/BOOT/BOOTX64.EFI'
+      'uefi/grubx64.efi': 'EFI/BOOT/grubx64.efi'
+      'centos-8-x86_64-vmlinuz': 'images/pxeboot/vmlinuz'
+      'centos-8-x86_64-initrd.img': 'images/pxeboot/initrd.img'
+    
