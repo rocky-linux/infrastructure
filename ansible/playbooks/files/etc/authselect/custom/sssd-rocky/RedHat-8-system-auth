@@ -1,0 +1,40 @@
+{imply "with-smartcard" if "with-smartcard-required"}
+auth        required                                     pam_env.so
+auth        required                                     pam_faildelay.so delay=2000000
+auth        required                                     pam_faillock.so preauth audit silent deny=5 unlock_time=900 {include if "with-faillock"}
+auth        [success=1 default=ignore]                   pam_succeed_if.so service notin login:gdm:xdm:kdm:xscreensaver:gnome-screensaver:kscreensaver quiet use_uid {include if "with-smartcard-required"}
+auth        [success=done ignore=ignore default=die]     pam_sss.so require_cert_auth ignore_authinfo_unavail   {include if "with-smartcard-required"}
+auth        sufficient                                   pam_fprintd.so                                         {include if "with-fingerprint"}
+auth        sufficient                                   pam_u2f.so cue                                         {include if "with-pam-u2f"}
+auth        required                                     pam_u2f.so cue nouserok                                {include if "with-pam-u2f-2fa"}
+auth        [default=1 ignore=ignore success=ok]         pam_succeed_if.so uid >= 1000 quiet
+auth        [default=1 ignore=ignore success=ok]         pam_localuser.so                                       {exclude if "with-smartcard"}
+auth        [default=2 ignore=ignore success=ok]         pam_localuser.so                                       {include if "with-smartcard"}
+auth        [success=done authinfo_unavail=ignore ignore=ignore default=die] pam_sss.so try_cert_auth           {include if "with-smartcard"}
+auth        sufficient                                   pam_unix.so {if not "without-nullok":nullok} try_first_pass
+auth        requisite                                    pam_succeed_if.so uid >= 1000 quiet_success
+auth        sufficient                                   pam_sss.so forward_pass
+auth        required                                     pam_faillock.so authfail audit deny=5 unlock_time=900 fail_interval=900       {include if "with-faillock"}
+auth        required                                     pam_deny.so
+
+account     required                                     pam_access.so                                          {include if "with-pamaccess"}
+account     required                                     pam_faillock.so                                        {include if "with-faillock"}
+account     required                                     pam_unix.so
+account     sufficient                                   pam_localuser.so
+account     sufficient                                   pam_succeed_if.so uid < 1000 quiet
+account     [default=bad success=ok user_unknown=ignore] pam_sss.so
+account     required                                     pam_permit.so
+
+password    requisite                                    pam_pwquality.so try_first_pass local_users_only minlen=14 dcredit=-1 lcredit=-1 ucredit=-1 ocredit=-1 retry=3
+password    requisite                                    pam_pwhistory.so use_authok remember=5
+password    sufficient                                   pam_unix.so sha512 shadow {if not "without-nullok":nullok} try_first_pass use_authtok
+password    sufficient                                   pam_sss.so use_authtok
+password    required                                     pam_deny.so
+
+session     optional                                     pam_keyinit.so revoke
+session     required                                     pam_limits.so
+-session    optional                                     pam_systemd.so
+session     optional                                     pam_oddjob_mkhomedir.so umask=0077                    {include if "with-mkhomedir"}
+session     [success=1 default=ignore]                   pam_succeed_if.so service in crond quiet use_uid
+session     required                                     pam_unix.so
+session     optional                                     pam_sss.so

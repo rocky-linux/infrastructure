@@ -10,7 +10,7 @@
       include_vars: "{{ item }}"
       with_first_found:
         - "ipaserver.yml"
-      when: "'ipaservers' in group_names"
+      when: "'ipaserver' in group_names"
 
     - name: Check if system is EFI
       stat:

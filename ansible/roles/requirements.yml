@@ -1,0 +1,13 @@
+---
+
+roles:
+  - name: geerlingguy.mysql
+  # monitoring
+  - name: cloudalchemy.node-exporter
+  - name: cloudalchemy.prometheus
+
+collections:
+  # freeipa
+  - name: freeipa.ansible_freeipa
+    version: 0.3.1
+  - name: community.general

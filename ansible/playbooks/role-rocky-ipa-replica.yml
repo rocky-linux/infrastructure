@@ -1,6 +1,6 @@
 ---
 # Creates an IPA replica
-# Variables are in inventory/ipainventory
+
 - name: Configure IPA server
   hosts: ipareplicas
   become: true

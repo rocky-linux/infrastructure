@@ -1,4 +1,0 @@
-[kvmhosts]
-kvm001.rockylinux.org ansible_host=10.100.2.110
-kvm002.rockylinux.org ansible_host=10.100.2.111
-kvm003.rockylinux.org ansible_host=10.100.2.112
