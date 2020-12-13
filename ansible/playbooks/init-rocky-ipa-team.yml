@@ -19,10 +19,10 @@
         fail_msg: "We are missing users or ipa admin password"
 
     - name: "Start users"
-      include: import-rockyusers.yml
+      import_playbook: import-rockyusers.yml
 
     - name: "Start groups"
-      include: import-rockygroups.yml
+      import_playbook: import-rockygroups.yml
 
     - name: "Start sudo for admins"
-      include: import-rockysudo.yml
+      import_playbook: import-rockysudo.yml

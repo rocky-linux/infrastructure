@@ -8,7 +8,7 @@
 
   # This is to try to avoid the handler issue in pre/post tasks
   handlers:
-    - include: handlers/main.yml
+    - import_tasks: handlers/main.yml
 
   pre_tasks:
     - name: Check if ansible cannot be run here
