@@ -4,6 +4,12 @@ name: Ansible Lint
 
 on:
   push:
+    branches:
+      - main
+    paths:
+      - '**.yml'
+      - '**.yaml'
+  pull_request:
     paths:
       - '**.yml'
       - '**.yaml'
@@ -11,7 +17,7 @@ on:
 jobs:
   ansible-lint:
     runs-on: ubuntu-latest
-    timeout-minutes: 7
+    timeout-minutes: 8
 
     steps:
       - name: Git checkout
