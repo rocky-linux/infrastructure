@@ -6,3 +6,6 @@ ipaadmin_password: !vault |
 ipadm_password: !vault |
           $ANSIBLE_VAULT;1.1;AES256
           REDACTED
+ipsilon_db_password: !vault |
+          $ANSIBLE_VAULT;1.1;AES256
+          REDACTED

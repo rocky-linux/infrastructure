@@ -5,6 +5,9 @@ roles:
   # monitoring
   - name: cloudalchemy.node-exporter
   - name: cloudalchemy.prometheus
+  - name: rockylinux.ipsilon
+    src: https://github.com/rocky-linux/ansible-role-ipsilon
+    version: master
 
 collections:
   # freeipa

@@ -1,0 +1,51 @@
+---
+# Stands up an ipsilon instance for simple SSO
+- name: Configure ipsilon server
+  hosts: ipsilon
+  become: true
+  vars_files:
+  - vars/encpass.yml
+
+  # This is to try to avoid the handler issue in pre/post tasks
+  handlers:
+    - include: handlers/main.yml
+
+  pre_tasks:
+    - name: Check if ansible cannot be run here
+      stat:
+        path: /etc/no-ansible
+      register: no_ansible
+
+    - name: Verify if we can run ansible
+      assert:
+        that:
+          - "not no_ansible.stat.exists"
+        msg: "/etc/no-ansible exists - skipping run on this node"
+
+    - name: Install arrfab ipsilon repo
+      yum_repository:
+        name: copr:copr.fedorainfracloud.org:arrfab:noggin
+        description: Copr repo for noggin owned by arrfab
+        file: copr_repos
+        baseurl: https://download.copr.fedorainfracloud.org/results/arrfab/noggin/epel-8-$basearch/
+        gpgcheck: true
+        gpgkey: https://download.copr.fedorainfracloud.org/results/arrfab/noggin/pubkey.gpg
+        enabled: true
+
+  roles:
+    - role: rockylinux.ipsilon
+      state: present
+
+  post_tasks:
+    - name: Touching run file that ansible has ran here
+      file:
+        path: /var/log/ansible.run
+        state: touch
+        mode: '0644'
+        owner: root
+        group: root
+
+    - name: "Turn on reverse zone syncing"
+      freeipa.ansible_freeipa.ipadnsconfig:
+        ipaadmin_password: '{{ ipaadmin_password }}'
+        allow_sync_ptr: true
