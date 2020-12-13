@@ -16,8 +16,3 @@
 
 - name: regenerate_auditd_rules
   command: /sbin/augenrules
-
-- name: restart_auditd
-  service:
-    name: auditd
-    state: restarted

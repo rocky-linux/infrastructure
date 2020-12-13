@@ -31,6 +31,5 @@
     backup: true
   notify:
     - regenerate_auditd_rules
-    - restart_auditd
   tags:
     - harden
