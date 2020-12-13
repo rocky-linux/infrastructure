@@ -45,7 +45,8 @@
     - harden
 
 - name: Rebuild grub
-  command: /usr/sbin/grub2-mkconfig -o {{ grub_config_path_link }}
+  command: "/usr/sbin/grub2-mkconfig -o {{ grub_config_path_link }}"
+  changed_when: flase
   tags:
     - grub
     - kernel
