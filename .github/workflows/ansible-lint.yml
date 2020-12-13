@@ -29,6 +29,6 @@ jobs:
         run: ansible-galaxy collection install -r ansible/roles/requirements.yml
 
       - name: Ansible Lint
-        uses: ansible/ansible-lint-action@master
+        uses: rocky-linux/ansible-lint-action@master
         with:
           args: "--exclude .github"
