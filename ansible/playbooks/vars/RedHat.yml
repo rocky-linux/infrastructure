@@ -3,9 +3,12 @@
 
 bin_su: /usr/bin/su
 bin_sudo: /usr/bin/sudo
-kernel_boot_options: audit=1
+
+# grub variables
+grub_boot_options: audit=1
 grub_config_path_link: /etc/grub2.cfg
 grub_config_path_efi: /etc/grub2-efi.cfg
+
 ipatype: client
 
 # Removing TFTP for now because there will likely be tftp/pxe servers
