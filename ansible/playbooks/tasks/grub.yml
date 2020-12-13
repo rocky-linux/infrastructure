@@ -1,0 +1,52 @@
+---
+- name: Reset grub link if we are EFI
+  set_fact:
+    grub_config_path_link: "{{ grub_config_path_efi }}"
+  when:
+    - efi_installed.stat.isdir is defined
+    - efi_installed.stat.isdir
+    - grub_config_path_efi is defined
+  tags:
+    - efi
+
+- name: Create grub.d directory
+  file:
+    name: /etc/default/grub.d
+    owner: root
+    group: root
+    mode: '0755'
+    state: directory
+    recurse: true
+  tags:
+    - grub
+    - kernel
+    - harden
+
+- name: Append /etc/default/grub file
+  lineinfile:
+    path: /etc/default/grub
+    line: for x in $(ls /etc/default/grub.d) ; do source /etc/default/grub.d/$x ; done
+    state: present
+  tags:
+    - grub
+    - kernel
+    - harden
+
+- name: Command line defaults
+  copy:
+    dest: "/etc/default/grub.d/99-rocky.cfg"
+    owner: root
+    group: root
+    mode: '0644'
+    content: 'GRUB_CMDLINE_LINUX_DEFAULT="$GRUB_CMDLINE_LINUX_DEFAULT {{ grub_boot_options }}"'
+  tags:
+    - grub
+    - kernel
+    - harden
+
+- name: Rebuild grub
+  command: /usr/sbin/grub2-mkconfig -o {{ grub_config_path_link }}
+  tags:
+    - grub
+    - kernel
+    - harden
