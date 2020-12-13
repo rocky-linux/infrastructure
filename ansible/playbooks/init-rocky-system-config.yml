@@ -6,7 +6,7 @@
 
   # This is to try to avoid the handler issue in pre/post tasks
   handlers:
-    - include: handlers/main.yml
+    - import_tasks: handlers/main.yml
 
   pre_tasks:
     - name: Check if ansible cannot be run here
@@ -22,16 +22,16 @@
 
   tasks:
     - name: Loading Variables from OS Common
-      include: tasks/variable_loader_common.yml
+      import_tasks: tasks/variable_loader_common.yml
 
     - name: Configure SSH
-      include: tasks/ssh_config.yml
+      import_tasks: tasks/ssh_config.yml
 
     - name: Configure harden settings
-      include: tasks/harden.yml
+      import_tasks: tasks/harden.yml
 
     - name: Configure PAM
-      include: tasks/authentication.yml
+      import_tasks: tasks/authentication.yml
 
   post_tasks:
     - name: Touching run file that ansible has ran here
