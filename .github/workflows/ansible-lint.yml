@@ -11,7 +11,7 @@ on:
 jobs:
   ansible-lint:
     runs-on: ubuntu-latest
-    timeout-minutes: 7
+    timeout-minutes: 5
 
     steps:
       - name: Git checkout
