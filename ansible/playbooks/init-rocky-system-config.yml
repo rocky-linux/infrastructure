@@ -33,6 +33,9 @@
     - name: Configure PAM
       import_tasks: tasks/authentication.yml
 
+    - name: Configure auditd
+      include: tasks/auditd.yml
+
   post_tasks:
     - name: Touching run file that ansible has ran here
       file:

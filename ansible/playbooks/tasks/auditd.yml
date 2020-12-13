@@ -1,0 +1,35 @@
+---
+- name: Ensure auditd is installed
+  package:
+    name: audit
+    state: present
+  tags:
+    - harden
+
+- name: Ensure auditd is enabled
+  service:
+    name: auditd
+    enabled: true
+
+- name: Ensure auditd buffer is OK
+  replace:
+    path: /etc/audit/rules.d/audit.rules
+    regexp: '-b \d+'
+    replace: '-b {{ audit_buffer }}'
+  notify:
+    - regenerate_auditd_rules
+  tags:
+    - harden
+
+- name: Ensure collection audit rules are available
+  template:
+    src: "etc/audit/rules.d/collection.rules.j2"
+    dest: "/etc/audit/rules.d/collection.rules"
+    owner: root
+    group: root
+    mode: '0600'
+    backup: true
+  notify:
+    - regenerate_auditd_rules
+  tags:
+    - harden
