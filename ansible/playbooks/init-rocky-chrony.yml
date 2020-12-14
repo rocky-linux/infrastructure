@@ -1,0 +1,11 @@
+---
+# Sets Up Chrony Server/Client
+# Created: @derekmpage
+# Kudos: @danielkubat  @Darkbat91
+- name: Rocky Chrony Runbook 
+  hosts: all
+  become: true
+
+  tasks:
+    - name: Configure Chrony
+      import_tasks: tasks/chrony.yml

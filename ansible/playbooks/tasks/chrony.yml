@@ -1,0 +1,26 @@
+---
+- name: Install chrony packages
+  yum:
+    name: "{{ chrony_packages }}"
+    state: present
+
+- name: Fix permissions for chrony home directory
+  file:
+    path: "{{ chrony_homedir }}"
+    mode: 0750
+    state: directory
+
+- name: Deploy configuration
+  template:
+    src: chrony.conf.j2
+    dest: "{{ chrony_config_file }}"
+    owner: "{{ chrony_owner }}"
+    group: "{{ chrony_group }}"
+    mode: "{{ chrony_mode }}"
+  notify: "chrony service restart"
+
+- name: Manage the state of service
+  systemd:
+    name: "{{ chrony_service_name }}"
+    state: "{{ chrony_service_state }}"
+    enabled: "{{ chrony_service_enabled }}"

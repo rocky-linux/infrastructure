@@ -1,0 +1,34 @@
+---
+# default permissions
+chrony_owner: root
+chrony_group: root
+chrony_mode: 0644
+
+# packages to install
+chrony_packages:
+  - chrony
+
+# configuration files
+chrony_config_file: /etc/chrony.conf
+
+# chrony user homedir
+chrony_homedir: /var/lib/chrony
+
+# service definition
+chrony_service_name: chronyd
+
+# log file
+chrony_log_file: /var/log/chrony
+
+# service state
+chrony_service_state: started
+chrony_service_enabled: yes
+
+# default internet timeservers to use
+chrony_timeservers: []
+   - 0.pool.ntp.org 
+   - 1.pool.ntp.org 
+   - 2.pool.ntp.org
+
+# is chrony ntp server - allows client connections
+chrony_server: false

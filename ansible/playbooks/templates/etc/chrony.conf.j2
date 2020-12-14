@@ -1,0 +1,37 @@
+# Remote servers for client association.
+{% for s in chrony_timeservers %}
+server {{ s }} iburst {% if loop.first %}prefer{% endif %}
+{% endfor %}
+
+# Ignore stratum in source selection.
+stratumweight 0
+
+# Record the rate at which the system clock gains/losses time.
+driftfile {{ chrony_homedir }}/drift
+
+# Allow the system clock to be stepped in the first three updates
+# if its offset is larger than 1.0 second.
+makestep 1.0 3
+
+# If chrony_server=true allow clients to connect
+{% if chrony_server is sameas true %}
+allow {{ chrony_allow_cidr }}
+bindaddress 0.0.0.0
+{% else %} 
+# Else If Client Deny NTP client access.
+deny all
+{% endif %}
+
+# Allow cmdaccess for localhost only (monitoring sometimes requires this to be opened to mgmt interface)
+bindcmdaddress 127.0.0.1
+bindcmdaddress ::1
+cmdallow
+
+# Send a message to syslog if a clock adjustment is larger than 0.5 seconds.
+logchange 0.5
+
+# Specify directory for log files.
+logdir {{ chrony_logdir }} 
+
+# Enable kernel synchronization of the real-time clock (RTC).
+rtcsync

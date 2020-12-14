@@ -16,3 +16,9 @@
 
 - name: regenerate_auditd_rules
   command: /sbin/augenrules
+
+- name: reload_chrony 
+  systemd:
+    name: "{{ chrony_service_name }}"
+    state: restarted
+  listen: "chrony service restart"
