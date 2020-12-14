@@ -8,11 +8,11 @@ roles:
   - name: rockylinux.ipsilon
     src: https://github.com/rocky-linux/ansible-role-ipsilon
     version: main
-  - name: community.mysql
 
 collections:
   # freeipa
   - name: freeipa.ansible_freeipa
     version: 0.3.1
   - name: community.general
+  - name: community.mysql
   - name: ansible.posix
