@@ -76,15 +76,21 @@ if grep -q CHANGEME "$KICKSTART_FILE"; then
   echo '### REMEMBER TO CHANGE THE ROOT PASSWORD AFTER THE INSTALLATION!'
 fi
 
-echo
-echo virt-install --connect \""$CONN"\" \
-	--name \""$NAME"\" \
-	--vcpus \""$CPUS"\" \
-	--ram \""$RAM"\" \
-	--os-variant "$OS_VARIANT" \
-	--disk \""path=${LIBVIRT_DATA_DIR}/${NAME}_root.qcow2,size=$DISK_SIZE,format=qcow2,bus=virtio"\" \
-	--network \""$NETWORK"\" \
-	--location \""$MIRROR"\" \
-	--initrd-inject \""$KICKSTART_FILE"\" \
-	--extra-args \""ks=file:/kickstart.cfg console=tty0 net.ifnames=0 $IP"\" \
-	"$EXTRA_ARGS"
+echo -n "
+virt-install --connect '$CONN' \\
+	--name '$NAME' \\
+	--vcpus '$CPUS' \\
+	--ram '$RAM' \\
+	--os-variant '$OS_VARIANT' \\
+	--disk 'path=${LIBVIRT_DATA_DIR}/${NAME}_root.qcow2,size=$DISK_SIZE,format=qcow2,bus=virtio' \\
+	--network '$NETWORK' \\
+	--location '$MIRROR' \\
+	--initrd-inject '$KICKSTART_FILE' \\
+	--extra-args 'ks=file:/kickstart.cfg console=tty0 net.ifnames=0 $IP'
+"
+if [ -n "$EXTRA_ARGS" ]; then
+  echo "  $EXTRA_ARGS"
+else
+  # Final newline
+  echo
+fi
