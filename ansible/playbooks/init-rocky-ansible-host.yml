@@ -31,7 +31,8 @@
         {{ ( force_purge | bool ) | ternary('--force','') }}
         --role-file {{ installation_prefix }}roles/requirements.yml
         --roles-path {{ installation_prefix }}{{ roles_installation_dir }}
-      changed_when: false
+      register: galaxy_install_role
+      changed_when: '"Installing " in galaxy_install_role.stdout'
 
     - name: Install needed collections
       command: >
@@ -39,7 +40,8 @@
         {{ ( force_purge | bool ) | ternary('--force-with-deps','') }}
         -r {{ installation_prefix }}roles/requirements.yml
         -p {{ installation_prefix }}{{ collection_installation_dir }}
-      changed_when: false
+      register: galaxy_install_collection
+      changed_when: '"Installing " in galaxy_install_collection.stdout'
 
     - name: cleanup old ssh known_hosts - remove
       file:
