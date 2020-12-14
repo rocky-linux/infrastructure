@@ -1,9 +1,9 @@
 ---
 name: Arcitecture Diagrams
-on:
-  push:
-    paths:
-      - 'architecture/**.py'
+on: push
+#  push:
+#    paths:
+#      - 'architecture/**.py'
 
 jobs:
   build-archi-diagrams:
@@ -19,6 +19,8 @@ jobs:
           python-version: 3.8
       - name: Install dependencies
         run: |
+          sudo apt update
+          sudo apt -y install graphviz
           python -m pip install --upgrade pip
           pip install diagrams
       - name: Build diagrams
