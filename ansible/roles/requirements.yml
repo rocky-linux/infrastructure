@@ -7,7 +7,7 @@ roles:
   - name: cloudalchemy.prometheus
   - name: rockylinux.ipsilon
     src: https://github.com/rocky-linux/ansible-role-ipsilon
-    version: master
+    version: main
 
 collections:
   # freeipa
