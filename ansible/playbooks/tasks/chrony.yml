@@ -1,4 +1,10 @@
 ---
+- name: Create overrides if we're an IPA Replica
+  include_vars: "{{ item }}"
+  with_first_found:
+    - "chronyserver.yml"
+  when: "'chronyservers' in group_names"
+
 - name: Install chrony packages
   yum:
     name: "{{ chrony_packages }}"

@@ -1,0 +1,9 @@
+---
+
+# default internet timeservers to use
+chrony_timeservers:
+  - chrony001.rockylinux.com
+  - chrony002.rockylinux.com
+
+# is chrony ntp server - allows client connections
+chrony_server: true

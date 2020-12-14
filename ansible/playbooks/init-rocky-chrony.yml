@@ -2,10 +2,38 @@
 # Sets Up Chrony Server/Client
 # Created: @derekmpage
 # Kudos: @danielkubat  @Darkbat91
+# Fixes: @nazunalika
 - name: Rocky Chrony Runbook
   hosts: all
   become: true
+  vars_files:
+    - vars/chrony.yml
+
+  # This is to try to avoid the handler issue in pre/post tasks
+  handlers:
+    - import_tasks: handlers/main.yml
+
+  pre_tasks:
+    - name: Check if ansible cannot be run here
+      stat:
+        path: /etc/no-ansible
+      register: no_ansible
+
+    - name: Verify if we can run ansible
+      assert:
+        that:
+          - "not no_ansible.stat.exists"
+        msg: "/etc/no-ansible exists - skipping run on this node"
 
   tasks:
     - name: Configure Chrony
       import_tasks: tasks/chrony.yml
+
+  post_tasks:
+    - name: Touching run file that ansible has ran here
+      file:
+        path: /var/log/ansible.run
+        state: touch
+        mode: '0644'
+        owner: root
+        group: root

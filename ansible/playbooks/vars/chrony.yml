@@ -26,9 +26,8 @@ chrony_service_enabled: yes
 
 # default internet timeservers to use
 chrony_timeservers:
-  - 0.pool.ntp.org
-  - 1.pool.ntp.org
-  - 2.pool.ntp.org
+  - chrony001.rockylinux.com
+  - chrony002.rockylinux.com
 
 # is chrony ntp server - allows client connections
 chrony_server: false

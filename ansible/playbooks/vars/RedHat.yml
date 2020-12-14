@@ -160,5 +160,3 @@ enable_svc:
 syslog_packages:
   - rsyslog
 
-ntp_packages:
-  - chrony

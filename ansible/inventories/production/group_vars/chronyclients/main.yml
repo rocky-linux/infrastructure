@@ -1,3 +1,0 @@
----
-
-chrony_timeservers = ["chrony001.rockylinux.com", "chrony002.rockylinux.com"]
