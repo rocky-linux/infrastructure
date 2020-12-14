@@ -32,6 +32,9 @@
         gpgkey: https://download.copr.fedorainfracloud.org/results/arrfab/noggin/pubkey.gpg
         enabled: true
 
+  # For now, this is sufficient for testing with a localhost cert. In the
+  # future we will come up with a way to issue either an internal cert with a
+  # front-facing externally signed cert, or just external altogether.
   roles:
     - role: rockylinux.ipsilon
       state: present
