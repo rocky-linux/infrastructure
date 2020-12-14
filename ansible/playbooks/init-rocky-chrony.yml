@@ -2,7 +2,7 @@
 # Sets Up Chrony Server/Client
 # Created: @derekmpage
 # Kudos: @danielkubat  @Darkbat91
-- name: Rocky Chrony Runbook 
+- name: Rocky Chrony Runbook
   hosts: all
   become: true
 
