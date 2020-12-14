@@ -22,7 +22,7 @@ chrony_log_file: /var/log/chrony
 
 # service state
 chrony_service_state: started
-chrony_service_enabled: yes
+chrony_service_enabled: true
 
 # default internet timeservers to use
 chrony_timeservers:

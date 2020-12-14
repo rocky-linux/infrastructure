@@ -1,8 +1,8 @@
 ---
-#prometheus_targets:
-#  node:
-#    - targets:
-#        - host1
-#        - host2
-#      labels:
-#        env: production
+# prometheus_targets:
+#   node:
+#     - targets:
+#         - host1
+#         - host2
+#       labels:
+#         env: production
