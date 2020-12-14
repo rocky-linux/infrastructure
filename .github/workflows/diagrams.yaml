@@ -1,9 +1,9 @@
 ---
 name: Arcitecture Diagrams
-on: push
-#  push:
-#    paths:
-#      - 'architecture/**.py'
+on:
+  push:
+    paths:
+      - 'architecture/**.py'
 
 jobs:
   build-archi-diagrams:
