@@ -29,7 +29,7 @@ Loosely copied from the CentOS ansible infrastructure.
 │   ├── vars
 ├── roles/local
 │   └── <role-name>
-|   └── requirements.yml
+│   └── requirements.yml
 ├── tasks -> playbooks/tasks
 ├── templates -> playbooks/templates
 └── vars -> playbooks/vars
@@ -110,11 +110,23 @@ Ensure that you use relevant tags where necessary for your tasks.
 
 ### Roles
 
-If you are using roles that are not part of this repository in the `roles` directory, you will need to list them in the `requirements.yml`. For example, we use the IPA role.
+If you are using roles or collections, you will need to list them in `./roles/requirements.yml`. For example, we use the freeipa collection and a mysql role from geerlingguy.
 
 ```
 ---
-- src: freeipa.ansible_freeipa
+roles:
+  - name: geerlingguy.mysql
+
+collections:
+  - name: freeipa.ansible_freeipa
+    version: 0.3.1
 ```
 
-Otherwise, custom roles for the infrastructure will sit in `ansible/roles`.
+Custom roles for infrastructure use will have their own separate repository. Right now, we do not have a Ansible Galaxy presence. For this, when referencing roles under Rocky Linux, you will have to specify its location and follow the naming format. Example below.
+
+```
+roles:
+  - name: rockylinux.ipsilon
+    src: https://github.com/rocky-linux/ansible-role-ipsilon
+    version: main
+```

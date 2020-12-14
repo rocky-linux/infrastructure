@@ -46,7 +46,8 @@
 
 - name: Rebuild grub
   command: "/usr/sbin/grub2-mkconfig -o {{ grub_config_path_link }}"
-  changed_when: flase
+  register: grub_command_result
+  changed_when: "grub_command_result.rc == 0"
   tags:
     - grub
     - kernel
