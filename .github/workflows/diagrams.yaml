@@ -1,0 +1,32 @@
+---
+on:
+  push:
+    paths:
+      - 'architecture/**.py'
+
+jobs:
+  build-diagrams:
+    runs-on: python:3
+    timeout-minutes: 5
+
+    steps:
+      - name: Git Checkout
+        uses: actions/checkout@v2
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install diagrams
+      - name: Build diagrams
+        run: |
+          for file in $(find architecture/ -type f -name "*.py")
+          do
+            python $file
+          done
+          mkdir artifacts; mv *.png artifacts/
+      - name: Upload diagram images
+        uses: actions/upload-artifact@v2
+        with:
+          name: diagrams-png
+          path: artifacts/*.png
+
+
