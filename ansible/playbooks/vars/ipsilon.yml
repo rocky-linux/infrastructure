@@ -1,0 +1,59 @@
+---
+# Vars for ipsilon
+ipsilon_databases:
+  - name: rockyipsilon
+
+ipsilon_database_users:
+  - name: ipsilon
+    host: "localhost"
+    password: "{{ ipsilon_db_password }}"
+    priv: "ipsilon.*:ALL"
+
+# apache configuration for ipsilon
+apache_listen_port: 80
+apache_listen_port_ssl: 443
+apache_create_vhosts: true
+apache_vhosts_filename: "vhosts_ipsilon.conf"
+apache_ssl_protocol: "PROFILE=SYSTEM"
+apache_ssl_cipher_suite: "PROFILE=SYSTEM"
+# Setting this to true for now until we have certificates. The parameters will
+# be certificate_file, certificate_key_file, and certificate_chain_file
+apache_ignore_missing_ssl_certificate: true
+apache_vhosts:
+  - servername: "{{ inventory_hostname }}"
+    documentroot: /var/www/html
+    serveradmin: identitymanagement@rockylinux.org
+    extra_parameters: |
+      CustomLog logs/{{ inventory_hostname }}_access.log combined
+      ErrorLog logs/{{ inventory_hostname }}_error.log
+      AccessFileName .htaccess
+      Header always set X-Frame-Options "SAMEORIGIN"
+      Header always set X-Xss-Protection "1; mode=block"
+      Header always set X-Content-Type-Options "nosniff"
+      Header always set Referrer-Policy "same-origin"
+      RewriteEngine On
+      RewriteCond $1 !^.well-known
+      RewriteCond %{HTTPS} !=on
+      RewriteRule ^/?(.*) https://{{ inventory_hostname }}/$1 [R,L]
+  - servername: "{{ inventory_hostname }}"
+    documentroot: /var/www/html
+    serveradmin: identitymanagement@rockylinux.org
+    extra_parameters: |
+      RewriteEngine On
+      RewriteCond $1 !^idp
+      RewriteRule ^/?(.*) https://%{SERVER_NAME}/idp [R,L]
+      Header always set Strict-Transport-Security "max-age=31536000"
+      Header always set X-Xss-Protection "1; mode=block"
+      Header always set X-Content-Type-Options "nosniff"
+      Header always set Referrer-Policy "same-origin"
+      ErrorLog logs/ssl-{{ inventory_hostname }}_error.log
+      TransferLog logs/ssl-{{ inventory_hostname }}_access.log
+      LogLevel warn
+      <Files ~ "\.(cgi|shtml|phtml|php3?)$">
+        SSLOptions +StdEnvVars
+      </Files>
+      <Directory "/var/www/cgi-bin">
+        SSLOptions +StdEnvVars
+      </Directory>
+      SetEnvIf User-Agent ".*MSIE.*"  nokeepalive ssl-unclean-shutdown downgrade-1.0 force-response-1.0
+      CustomLog logs/ssl-seven.rockylinux.org.org_request.log "%t %h %{SSL_PROTOCOL}x %{SSL_CIPHER}x \"%r\" %b"
