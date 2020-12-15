@@ -10,7 +10,7 @@ repos:
       - id: check-executables-have-shebangs
       - id: check-json
       - id: pretty-format-json
-
+      - id: detect-private-key
 
   - repo: local
     hooks:
