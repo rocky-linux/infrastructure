@@ -11,6 +11,7 @@ repos:
       - id: check-json
       - id: pretty-format-json
 
+
   - repo: local
     hooks:
       - id: ansible-lint
