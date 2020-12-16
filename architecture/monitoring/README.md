@@ -44,9 +44,9 @@ Likewise, I do not see Logging as directly related. A separate stack is
 necessary for that. Loki would perhaps be a good solution that could
 use the same Grafana instance. ELK and Graylog are also worth considering.
 
-## Responsablities
+## Responsiblities
 
-The monitoring team canot realistically be responsible for how every single 
+The monitoring team cannot realistically be responsible for how every single 
 is monitored. Prometheus has a huge library of exporters for almost everything.
 
 The monitoring team can be responsible for ensuring that the infrastructure is
