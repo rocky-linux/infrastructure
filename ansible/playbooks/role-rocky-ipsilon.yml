@@ -22,6 +22,26 @@
           - "not no_ansible.stat.exists"
         msg: "/etc/no-ansible exists - skipping run on this node"
 
+    # EPEL and PowerTools are required for ipsilon to function
+    # I also couldn't find an ansible built-in to do this
+    - name: Enable the PowerTools repository
+      ini_file:
+        dest: /etc/yum.repos.d/CentOS-Linux-PowerTools.repo
+        section: powertools
+        option: enabled
+        value: 1
+        owner: root
+        group: root
+        mode: '0644'
+
+    # The CentOS extras repos has epel-release provided
+    - name: Enable the EPEL repository
+      yum:
+        name: epel-release
+        state: present
+      tags:
+        - packages
+
     - name: Install arrfab ipsilon repo
       yum_repository:
         name: copr:copr.fedorainfracloud.org:arrfab:noggin
