@@ -43,3 +43,17 @@ opion, better suited to that problem.
 Likewise, I do not see Logging as directly related. A separate stack is
 necessary for that. Loki would perhaps be a good solution that could
 use the same Grafana instance. ELK and Graylog are also worth considering.
+
+## Responsablities
+
+The monitoring team canot realistically be responsible for how every single 
+is monitored. Prometheus has a huge library of exporters for almost everything.
+
+The monitoring team can be responsible for ensuring that the infrastructure is
+available to the application/infrastructure teams. Also that knowledge of how
+to be added to that infrastucture is suitably shared.
+
+It falls on the application teams themselves to find a suitable exporter, add
+it to the Prometheus server and write the necessary alerts, queries and
+dashboards. Obviously, we will help as much as we can, but please don't ask
+me to learn the internals of FreeIPA for example.
