@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 from diagrams import Diagram, Cluster, Edge
 from diagrams.aws.compute import EC2
 from diagrams.aws.general import General
