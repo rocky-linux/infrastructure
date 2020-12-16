@@ -15,8 +15,9 @@
         name: python3-policycoreutils.noarch
         state: present
 
-  role:
+  roles:
     - role: geerlingguy.gitlab
+      state: present
       vars_files:
         - vars/gitlab.yml
 
