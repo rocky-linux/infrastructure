@@ -6,6 +6,7 @@
   become: true
   vars_files:
   - vars/encpass.yml
+  - vars/ipaclient.yml
 
   pre_tasks:
     - name: Check if ansible cannot be run here
@@ -23,7 +24,7 @@
 
 
   roles:
-    - role: ipaclient
+    - role: freeipa.ansible_freeipa.ipaclient
       state: present
 
   post_tasks:

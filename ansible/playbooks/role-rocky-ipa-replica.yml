@@ -50,7 +50,7 @@
         - reload_networkmanager
 
   roles:
-    - role: ipareplica
+    - role: freeipa.ansible_freeipa.ipareplica
       state: present
 
   post_tasks:

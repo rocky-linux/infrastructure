@@ -122,6 +122,8 @@ collections:
     version: 0.3.1
 ```
 
+**Note**: There will be cases where you should and must specify the version you're working with, depending on the author and the amount of changes that may occur. There may be a future policy that you have to lock onto a specific version.
+
 Custom roles for infrastructure use will have their own separate repository. Right now, we do not have a Ansible Galaxy presence. For this, when referencing roles under Rocky Linux, you will have to specify its location and follow the naming format. Example below.
 
 ```
@@ -130,3 +132,22 @@ roles:
     src: https://github.com/rocky-linux/ansible-role-ipsilon
     version: main
 ```
+
+### There's no role for...
+
+If you have to make your own role, that's understandable. There's going to be cases like this and we would like to try to work on that case by case. If you're going to create your own role, the following things must be true:
+
+* Follows the ansible-galaxy spec
+* pre-commit runs for linting purposes
+* Molecule github workflow
+* The repository name following the format: ansible-role-name
+
+The pre-commit, yamllint, and ansible-lint configurations of this repository is a good starting point for your role.
+
+Right now, this is a good template to start with: https://github.com/Darkbat91/ansible-roletemplate - This will soon be under the rocky-linux umbrella.
+
+### Pre-commits / linting
+
+When pushing to your own forked version of this repository, pre-commit must run to verify your changes. They must be passing to be pushed up. This is an absolute requirement, even for roles.
+
+When the linter passes, the push will complete and you will be able to open a PR.

@@ -7,7 +7,11 @@ ipsilon_database_users:
   - name: ipsilon
     host: "localhost"
     password: "{{ ipsilon_db_password }}"
-    priv: "ipsilon.*:ALL"
+    priv: "rockyipsilon.*:ALL"
+
+ipsilon_db_user: ipsilon
+ipsilon_db_name: rockyipsilon
+ipsilon_httpd_hostname: "{{ inventory_hostname }}"
 
 # apache configuration for ipsilon
 apache_listen_port: 80

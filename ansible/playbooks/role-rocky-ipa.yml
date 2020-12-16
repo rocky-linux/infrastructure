@@ -55,7 +55,7 @@
         owner: root
         group: root
 
-    - name: "Turn on reverse zone syncing"
+    - name: Turn on reverse zone syncing
       freeipa.ansible_freeipa.ipadnsconfig:
         ipaadmin_password: '{{ ipaadmin_password }}'
         allow_sync_ptr: true
