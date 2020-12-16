@@ -6,6 +6,7 @@
   vars_files:
   - vars/encpass.yml
   - vars/users.yml
+  - vars/adminusers.yml
   - vars/groups.yml
 
   tasks:
@@ -19,10 +20,10 @@
         fail_msg: "We are missing users or ipa admin password"
 
     - name: "Start users"
-      import_playbook: import-rockyusers.yml
+      import_tasks: import-rockyusers.yml
 
     - name: "Start groups"
-      import_playbook: import-rockygroups.yml
+      import_tasks: import-rockygroups.yml
 
     - name: "Start sudo for admins"
-      import_playbook: import-rockysudo.yml
+      import_tasks: import-rockysudo.yml
