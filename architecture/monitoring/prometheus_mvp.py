@@ -4,11 +4,11 @@ from diagrams import Diagram, Cluster, Edge
 from diagrams.aws.compute import EC2
 from diagrams.aws.general import General
 from diagrams.aws.network import ELB
-from diagrams.onprem.monitoring import Grafana, Prometheus
 from diagrams.onprem.compute import Server
+from diagrams.onprem.iac import Ansible
+from diagrams.onprem.monitoring import Grafana, Prometheus
 from diagrams.saas.alerting import Pushover
 from diagrams.saas.chat import Slack
-from diagrams.onprem.iac import Ansible
 
 graph_attr = {
         }
