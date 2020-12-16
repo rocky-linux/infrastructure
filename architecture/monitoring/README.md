@@ -33,3 +33,13 @@ python ./prometheus-mvp.py
 ```
 
 We'll automate putting the outputed file somewhere ASAP
+
+## What this is NOT addressing
+
+I am purposely not covering Logging and web service uptime here. We can check
+web services with Prometheus, but an external service (UptimeRobot?) is, in my
+opion, better suited to that problem.
+
+Likewise, I do not see Logging as directly related. A separate stack is
+necessary for that. Loki would perhaps be a good solution that could
+use the same Grafana instance. ELK and Graylog are also worth considering.
