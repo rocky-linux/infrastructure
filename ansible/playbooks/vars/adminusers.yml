@@ -1,5 +1,5 @@
 ---
-users:
+adminusers:
   - name: label2
     first: Louis
     last: Abel
