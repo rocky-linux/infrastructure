@@ -5,3 +5,4 @@ ipaclient_realm: ROCKYLINUX.ORG
 ipaadmin_principal: admin
 ipaclient_no_ntp: true
 ipaclient_mkhomedir: true
+ipatype: client

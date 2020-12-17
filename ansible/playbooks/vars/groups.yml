@@ -12,3 +12,5 @@ ipagroups:
     description: Marketing
   - group: rockyadm
     description: Rocky Linux Administrators - Only Admin Accounts
+  - group: gitadm
+    description: Rocky Linux GitLab Admins

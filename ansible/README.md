@@ -11,6 +11,7 @@ Loosely copied from the CentOS ansible infrastructure.
 ```
 .
 ├── ansible.cfg
+├── collections
 ├── files -> playbooks/files
 ├── handlers -> playbooks/handlers
 ├── inventories
