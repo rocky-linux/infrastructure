@@ -3,8 +3,14 @@
 - name: Install and Provision Gitlab
   hosts: gitlabservers
   become: true
+  vars_file:
+    - vars/gitlab.yml
 
   pre_tasks:
+    - name: Check if ansible cannot be run here
+      stat:
+        path: /etc/no-ansible
+      register: no_ansible
     - name: Verify if we can run ansible
       assert:
         that:
@@ -18,8 +24,6 @@
   roles:
     - role: geerlingguy.gitlab
       state: present
-      vars_files:
-        - vars/gitlab.yml
 
   post_tasks:
     - name: Touching run file that ansible has ran here
