@@ -21,6 +21,7 @@
 
   role:
     - role: cloudalchemy.prometheus
+    - role: cloudalchemy.alertmanager
 
   post_tasks:
     - name: Touching run file that ansible has ran here
@@ -30,3 +31,24 @@
         mode: '0644'
         owner: root
         group: root
+
+- name: Install Prometheus Node Exporter
+  hosts: all
+  become: true
+
+  pre_tasks:
+    - name: Install SELinux packages
+      package:
+        name: python3-policycoreutils.noarch
+        state: present
+
+  roles:
+    - role: cloudalchemy.node-exporter
+      state: present
+
+  post_tasks:
+    - name: Open firewall for node-exporter
+      ansible.posix.firewalld:
+        port: 9100/tcp
+        permanent: yes
+        state: enabled

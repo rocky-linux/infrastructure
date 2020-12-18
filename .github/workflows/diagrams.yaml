@@ -1,0 +1,37 @@
+---
+name: Arcitecture Diagrams
+on:
+  push:
+    paths:
+      - 'architecture/**.py'
+
+jobs:
+  build-archi-diagrams:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Git Checkout
+        uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+      - name: Install dependencies
+        run: |
+          sudo apt update
+          sudo apt -y install graphviz
+          python -m pip install --upgrade pip
+          pip install diagrams
+      - name: Build diagrams
+        run: |
+          for file in $(find architecture/ -type f -name "*.py")
+          do
+            python $file
+          done
+          mkdir artifacts; mv *.png artifacts/
+      - name: Upload diagram images
+        uses: actions/upload-artifact@v2
+        with:
+          name: diagrams-png
+          path: artifacts/*.png
