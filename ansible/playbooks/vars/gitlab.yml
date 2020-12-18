@@ -1,0 +1,61 @@
+---
+gitlab_config_template: "etc/gitlab/rocky_gitlab.rb"
+gitlab_domain: git.rockylinux.org
+gitlab_external_url: "https://{{ gitlab_domain }}/"
+
+# Location where all the git repositories will be stored.
+gitlab_git_data_dir: "/var/opt/gitlab/git-data"
+
+gitlab_backup_path: "/var/opt/gitlab/backups"
+gitlab_edition: "gitlab-ee"
+gitlab_redirect_http_to_https: "true"
+
+# SSL Self-signed Certificate Configuration.
+# Eventually we will have legitimate certificates to use, such as LetsEncrypt
+gitlab_create_self_signed_cert: "true"
+gitlab_self_signed_cert_subj: "/C=US/ST=Missouri/L=Saint Louis/O=IT/CN={{ gitlab_domain }}"
+gitlab_ssl_certificate: "/etc/gitlab/ssl/{{ gitlab_domain }}.crt"
+gitlab_ssl_certificate_key: "/etc/gitlab/ssl/{{ gitlab_domain }}.key"
+
+# LDAP Configuration
+gitlab_ldap_enabled: "true"
+gitlab_ldap_host: "ipa001.rockylinux.org"
+gitlab_ldap_port: "389"
+gitlab_ldap_uid: "uid"
+gitlab_ldap_method: "start_tls"
+gitlab_ldap_bind_dn: "uid=binder,cn=sysaccounts,cn=etc,dc=rockylinux,dc=org"
+gitlab_ldap_password: "ThisIsNotThePassword!"
+gitlab_ldap_base: "cn=users,cn=accounts,dc=rockylinux,dc=org"
+gitlab_ldap_group_dn: "cn=groups,cn=accounts,dc=rockylinux,dc=org"
+gitlab_ldap_admin_group: "cn=gitadm,cn=groups,cn=accounts,dc=rockylinux,dc=org"
+
+gitlab_time_zone: "UTC"
+
+# Validates Certifications when downloading Gitlab Installation repo
+gitlab_download_validate_certs: true
+
+# Email and SMTP configuration (For the future)
+# Email configuration.
+gitlab_email_enabled: "false"
+gitlab_email_from: "gitlab@rockylinux.org"
+gitlab_email_display_name: "Gitlab"
+gitlab_email_reply_to: "gitlab@rockylinux.org"
+# SMTP configuration
+gitlab_smtp_enable: "false"
+gitlab_smtp_address: "smtp.gmail.com"
+gitlab_smtp_port: "587"
+gitlab_smtp_user_name: "username@gmail.com"
+gitlab_smtp_password: "whateverThisIs"
+gitlab_smtp_domain: "gmail.com"
+gitlab_smtp_authentication: "login"
+gitlab_smtp_enable_starttls_auto: "true"
+gitlab_smtp_tls: "true"
+gitlab_smtp_openssl_verify_mode: "none"
+gitlab_smtp_ca_path: "/etc/pki/tls/certs"
+gitlab_smtp_ca_file: "/etc/pki/tls/certs/ca-bundle.crt"
+
+# In case of reverse proxy
+gitlab_nginx_listen_port: 8080
+gitlab_nginx_listen_https: "false"
+
+gitlab_default_theme: 2

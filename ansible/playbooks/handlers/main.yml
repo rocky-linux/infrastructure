@@ -9,6 +9,11 @@
     name: httpd
     state: restarted
 
+- name: restart_nginx
+  service:
+    name: nginx
+    state: restarted
+
 - name: reload_networkmanager
   service:
     name: NetworkManager
@@ -22,3 +27,8 @@
     name: "{{ chrony_service_name }}"
     state: restarted
   listen: "chrony service restart"
+
+- name: restart_gitlab
+  command: gitlab-ctl reconfigure
+  register: gitlab_restart
+  failed_when: gitlab_restart_handler_failed_when | bool

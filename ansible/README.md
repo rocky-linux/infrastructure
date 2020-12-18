@@ -67,6 +67,10 @@ role-* -> These playbooks call roles specifically for infrastructure tasks.
           on their usage.
 ```
 
+## Ansible Configuration
+
+The ansible configuration declares our defaults for our ansible host. This is especially true for the "destinations", where the roles and collections are referenced.
+
 ## Designing Playbooks
 
 ### Pre flight and post flight
@@ -152,3 +156,13 @@ Right now, this is a good template to start with: https://github.com/Darkbat91/a
 When pushing to your own forked version of this repository, pre-commit must run to verify your changes. They must be passing to be pushed up. This is an absolute requirement, even for roles.
 
 When the linter passes, the push will complete and you will be able to open a PR.
+
+## Initializing the Ansible Host
+
+When initializing the ansible host, you should be in `./infrastructure/ansible` so that the `ansible.cfg` is used. You will need to run the `init-rocky-ansible-host.yml` playbook and to get started, which will install all the roles and collections required for the playbooks to run.
+
+```
+% git clone https://github.com/rocky-linux/infrastructure
+% cd infrastructure/ansible
+% ansible-playbook playbooks/init-rocky-ansible-host.yml
+```
