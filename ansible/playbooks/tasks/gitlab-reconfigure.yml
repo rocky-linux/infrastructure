@@ -1,16 +1,4 @@
 ---
-# We need to do some additional configuration for GitLab to ensure that it
-# works and operates immediately with FreeIPA.
-- name: Insert Additional GitLab EE Settings
-  blockinfile:
-    path: /etc/gitlab/gitlab.rb
-    block: |
-      gitlab_rails['ldap_group_base'] = 'cn=groups,cn=accounts,dc=rockylinux,dc=org'
-      gitlab_rails['ldap_admin_group'] = 'cn=gitadm,cn=groups,cn=accounts,dc=rockylinux,dc=org'
-      nginx['enable'] = false
-      nginx['external_users'] = ['nginx']
-  notify: restart_gitlab
-
 - name: Install nginx normally
   yum:
     name: nginx
@@ -51,6 +39,14 @@
     group: root
     mode: '0644'
   when: gitlab_create_self_signed_cert
+
+- name: Symlink the IPA CA
+  file:
+    src: "/etc/ipa/ca.crt"
+    dest: "/etc/gitlab/trusted_certs/ca.crt"
+    owner: root
+    group: root
+    state: link
 
 - name: Turn on necessary SELinux booleans
   ansible.posix.seboolean:
