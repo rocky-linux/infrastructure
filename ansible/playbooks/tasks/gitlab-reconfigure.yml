@@ -79,6 +79,13 @@
     - http
     - https
 
+- name: Add nginx user to git groups
+  user:
+    name: nginx
+    shell: /sbin/nologin
+    groups: gitlab-www,git
+    append: yes
+
 - name: Enable and Start nginx
   service:
     name: nginx
