@@ -46,8 +46,9 @@ use the same Grafana instance. ELK and Graylog are also worth considering.
 
 ## Responsiblities
 
-The monitoring team cannot realistically be responsible for how every single 
-is monitored. Prometheus has a huge library of exporters for almost everything.
+The monitoring team cannot realistically be responsible for how every single
+application is monitored. Prometheus has a huge library of exporters for almost
+everything.
 
 The monitoring team can be responsible for ensuring that the infrastructure is
 available to the application/infrastructure teams. Also that knowledge of how
@@ -57,3 +58,14 @@ It falls on the application teams themselves to find a suitable exporter, add
 it to the Prometheus server and write the necessary alerts, queries and
 dashboards. Obviously, we will help as much as we can, but please don't ask
 me to learn the internals of FreeIPA for example.
+
+## Exporters
+
+The primary place to find exporters is on Prometheus own site, but this is far
+from exhaustive:
+
+https://prometheus.io/docs/instrumenting/exporters/
+
+Here are some others that are not in the list, but could be useful:
+
+- [FreeIPA](https://github.com/terrycain/389ds_exporter)
