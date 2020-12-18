@@ -1,6 +1,6 @@
 ---
 gitlab_domain: git.rockylinux.org
-gitlab_external_url: "https://{gitlab_domain}/"
+gitlab_external_url: "https://{{ gitlab_domain }}/"
 
 # Location where all the git repositories will be stored.
 gitlab_git_data_dir: "/var/opt/gitlab/git-data"
@@ -8,16 +8,17 @@ gitlab_git_data_dir: "/var/opt/gitlab/git-data"
 gitlab_backup_path: "/var/opt/gitlab/backups"
 gitlab_edition: "gitlab-ee"
 gitlab_redirect_http_to_https: "true"
+
+# SSL Self-signed Certificate Configuration.
+# Eventually we will have legitimate certificates to use, such as LetsEncrypt
+gitlab_create_self_signed_cert: "true"
+gitlab_self_signed_cert_subj: "/C=US/ST=Missouri/L=Saint Louis/O=IT/CN={{ gitlab_domain }}"
 gitlab_ssl_certificate: "/etc/gitlab/ssl/{{ gitlab_domain }}.crt"
 gitlab_ssl_certificate_key: "/etc/gitlab/ssl/{{ gitlab_domain }}.key"
 
-# SSL Self-signed Certificate Configuration.
-gitlab_create_self_signed_cert: "true"
-gitlab_self_signed_cert_subj: "/C=US/ST=Missouri/L=Saint Louis/O=IT/CN={{ gitlab_domain }}"
-
 # LDAP Configuration
 gitlab_ldap_enabled: "true"
-gitlab_ldap_host: "rockylinux.org"
+gitlab_ldap_host: "ipa001.rockylinux.org"
 gitlab_ldap_port: "389"
 gitlab_ldap_uid: "uid"
 gitlab_ldap_method: "start_tls"
@@ -38,17 +39,17 @@ gitlab_email_display_name: "Gitlab"
 gitlab_email_reply_to: "gitlab@rockylinux.org"
 # SMTP configuration
 gitlab_smtp_enable: "false"
-gitlab_smtp_address: "smtp.server"
-gitlab_smtp_port: "465"
-gitlab_smtp_user_name: "smtp user"
-gitlab_smtp_password: "smtp password"
-gitlab_smtp_domain: "rockylinux.org"
+gitlab_smtp_address: "smtp.gmail.com"
+gitlab_smtp_port: "587"
+gitlab_smtp_user_name: "username@gmail.com"
+gitlab_smtp_password: "whateverThisIs"
+gitlab_smtp_domain: "gmail.com"
 gitlab_smtp_authentication: "login"
 gitlab_smtp_enable_starttls_auto: "true"
-gitlab_smtp_tls: "false"
+gitlab_smtp_tls: "true"
 gitlab_smtp_openssl_verify_mode: "none"
-gitlab_smtp_ca_path: "/etc/ssl/certs"
-gitlab_smtp_ca_file: "/etc/ssl/certs/ca-certificates.crt"
+gitlab_smtp_ca_path: "/etc/pki/tls/certs"
+gitlab_smtp_ca_file: "/etc/pki/tls/certs/ca-bundle.crt"
 
 # In case of reverse proxy
 gitlab_nginx_listen_port: 8080

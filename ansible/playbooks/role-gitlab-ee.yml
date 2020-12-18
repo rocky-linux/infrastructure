@@ -11,11 +11,13 @@
       stat:
         path: /etc/no-ansible
       register: no_ansible
+
     - name: Verify if we can run ansible
       assert:
         that:
           - "not no_ansible.stat.exists"
         msg: "/etc/no-ansible exists - skipping un on this node"
+
     - name: Install SELinux packages
       package:
         name: python3-policycoreutils.noarch
@@ -26,6 +28,9 @@
       state: present
 
   post_tasks:
+    - name: Reconfigure GitLab
+      import_tasks: tasks/gitlab-reconfigure.yml
+
     - name: Touching run file that ansible has ran here
       file:
         path: /var/log/ansible.run
