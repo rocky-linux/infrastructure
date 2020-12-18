@@ -29,28 +29,28 @@ gitlab_rails['backup_path'] = "{{ gitlab_backup_path }}"
 # https://gitlab.com/gitlab-org/gitlab-ce/blob/master/config/gitlab.yml.example#L118
 gitlab_rails['ldap_enabled'] = {{ gitlab_ldap_enabled }}
 {% if gitlab_ldap_enabled == "true" %}
- gitlab_rails['ldap_servers'] = YAML.load <<-'EOS'
-   main:
-     label: 'LDAP'
-     host: '{{ gitlab_ldap_host }}'
-     port: {{ gitlab_ldap_port  }}
-     uid: '{{ gitlab_ldap_uid }}'
-     method: '{{ gitlab_ldap_method}}'
-     bind_dn: '{{ gitlab_ldap_bind_dn }}'
-     password: '{{ gitlab_ldap_password }}'
-     allow_username_or_email_login: true
-     base: '{{ gitlab_ldap_base }}'
-     user_filter: ''
-     group_base: '{{ gitlab_ldap_group_dn }}'
-     admin_group: '{{ gitlab_ldap_admin_group }}'
-     sync_ssh_keys: true
-     attributes:
-       username: ['uid']
-       email: ['mail']
-       name: 'cn'
-       first_name: 'givenName'
-       last_name: 'sn'
- EOS
+gitlab_rails['ldap_servers'] = YAML.load <<-'EOS'
+  main:
+    label: 'LDAP'
+    host: '{{ gitlab_ldap_host }}'
+    port: {{ gitlab_ldap_port  }}
+    uid: '{{ gitlab_ldap_uid }}'
+    method: '{{ gitlab_ldap_method}}'
+    bind_dn: '{{ gitlab_ldap_bind_dn }}'
+    password: '{{ gitlab_ldap_password }}'
+    allow_username_or_email_login: true
+    base: '{{ gitlab_ldap_base }}'
+    user_filter: ''
+    group_base: '{{ gitlab_ldap_group_dn }}'
+    admin_group: '{{ gitlab_ldap_admin_group }}'
+    sync_ssh_keys: true
+    attributes:
+      username: ['uid']
+      email: ['mail']
+      name: 'cn'
+      first_name: 'givenName'
+      last_name: 'sn'
+EOS
 {% endif %}
 
 # GitLab Nginx

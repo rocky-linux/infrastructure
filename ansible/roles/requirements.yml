@@ -8,6 +8,7 @@ roles:
   - name: rockylinux.ipsilon
     src: https://github.com/rocky-linux/ansible-role-ipsilon
     version: main
+  - name: geerlingguy.gitlab
 
 collections:
   # freeipa

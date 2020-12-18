@@ -29,6 +29,7 @@
     owner: root
     group: root
     mode: '0644'
+    remote_src: true
   when: gitlab_create_self_signed_cert
 
 - name: Copy self-signed certificate key
@@ -38,12 +39,13 @@
     owner: root
     group: root
     mode: '0644'
+    remote_src: true
   when: gitlab_create_self_signed_cert
 
 - name: Symlink the IPA CA
   file:
     src: "/etc/ipa/ca.crt"
-    dest: "/etc/gitlab/trusted_certs/ca.crt"
+    dest: "/etc/gitlab/trusted-certs/ipa-ca.crt"
     owner: root
     group: root
     state: link

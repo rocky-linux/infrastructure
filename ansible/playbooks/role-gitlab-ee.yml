@@ -3,8 +3,12 @@
 - name: Install and Provision Gitlab
   hosts: gitlabservers
   become: true
-  vars_file:
-    - vars/gitlab.yml
+  vars_files:
+  - vars/gitlab.yml
+
+  # This is to try to avoid the handler issue in pre/post tasks
+  handlers:
+    - import_tasks: handlers/main.yml
 
   pre_tasks:
     - name: Check if ansible cannot be run here
