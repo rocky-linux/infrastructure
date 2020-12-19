@@ -23,7 +23,10 @@ so I propose something like the following:
   - Non-critical alerts in a dedicated channel
   - Critical alerts to a small group via a service like Pushover/Pagerduty.
 
-The essentials to start monitoring ASAP are obviously system metrics.
+The essentials to start monitoring ASAP are obviously system metrics. There
+are **many** other things that can and should be added, but that is a good
+start. To that end, Node Exporter needs to be added to every single host.
+Prometheus is then pointed at each of those (via Ansible for now).
 
 ## Pretty pictures via Python
 
