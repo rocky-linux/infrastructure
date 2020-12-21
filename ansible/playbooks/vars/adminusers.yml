@@ -63,3 +63,10 @@ adminusers:
     password: ThisIsNotMyPassword1!
     title: Infrastructure Manager
     loginshell: /bin/bash
+  - name: bagner2
+    first: Benjamin
+    last: Agner
+    email: bagner@rockylinux.org
+    password: ThisIsNotMyPassword1!
+    title: Security Director
+    loginshell: /bin/bash

@@ -31,3 +31,18 @@
   loop: "{{ adminusers }}"
   tags:
     - users
+
+- name: "Creating Service Accounts"
+  freeipa.ansible_freeipa.ipauser:
+    ipaadmin_password: "{{ ipaadmin_password }}"
+    name: "{{ item.name }}"
+    first: "{{ item.first }}"
+    last: "{{ item.last }}"
+    email: "{{ item.email }}"
+    password: "{{ item.password }}"
+    title: "{{ item.title }}"
+    loginshell: "{{ item.loginshell }}"
+    update_password: on_create
+  loop: "{{ svcusers }}"
+  tags:
+    - users
