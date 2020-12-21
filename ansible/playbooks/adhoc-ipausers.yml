@@ -5,6 +5,7 @@
 - name: Create a User
   hosts: ipaserver
   become: false
+  gather_facts: false
   vars_files:
   - vars/encpass.yml
 
