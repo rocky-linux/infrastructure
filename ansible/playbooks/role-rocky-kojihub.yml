@@ -56,6 +56,7 @@
   # Right now, we are not sure how or where we'll get our certificates. So we
   # are presenting a choice by setting a variable, koji_internal_ca. There is a
   # change that we will have to do internal certs for mqtt anyway.
+  # TODO: We need an MQTT role and pre_tasks for the keytabs for this role
   roles:
     - role: geerlingguy.certbot
       state: present
