@@ -2,8 +2,18 @@
 ipagroups:
   - group: infrastructure
     description: Infrastructure Team
+    user:
+      - label
+      - neil
+      - rlh
+      - rfelsburg
+      - tg
+      - bagner
   - group: operations
     description: Operations Team
+    user:
+      - rlh
+      - rfelsburg
   - group: development
     description: Development Team
   - group: qa
@@ -12,5 +22,29 @@ ipagroups:
     description: Marketing
   - group: rockyadm
     description: Rocky Linux Administrators - Only Admin Accounts
+    user:
+      - label2
+      - gmk2
+      - brian2
+      - hbjy2
+      - jorp2
+      - neil2
+      - rlh2
+      - rfelsburg2
+      - tg2
+      - bagner2
   - group: gitadm
     description: Rocky Linux GitLab Admins
+    user:
+      - label
+      - neil
+      - rlh
+      - rfelsburg
+      - tg
+      - hbjy
+  - group: services
+    description: Rocky Linux Service Accounts
+    user:
+      - hostman
+      - kerbman
+      - rockykoji

@@ -1,6 +1,6 @@
 ---
 # Stands up an ipsilon instance for simple SSO
-- name: Configure ipsilon server
+- name: Configure koji hub and web server
   hosts: kojihub
   become: true
   vars_files:

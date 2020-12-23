@@ -6,6 +6,7 @@
     name: "{{ item.group }}"
     description: "{{ item.description }}"
     nonposix: false
+    user: "{{ item.user | default(none) }}"
   loop: "{{ ipagroups }}"
   tags:
     - groups
