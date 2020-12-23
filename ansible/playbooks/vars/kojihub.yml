@@ -1,0 +1,97 @@
+---
+# koji hub settings
+
+# Use an internal CA (IPA)
+koji_internal_ca: true
+
+# Use postgresql on this machine rather than managed service
+koji_postgresql_vm: true
+
+# Database settings
+koji_db_name: koji
+koji_db_user: koji
+koji_db_pass: ThisIsNotThePassword!
+koji_db_host: localhost
+
+koji_web_url: "https://{{ ansible_fqdn }}/koji"
+koji_hub_url: "https://{{ ansible_fqdn }}/kojihub"
+koji_files_url: "https://{{ ansible_fqdn }}/kojifiles"
+
+# The IPA internal CA is combined with the others
+koji_web_cacert: /etc/pki/tls/certs/ca-bundle.crt
+koji_web_tls_cert: "/etc/pki/tls/certs/{{ ansible_fqdn }}.crt"
+koji_web_tls_key: "/etc/pki/tls/private/{{ ansible_fqdn }}.key"
+
+# NFS? We need a place.
+koji_nfs: false
+koji_mount: /mnt/koji
+koji_nfs_path: nfs.rockylinux.org:/export/koji
+
+# Koji Admin Settings
+koji_admin_client: true
+koji_admin_user: rockykoji
+koji_admin_principal: rockykoji@ROCKYLINUX.ORG
+koji_admin_localuser: true
+koji_admin_localuser_name: koji
+
+# Hub Settings
+koji_hub_principal: "HTTP/{{ ansible_fqdn }}@ROCKYLINUX.ORG"
+koji_hub_proxy_principals: koji/kojiweb@ROCKYLINUX.ORG
+koji_hub_keytab: /etc/koji.keytab
+koji_hub_principal_format: compile/%s@ROCKYLINUX.ORG
+# This should be sufficient even for LE
+koji_hub_ca: /etc/pki/tls/certs/ca-bundle.crt
+
+# Koji FAS Syncing
+# This isn't implemented yet in the role
+koji_fas_sync: false
+koji_fas_url: https://accounts.rockylinux.org
+
+# Not implemented yet
+koji_hub_plugin_mqtt_host: mqtt.rockylinux.org
+koji_hub_plugin_mqtt_topic: koji
+koji_hub_plugin_mqtt_ca: "{{ koji_hub_ca }}"
+koji_hub_plugin_mqtt_tls_cert: /etc/pki/tls/certs/mqtt.pem
+koji_hub_plugin_mqtt_tls_key: /etc/pki/tls/certs/mqtt.pem
+koji_hub_plugin_mqtt_excluded_tags:
+  - testing-tag
+
+# IPA Certs if Required
+ipa_getcert_requested_hostnames:
+  - name: "{{ ansible_fqdn }}"
+    owner: apache
+
+# postgresql vars
+postgresql_restarted_state: "restarted"
+postgresql_python_library: python3-psycopg2
+postgresql_user: postgres
+postgresql_group: postgres
+postgresql_hba_entries:
+  - type: local
+    database: koji
+    user: koji
+    auth_method: trust
+  - type: local
+    database: all
+    user: postgres
+    auth_method: peer
+  - type: host
+    database: koji
+    user: koji
+    address: '10.100.1.0/24'
+    auth_method: md5
+
+postgresql_databases:
+  - name: "{{ koji_db_name }}"
+    owner: "{{ koji_db_user }}"
+
+postgresql_users:
+  - name: "{{ koji_db_user }}"
+    password: "{{ koji_db_pass }}"
+    role_attr_flags: "NOCREATEDB,NOSUPERUSER,NOCREATEROLE"
+    db: "{{ koji_db_name }}"
+    state: present
+
+postgresql_global_config_options:
+  - option: listen_addresses
+    value: '*'

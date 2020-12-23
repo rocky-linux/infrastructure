@@ -14,13 +14,15 @@
       assert:
         that:
           - ipaadmin_password | mandatory
-          - ipaService | mandatory
+          - ipa_service | mandatory
         success_msg: "Required variables provided"
         fail_msg: "We are missing required information"
 
     - name: "Creating Kerberos Service"
       freeipa.ansible_freeipa.ipaservice:
         ipaadmin_password: "{{ ipaadmin_password }}"
-        name: "{{ ipaService }}"
+        name: "{{ ipa_service }}"
+        skip_host_check: "{{ ipa_skip_host_check | default(false) }}"
+        force: "{{ ipa_force | default(false) }}"
       tags:
         - services

@@ -3,14 +3,21 @@ svcusers:
   - name: hostman
     first: Host
     last: Manager
-    email: hostman@rockylinux.org
+    email: infrastructure@rockylinux.org
     password: ThisIsNotMyPassword1!
     title: System Account - Host Manager
     loginshell: /sbin/nologin
   - name: kerbman
     first: Kerberos
     last: Manager
-    email: kerbman@rockylinux.org
+    email: infrastructure@rockylinux.org
     password: ThisIsNotMyPassword1!
     title: System Account - Kerberos Key Manager
+    loginshell: /sbin/nologin
+  - name: rockykoji
+    first: Koji
+    last: Manager
+    email: infrastructure@rockylinux.org
+    password: ThisIsNotMyPassword1!
+    title: System Account - Koji Manager
     loginshell: /sbin/nologin
