@@ -13,3 +13,6 @@ ipadm_password: !vault |
 ipsilon_db_password: !vault |
           $ANSIBLE_VAULT;1.1;AES256
           REDACTED
+koji_db_pass: !vault |
+          $ANSIBLE_VAULT;1.1;AES256
+          REDACTED

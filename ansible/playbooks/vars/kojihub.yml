@@ -11,7 +11,8 @@ koji_postgresql_vm: true
 koji_db_name: koji
 koji_db_user: koji
 koji_db_pass: ThisIsNotThePassword!
-koji_db_host: localhost
+# This will need to change when koji_postgresql_vm is false
+koji_db_host: "{{ ansible_fqdn }}"
 
 koji_web_url: "https://{{ ansible_fqdn }}/koji"
 koji_hub_url: "https://{{ ansible_fqdn }}/kojihub"
@@ -40,7 +41,7 @@ koji_hub_proxy_principals: koji/kojiweb@ROCKYLINUX.ORG
 koji_hub_keytab: /etc/koji.keytab
 koji_hub_principal_format: compile/%s@ROCKYLINUX.ORG
 # This should be sufficient even for LE
-koji_hub_ca: /etc/pki/tls/certs/ca-bundle.crt
+koji_hub_ca: "{{ koji_web_cacert }}"
 
 # Koji FAS Syncing
 # This isn't implemented yet in the role
