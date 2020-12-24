@@ -10,7 +10,6 @@ koji_postgresql_vm: true
 # Database settings
 koji_db_name: koji
 koji_db_user: koji
-koji_db_pass: ThisIsNotThePassword!
 # This will need to change when koji_postgresql_vm is false
 koji_db_host: "{{ ansible_fqdn }}"
 
@@ -53,7 +52,7 @@ koji_hub_plugin_mqtt_host: mqtt.rockylinux.org
 koji_hub_plugin_mqtt_topic: koji
 koji_hub_plugin_mqtt_ca: "{{ koji_hub_ca }}"
 koji_hub_plugin_mqtt_tls_cert: /etc/pki/tls/certs/mqtt.pem
-koji_hub_plugin_mqtt_tls_key: /etc/pki/tls/certs/mqtt.pem
+koji_hub_plugin_mqtt_tls_key: /etc/pki/tls/certs/mqtt.key
 koji_hub_plugin_mqtt_excluded_tags:
   - testing-tag
 
@@ -61,6 +60,9 @@ koji_hub_plugin_mqtt_excluded_tags:
 ipa_getcert_requested_hostnames:
   - name: "{{ ansible_fqdn }}"
     owner: apache
+    key_location: "{{ koji_web_tls_key }}"
+    cert_location: "{{ koji_web_tls_cert }}"
+    postcmd: "/bin/systemctl reload httpd"
 
 # postgresql vars
 postgresql_restarted_state: "restarted"

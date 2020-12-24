@@ -16,6 +16,9 @@ roles:
   - name: rockylinux.kojihub
     src: https://github.com/rocky-linux/ansible-role-kojihub
     version: main
+  - name: rockylinux.mqtt
+    src: https://github.com/rocky-linux/ansible-role-mqtt
+    version: main
 
 collections:
   # freeipa
