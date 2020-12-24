@@ -2,9 +2,10 @@
 # This playbook is meant to be used with callable variables, like adhoc or AWX.
 # What: Pulls keytabs for a kerberos service
 # What is expected:
-#  -> ipaService, using this format: SVC/hostname.rockylinux.org@ROCKYLINUX.ORG
-#  -> ipaKeytabFullPath: The full path to the keytab. Example: /etc/gitlab/gitlab.keytab
-#  -> ipaServer: This needs to be one of the IPA servers
+#  -> ipa_service, using this format: SVC/hostname.rockylinux.org@ROCKYLINUX.ORG
+#  -> ipa_keytab_fullpath: The full path to the keytab. Example: /etc/gitlab/gitlab.keytab
+#  -> ipa_server: This needs to be one of the IPA servers
+#  -> ipa_owner: If applicable, the local account that will own this keytab (eg for Apache)
 
 - name: Pull keytab from IPA
   hosts: "{{ host }}"
@@ -18,16 +19,27 @@
       assert:
         that:
           - ipaadmin_password | mandatory
-          - ipaService | mandatory
-          - ipaKeytabFullPath | mandatory
-          - ipaServer | mandatory
+          - ipa_service | mandatory
+          - ipa_keytab_fullpath | mandatory
+          - ipa_server | mandatory
         success_msg: "Required variables provided"
         fail_msg: "We are missing required information"
 
     - name: "Pulling keytab"
-      command: "ipa-getkeytab -s {{ ipaServer }} -p {{ ipaService }} -k {{ ipaKeytabFullPath }}"
+      command: "ipa-getkeytab -s {{ ipa_server }} -p {{ ipa_service }} -k {{ ipa_keytab_fullpath }}"
       register: ipakeytab_result
       changed_when:
         - ipakeytab_result.rc == 0
+      tags:
+        - keytab
+
+    - name: "Set ownership if applicable"
+      file:
+        path: "{{ ipa_keytab_fullpath }}"
+        owner: "{{ ipa_owner }}"
+        group: "{{ ipa_owner }}"
+        mode: '0600'
+        state: file
+      when: ipa_owner
       tags:
         - keytab

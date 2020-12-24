@@ -1,0 +1,83 @@
+---
+# Stands up an ipsilon instance for simple SSO
+- name: Configure koji hub and web server
+  hosts: kojihub
+  become: true
+  vars_files:
+  - vars/encpass.yml
+  - vars/kojihub.yml
+
+  # This is to try to avoid the handler issue in pre/post tasks
+  handlers:
+    - import_tasks: handlers/main.yml
+
+  pre_tasks:
+    - name: Check if ansible cannot be run here
+      stat:
+        path: /etc/no-ansible
+      register: no_ansible
+
+    - name: Verify if we can run ansible
+      assert:
+        that:
+          - "not no_ansible.stat.exists"
+        msg: "/etc/no-ansible exists - skipping run on this node"
+
+    # EPEL and PowerTools are required for ipsilon to function
+    # I also couldn't find an ansible built-in to do this
+    - name: Enable the PowerTools repository
+      ini_file:
+        dest: /etc/yum.repos.d/CentOS-Linux-PowerTools.repo
+        section: powertools
+        option: enabled
+        value: 1
+        owner: root
+        group: root
+        mode: '0644'
+
+    # The CentOS extras repos has epel-release provided
+    - name: Enable the EPEL repository
+      yum:
+        name: epel-release
+        state: present
+      tags:
+        - packages
+
+    - name: Install rocky-tools copr
+      yum_repository:
+        name: copr:copr.fedorainfracloud.org:nalika:rockylinux-tool
+        description: Copr repo for rockylinux-tools owned by nalika
+        file: copr_repos
+        baseurl: https://download.copr.fedorainfracloud.org/results/nalika/rockylinux-tools/epel-8-$basearch/
+        gpgcheck: true
+        gpgkey: https://download.copr.fedorainfracloud.org/results/nalika/rockylinux-tools/pubkey.gpg
+        enabled: true
+
+  # Right now, we are not sure how or where we'll get our certificates. So we
+  # are presenting a choice by setting a variable, koji_internal_ca. There is a
+  # change that we will have to do internal certs for mqtt anyway.
+  # TODO: We need an MQTT role and pre_tasks for the keytabs for this role
+  roles:
+    - role: geerlingguy.certbot
+      state: present
+      when: not koji_internal_ca
+
+    - role: rockylinux.ipagetcert
+      state: present
+      when: koji_internal_ca
+
+    - role: geerlingguy.postgresql
+      state: present
+      when: koji_postgresql_vm
+
+    - role: rockylinux.kojihub
+      state: present
+
+  post_tasks:
+    - name: Touching run file that ansible has ran here
+      file:
+        path: /var/log/ansible.run
+        state: touch
+        mode: '0644'
+        owner: root
+        group: root

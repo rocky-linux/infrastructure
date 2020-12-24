@@ -5,10 +5,20 @@ roles:
   # monitoring
   - name: cloudalchemy.node-exporter
   - name: cloudalchemy.prometheus
+  - name: geerlingguy.gitlab
+  - name: geerlingguy.postgresql
+  - name: rockylinux.ipagetcert
+    src: https://github.com/rocky-linux/ansible-role-ipa-getcert
+    version: main
   - name: rockylinux.ipsilon
     src: https://github.com/rocky-linux/ansible-role-ipsilon
     version: main
-  - name: geerlingguy.gitlab
+  - name: rockylinux.kojihub
+    src: https://github.com/rocky-linux/ansible-role-kojihub
+    version: main
+  - name: rockylinux.mqtt
+    src: https://github.com/rocky-linux/ansible-role-mqtt
+    version: main
 
 collections:
   # freeipa

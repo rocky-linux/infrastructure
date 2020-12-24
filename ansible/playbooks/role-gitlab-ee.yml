@@ -28,6 +28,10 @@
         state: present
 
   roles:
+    - role: geerlingguy.certbot
+      state: present
+      when: not gitlab_create_self_signed_cert
+
     - role: geerlingguy.gitlab
       state: present
 
