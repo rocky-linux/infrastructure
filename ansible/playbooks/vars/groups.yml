@@ -48,3 +48,11 @@ ipagroups:
       - hostman
       - kerbman
       - rockykoji
+  - group: iam
+    description: Rocky Linux Identity Management
+    user:
+      - label
+  - group: releng
+    description: Rocky Linux Release Engineering
+    user:
+      - label

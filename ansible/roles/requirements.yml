@@ -26,5 +26,6 @@ collections:
     version: 0.3.1
   - name: community.general
   - name: community.mysql
+  - name: community.rabbitmq
   - name: ansible.posix
   - name: ktdreyer.koji_ansible
