@@ -13,5 +13,6 @@ rabbitmq_tls_key: "/etc/pki/tls/private/{{ ansible_fqdn }}.key"
 
 # rabbitmq cluster list and information should be defined in hostvars to ensure
 # that the configuration is idempotent.
-#rabbitmq_cluster_staging_list:
-#rabbitmq_cluster_staging_name:
+#rabbitmq_cluster_list:
+#rabbitmq_cluster_name:
+#rabbitmq_env:
