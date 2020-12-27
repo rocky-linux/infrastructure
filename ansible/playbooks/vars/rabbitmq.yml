@@ -13,6 +13,22 @@ rabbitmq_tls_key: "/etc/pki/tls/private/{{ ansible_fqdn }}.key"
 
 # rabbitmq cluster list and information should be defined in hostvars to ensure
 # that the configuration is idempotent.
-#rabbitmq_cluster_list:
 #rabbitmq_cluster_name:
 #rabbitmq_env:
+
+# THIS IS DYNAMIC. IT'S ADVISED IT NOT BE STATIC.
+# This should be changed depending on how inventory is managed. For example, if
+# it's not possible to have "staging inventory" as opposed to a "production"
+# inventory, you would likely have a different name than just "rabbitmq". It is
+# also possible there will be more than one cluster, so these must be taken
+# into account when setting this variable.
+rabbitmq_cluster_list: "{{ groups['rabbitmq'] }}"
+
+# Messaging queues are generally private
+rabbitmq_private: true
+ipa_getcert_requested_hostnames:
+  - name: "{{ ansible_fqdn }}"
+    owner: rabbitmq
+    key_location: "{{ rabbitmq_tls_key }}"
+    cert_location: "{{ rabbitmq_tls_cert }}"
+    postcmd: "/bin/systemctl restart rabbitmq-server"

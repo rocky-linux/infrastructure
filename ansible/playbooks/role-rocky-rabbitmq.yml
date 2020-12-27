@@ -60,6 +60,7 @@
   roles:
     - role: rockylinux.ipagetcert
       state: present
+      when: rabbitmq_private
 
     - role: rockylinux.rabbitmq
       state: present
