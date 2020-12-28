@@ -17,7 +17,7 @@ makestep 1.0 3
 {% if chrony_server is sameas true %}
 allow {{ chrony_allow_cidr }}
 bindaddress 0.0.0.0
-{% else %} 
+{% else %}
 # Else If Client Deny NTP client access.
 deny all
 {% endif %}
@@ -31,7 +31,7 @@ cmdallow
 logchange 0.5
 
 # Specify directory for log files.
-logdir {{ chrony_logdir }} 
+logdir {{ chrony_logdir }}
 
 # Enable kernel synchronization of the real-time clock (RTC).
 rtcsync

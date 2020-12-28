@@ -21,4 +21,3 @@ The main branch is the top level branch that should, in most circumstances, not 
 
 * main
 * develop
-

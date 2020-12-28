@@ -46,7 +46,7 @@ use the same Grafana instance. ELK and Graylog are also worth considering.
 
 ## Responsiblities
 
-The monitoring team cannot realistically be responsible for how every single 
+The monitoring team cannot realistically be responsible for how every single
 is monitored. Prometheus has a huge library of exporters for almost everything.
 
 The monitoring team can be responsible for ensuring that the infrastructure is

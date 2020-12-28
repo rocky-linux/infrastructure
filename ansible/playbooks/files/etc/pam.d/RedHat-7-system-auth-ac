@@ -31,4 +31,3 @@ session     optional      pam_oddjob_mkhomedir.so umask=0077
 session     [success=1 default=ignore] pam_succeed_if.so service in crond quiet use_uid
 session     required      pam_unix.so
 session     optional      pam_sss.so
-
