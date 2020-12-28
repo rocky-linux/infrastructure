@@ -16,8 +16,8 @@ roles:
   - name: rockylinux.kojihub
     src: https://github.com/rocky-linux/ansible-role-kojihub
     version: main
-  - name: rockylinux.mqtt
-    src: https://github.com/rocky-linux/ansible-role-mqtt
+  - name: rockylinux.rabbitmq
+    src: https://github.com/rocky-linux/ansible-role-rabbitmq
     version: main
 
 collections:
@@ -29,3 +29,4 @@ collections:
   - name: community.rabbitmq
   - name: ansible.posix
   - name: ktdreyer.koji_ansible
+  - name: netbox.netbox

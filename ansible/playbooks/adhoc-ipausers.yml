@@ -14,25 +14,25 @@
       assert:
         that:
           - ipaadmin_password | mandatory
-          - ipaName | mandatory
-          - ipaFirst | mandatory
-          - ipaLast | mandatory
-          - ipaEmail | mandatory
-          - ipaPassword | mandatory
-          - ipaTitle | mandatory
+          - ipa_name | mandatory
+          - ipa_first | mandatory
+          - ipa_last | mandatory
+          - ipa_email | mandatory
+          - ipa_password | mandatory
+          - ipa_title | mandatory
         success_msg: "Required variables provided"
         fail_msg: "We are missing user information or ipa admin password"
 
     - name: "Creating User Account"
       freeipa.ansible_freeipa.ipauser:
         ipaadmin_password: "{{ ipaadmin_password }}"
-        name: "{{ ipaName }}"
-        first: "{{ ipaFirst }}"
-        last: "{{ ipaLast }}"
-        email: "{{ ipaEmail }}"
-        password: "{{ ipaPassword }}"
-        title: "{{ ipaTitle }}"
-        loginshell: "{{ ipaLoginshell|default('/sbin/nologin', True) }}"
+        name: "{{ ipa_name }}"
+        first: "{{ ipa_first }}"
+        last: "{{ ipa_last }}"
+        email: "{{ ipa_email }}"
+        password: "{{ ipa_password }}"
+        title: "{{ ipa_title }}"
+        loginshell: "{{ ipa_loginshell|default('/sbin/nologin', True) }}"
         update_password: on_create
       tags:
         - users
