@@ -69,7 +69,7 @@
 - name: Apply fcontext to GitLab unix socket for nginx
   command: restorecon -v /var/opt/gitlab/gitlab-workhorse/sockets/socket
   register: restorecon_result
-  changed_when: "restorecon_result == 0"
+  changed_when: "restorecon_result.rc == 0"
 
 - name: Add firewall rules - http/s
   ansible.posix.firewalld:
