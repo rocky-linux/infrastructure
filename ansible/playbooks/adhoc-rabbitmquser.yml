@@ -1,6 +1,7 @@
 ---
 # This playbook is meant to be used with callable variables, like adhoc or AWX.
 # What: Creates RabbitMQ Users
+# The username is the required parameter
 
 - name: Create a User
   hosts: rabbitmq

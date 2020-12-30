@@ -4,6 +4,7 @@
   hosts: rabbitmq
   become: true
   vars_files:
+  - vars/common.yml
   - vars/encpass.yml
   - vars/rabbitmq.yml
 

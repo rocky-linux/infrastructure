@@ -16,6 +16,10 @@ rabbitmq_tls_key: "/etc/pki/tls/private/{{ ansible_fqdn }}.key"
 #rabbitmq_cluster_name:
 #rabbitmq_env:
 
+# Federation / Public Queues
+rabbitmq_enable_public: false
+#pubsub_federation_pass:
+
 # THIS IS DYNAMIC. IT'S ADVISED IT NOT BE STATIC.
 # This should be changed depending on how inventory is managed. For example, if
 # it's not possible to have "staging inventory" as opposed to a "production"
@@ -23,6 +27,7 @@ rabbitmq_tls_key: "/etc/pki/tls/private/{{ ansible_fqdn }}.key"
 # also possible there will be more than one cluster, so these must be taken
 # into account when setting this variable.
 rabbitmq_cluster_list: "{{ groups['rabbitmq'] }}"
+rabbitmq_ldap_servers: "{{ rocky_ipaserver_list }}"
 
 # Messaging queues are generally private
 rabbitmq_private: true

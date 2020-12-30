@@ -1,0 +1,8 @@
+---
+rocky_ldap_bind_dn: "uid=binder,cn=sysaccounts,cn=etc,dc=rockylinux,dc=org"
+rocky_ldap_bind_pw: "ThisIsNotThePassword!"
+rocky_ldap_user_basedn: "cn=users,cn=accounts,dc=rockylinux,dc=org"
+rocky_ldap_group_basedn: "cn=groups,cn=accounts,dc=rockylinux,dc=org"
+rocky_ldap_account_basedn: "cn=accounts,dc=rockylinux,dc=org"
+# Requires jinja 2.9+
+rocky_ipaserver_list: "{{ groups['ipaserver'] + groups['ipareplicas'] }}"

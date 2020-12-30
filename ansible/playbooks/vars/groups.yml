@@ -42,12 +42,25 @@ ipagroups:
       - rfelsburg
       - tg
       - hbjy
+  - group: gitusers
+    description: Rocky Linux GitLab Users
+    user:
+      - label
+      - neil
+      - rlh
+      - rfelsburg
+      - tg
+      - hbjy
+      - rockyautomation
   - group: services
     description: Rocky Linux Service Accounts
     user:
       - hostman
       - kerbman
       - rockykoji
+      - pubsub_federation
+      - rockypubsub
+      - rockyautomation
   - group: iam
     description: Rocky Linux Identity Management
     user:
@@ -56,3 +69,5 @@ ipagroups:
     description: Rocky Linux Release Engineering
     user:
       - label
+  - group: mq_pub_readonly
+    description: RabbitMQ ReadOnly
