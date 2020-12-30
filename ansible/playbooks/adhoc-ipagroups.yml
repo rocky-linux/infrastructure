@@ -14,17 +14,17 @@
       assert:
         that:
           - ipaadmin_password | mandatory
-          - ipaGroup | mandatory
-          - ipaDescription | mandatory
-          - ipaPosix | mandatory
+          - ipa_group | mandatory
+          - ipa_description | mandatory
+          - ipa_posix | mandatory
         success_msg: "Required variables provided"
         fail_msg: "We are missing group information or ipa admin password"
 
     - name: "Creating Mandatory Groups"
       freeipa.ansible_freeipa.ipagroup:
         ipaadmin_password: "{{ ipaadmin_password }}"
-        name: "{{ ipaGroup }}"
-        description: "{{ ipaDescription }}"
-        nonposix: "{{ ipaPosix }}"
+        name: "{{ ipa_group }}"
+        description: "{{ ipa_description }}"
+        nonposix: "{{ ipa_posix }}"
       tags:
         - groups

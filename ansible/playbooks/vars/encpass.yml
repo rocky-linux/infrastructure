@@ -16,3 +16,6 @@ ipsilon_db_password: !vault |
 koji_db_pass: !vault |
           $ANSIBLE_VAULT;1.1;AES256
           REDACTED
+pubsub_federation_pass: !vault |
+          $ANSIBLE_VAULT;1.1;AES256
+          REDACTED

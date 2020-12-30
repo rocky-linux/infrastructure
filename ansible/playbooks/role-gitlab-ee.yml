@@ -4,6 +4,7 @@
   hosts: gitlabservers
   become: true
   vars_files:
+  - vars/common.yml
   - vars/gitlab.yml
 
   # This is to try to avoid the handler issue in pre/post tasks

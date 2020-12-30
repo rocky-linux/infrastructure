@@ -21,3 +21,24 @@ svcusers:
     password: ThisIsNotMyPassword1!
     title: System Account - Koji Manager
     loginshell: /sbin/nologin
+  - name: pubsub_federation
+    first: pubsub
+    last: federation
+    email: infrastructure@rockylinux.org
+    password: ThisIsNotMyPassword1!
+    title: System Account - pubsub federator
+    loginshell: /sbin/nologin
+  - name: rockypubsub
+    first: rocky
+    last: pubsub
+    email: infrastructure@rockylinux.org
+    password: ThisIsNotMyPassword1!
+    title: System Account - pubsub
+    loginshell: /sbin/nologin
+  - name: rockyautomation
+    first: Rocky
+    last: Automation
+    email: infrastructure@rockylinux.org
+    password: ThisIsNotMyPassword1!
+    title: System Account - Automation
+    loginshell: /sbin/nologin
