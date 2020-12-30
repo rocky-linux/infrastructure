@@ -1,0 +1,34 @@
+---
+# This playbook is meant to be used with callable variables, like adhoc or AWX.
+# What: Creates RabbitMQ Users
+
+- name: Create a User
+  hosts: rabbitmq
+  become: false
+  gather_facts: false
+  vars_files:
+  - vars/encpass.yml
+  - vars/rabbitmq.yml
+
+  tasks:
+    - name: "Checking for user variables"
+      assert:
+        that:
+          - username != "admin"
+          - username != "guest"
+          - username != "mq-monitoring"
+        success_msg: "Required variables provided"
+        fail_msg: "Username is reserved"
+      tags:
+        - rabbitmq
+
+    - name: "Creating User Account"
+      community.rabbitmq.rabbitmq_user:
+        user: "{{ username }}"
+        vhost: "{{ vhost }}"
+        read_priv: "^$"
+        write_priv: "amq\\.topic"
+        configure_priv: "^$"
+        state: present
+      tags:
+        - rabbitmq
