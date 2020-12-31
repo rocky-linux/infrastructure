@@ -39,6 +39,9 @@
     - name: Configure grub
       import_tasks: tasks/grub.yml
 
+    - name: Configure common scripts
+      import_tasks: tasks/scripts.yml
+
   post_tasks:
     - name: Touching run file that ansible has ran here
       file:
