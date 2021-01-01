@@ -1,7 +1,7 @@
 ---
 # koji hub settings
 # This should be the front-facing URL of koji
-koji_url_name: koji.rockylinux.org
+#koji_url_name: koji.rockylinux.org
 
 # Use an internal CA (IPA)
 koji_internal_ca: true
@@ -42,7 +42,7 @@ koji_hub_proxy_principals: "HTTP/{{ inventory_hostname }}@ROCKYLINUX.ORG"
 koji_hub_keytab: /etc/keytabs/host.keytab
 koji_hub_principal_format: compile/%s@ROCKYLINUX.ORG
 # This should be sufficient even for LE
-koji_hub_ca: "{{ koji_web_cacert  }}"
+koji_hub_ca: "{{ koji_web_cacert }}"
 
 # Koji FAS Syncing
 # This isn't implemented yet in the role

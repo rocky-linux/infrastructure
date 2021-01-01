@@ -22,7 +22,6 @@ PIDFILE="$LOCKDIR/pid"
 
 function cleanup {
     rm -rf "$LOCKDIR"
-
 }
 
 RESTORE_UMASK=$(umask -p)
@@ -33,9 +32,9 @@ if [ $? != 0  ]; then
     if [ -n "$PID"  ] && /bin/ps $PID > /dev/null
     then
         if [ "$SILENT" != "yes"  ]; then
-	    echo "$PID is still running"
-	    /bin/ps -o user,pid,start,time,comm $PID
-	fi
+            echo "$PID is still running"
+            /bin/ps -o user,pid,start,time,comm $PID
+        fi
         exit 1;
     else
         echo "$LOCKDIR exists but $PID is dead"
