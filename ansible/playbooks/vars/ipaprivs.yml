@@ -26,3 +26,10 @@ iparoles:
       - "Netgroups Administrators"
     user:
       - hostman
+  - role: IPA User Managers
+    description: Rocky IPA User Managers responsible for idm flow
+    privileges:
+      - "Group Administrators"
+      - "Stage User Administrators"
+      - "User Administrators"
+      - "FAS Agreement Administrators"
