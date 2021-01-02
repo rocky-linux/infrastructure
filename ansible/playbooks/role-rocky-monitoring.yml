@@ -13,7 +13,9 @@
       assert:
         that:
           - "not no_ansible.stat.exists"
-        msg: "/etc/no-ansible exists - skipping run on this node"
+        success_msg: "We are able to run on this node"
+        fail_msg: "/etc/no-ansible exists - skipping run on this node"
+
     - name: Install SELinux packages
       package:
         name: python3-policycoreutils.noarch
@@ -50,5 +52,5 @@
     - name: Open firewall for node-exporter
       ansible.posix.firewalld:
         port: 9100/tcp
-        permanent: yes
+        permanent: true
         state: enabled
