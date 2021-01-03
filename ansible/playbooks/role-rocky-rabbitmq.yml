@@ -28,7 +28,7 @@
     # We have separate passwords per rabbitmq env
     - name: Import rabbitmq passwords
       include_vars:
-        file: "vars/rabbitmq_{{ rabbitmq_env }}.yml"
+        file: "vars/vaults/rabbitmq_{{ rabbitmq_env }}.yml"
 
     # EPEL and PowerTools are required for ipsilon to function
     # I also couldn't find an ansible built-in to do this
