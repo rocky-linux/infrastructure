@@ -6,4 +6,4 @@ rocky_ldap_account_basedn: "cn=accounts,dc=rockylinux,dc=org"
 # Requires jinja 2.9+
 rocky_ipaserver_list: "{{ groups['ipaserver'] + groups['ipareplicas'] }}"
 # This will need to be vaulted
-rocky_ldap_bind_pw: "ThisIsNotThePassword!"
+# rocky_ldap_bind_pw: "ThisIsNotThePassword!"

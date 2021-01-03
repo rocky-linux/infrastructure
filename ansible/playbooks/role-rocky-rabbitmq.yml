@@ -5,7 +5,7 @@
   become: true
   vars_files:
   - vars/common.yml
-  - vars/encpass.yml
+  - vars/vaults/encpass.yml
   - vars/rabbitmq.yml
 
   # This is to try to avoid the handler issue in pre/post tasks

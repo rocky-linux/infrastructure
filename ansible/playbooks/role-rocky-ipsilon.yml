@@ -4,7 +4,7 @@
   hosts: ipsilon
   become: true
   vars_files:
-  - vars/encpass.yml
+  - vars/vaults/encpass.yml
   - vars/ipsilon.yml
 
   # This is to try to avoid the handler issue in pre/post tasks

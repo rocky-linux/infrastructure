@@ -5,8 +5,8 @@
   hosts: ipaclients
   become: true
   vars_files:
-  - vars/encpass.yml
-  - vars/ipaclient.yml
+  - vars/vaults/encpass.yml
+  - vars/ipa/ipaclient.yml
 
   pre_tasks:
     - name: Check if ansible cannot be run here

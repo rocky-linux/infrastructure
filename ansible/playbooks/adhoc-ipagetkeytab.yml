@@ -18,7 +18,7 @@
   become: true
   gather_facts: false
   vars_files:
-    - vars/encpass.yml
+    - vars/vaults/encpass.yml
 
   tasks:
     - name: "Checking for user variables"

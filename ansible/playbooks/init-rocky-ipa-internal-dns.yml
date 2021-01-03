@@ -5,9 +5,9 @@
   become: false
   gather_facts: false
   vars_files:
-  - vars/encpass.yml
-  - vars/rdns.yml
-  - vars/fdns.yml
+  - vars/vaults/encpass.yml
+  - vars/ipa/rdns.yml
+  - vars/ipa/fdns.yml
 
   tasks:
     - name: "Checking for user variables"
