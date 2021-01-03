@@ -1,0 +1,44 @@
+---
+# This playbook is meant to be used with callable variables, like adhoc or AWX.
+# What: Creates dns records in the idm infrastructure based on the variables
+#       provided.
+# What is expected:
+#  -> ipaadmin_password: This should be the password of the admin user
+#  -> ipa_admin: The admin user that has kerberos management capabilities (default is admin)
+#  -> ipa_zone: The zone name (eg, rockylinux.org)
+#  -> ipa_name: The shortname (eg, buildbox instead of buildbox.rockylinux.org)
+#  -> ipa_name_type: Type of record (eg, CNAME, A, AAAA, PTR)
+#  -> ipa_name_value: Record value (depends on type of record)
+#  -> ipa_presence: present or absent
+
+- name: Create a DNS Record
+  hosts: ipaserver
+  become: false
+  gather_facts: false
+  vars_files:
+  - vars/vaults/encpass.yml
+
+  tasks:
+    - name: "Checking for user variables"
+      assert:
+        that:
+          - ipaadmin_password | mandatory
+          - ipa_zone | mandatory
+          - ipa_name | mandatory
+          - ipa_name_type | mandatory
+          - ipa_name_value | mandatory
+          - ipa_presence | mandatory
+        success_msg: "Required variables provided"
+        fail_msg: "We are missing zone information or ipa admin password"
+
+    - name: "Creating DNS Record"
+      freeipa.ansible_freeipa.ipadnsrecord:
+        ipaadmin_principal: "{{ ipa_admin|default('admin') }}"
+        ipaadmin_password: "{{ ipaadmin_password }}"
+        zone_name: "{{ ipa_zone }}"
+        name: "{{ ipa_name }}"
+        record_type: "{{ ipa_name_type }}"
+        record_value: "{{ ipa_name_value }}"
+        state: "{{ ipa_presence }}"
+      tags:
+        - dns
