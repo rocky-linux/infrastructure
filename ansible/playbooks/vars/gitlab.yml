@@ -63,7 +63,7 @@ gitlab_nginx_listen_https: "false"
 
 gitlab_default_theme: 2
 
-gitlab_external_db: false
+gitlab_external_db: true
 gitlab_external_db_host: db.rockylinux.org
 gitlab_external_db_user: gitlab
-gitlab_external_db_password: gitlab
+gitlab_external_db_password: "{{ gitlab_db_pass }}"

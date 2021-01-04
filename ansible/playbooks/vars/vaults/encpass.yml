@@ -22,3 +22,6 @@ koji_db_pass: !vault |
 pubsub_federation_pass: !vault |
           $ANSIBLE_VAULT;1.1;AES256
           REDACTED
+gitlab_db_pass: !vault |
+          $ANSIBLE_VAULT;1.1;AES256
+          REDACTED
