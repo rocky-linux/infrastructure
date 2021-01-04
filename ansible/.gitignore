@@ -11,5 +11,5 @@ collections/*
 !README.md
 
 # Ignore all vaults
-vars/vaults/*
-!vars/vaults/README.md
+playbooks/vars/vaults/*
+!playbooks/vars/vaults/README.md
