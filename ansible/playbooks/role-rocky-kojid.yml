@@ -1,11 +1,11 @@
 ---
 # Stands up an ipsilon instance for simple SSO
-- name: Configure ipsilon server
-  hosts: ipsilon
+- name: Configure koji hub and web server
+  hosts: kojihub
   become: true
   vars_files:
   - vars/vaults/encpass.yml
-  - vars/ipsilon.yml
+  - vars/kojid.yml
 
   # This is to try to avoid the handler issue in pre/post tasks
   handlers:
@@ -23,6 +23,19 @@
           - "not no_ansible.stat.exists"
         success_msg: "We are able to run on this node"
         fail_msg: "/etc/no-ansible exists - skipping run on this node"
+
+    - name: Check for keytabs - kojid
+      stat:
+        path: /etc/kojid.keytab
+      register: kojid_keytab
+      changed_when: "1 != 1"
+
+    - name: Verify keytab
+      assert:
+        that:
+          - "kojid_keytab.stat.exists"
+        success_msg: "It is likely we have all keytabs"
+        fail_msg: "There are no keytabs. Please build the keytabs."
 
     # EPEL and PowerTools are required for ipsilon to function
     # I also couldn't find an ansible built-in to do this
@@ -44,21 +57,22 @@
       tags:
         - packages
 
-    - name: Install arrfab ipsilon repo
+    - name: Install rocky-tools copr
       yum_repository:
-        name: copr:copr.fedorainfracloud.org:arrfab:noggin
-        description: Copr repo for noggin owned by arrfab
+        name: copr:copr.fedorainfracloud.org:nalika:rockylinux-tool
+        description: Copr repo for rockylinux-tools owned by nalika
         file: copr_repos
-        baseurl: https://download.copr.fedorainfracloud.org/results/arrfab/noggin/epel-8-$basearch/
+        baseurl: https://download.copr.fedorainfracloud.org/results/nalika/rockylinux-tools/epel-8-$basearch/
         gpgcheck: true
-        gpgkey: https://download.copr.fedorainfracloud.org/results/arrfab/noggin/pubkey.gpg
+        gpgkey: https://download.copr.fedorainfracloud.org/results/nalika/rockylinux-tools/pubkey.gpg
         enabled: true
 
-  # For now, this is sufficient for testing with a localhost cert. In the
-  # future we will come up with a way to issue either an internal cert with a
-  # front-facing externally signed cert, or just external altogether.
+  # Right now, we are not sure how or where we'll get our certificates. So we
+  # are presenting a choice by setting a variable, koji_internal_ca. There is a
+  # change that we will have to do internal certs for mqtt anyway.
+  # TODO: We need an MQTT role and pre_tasks for the keytabs for this role
   roles:
-    - role: rockylinux.ipsilon
+    - role: rockylinux.kojid
       state: present
 
   post_tasks:

@@ -14,6 +14,13 @@ svcusers:
     password: ThisIsNotMyPassword1!
     title: System Account - Kerberos Key Manager
     loginshell: /sbin/nologin
+  - name: userman
+    first: User
+    last: Manager
+    email: infrastructure@rockylinux.org
+    password: ThisIsNotMyPassword1!
+    title: System Account - User Manager
+    loginshell: /sbin/nologin
   - name: rockykoji
     first: Koji
     last: Manager

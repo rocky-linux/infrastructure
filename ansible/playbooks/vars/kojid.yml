@@ -1,0 +1,15 @@
+---
+# vars for kojid
+
+kojid_vendor: Rocky
+kojid_packager: infrastructure@rockylinux.org
+kojid_distribution: Rocky
+# These three should probably be specified by special vars
+# kojid_web_url: https://koji.rockylinux.org/koji
+# kojid_hub_url: https://koji.rockylinux.org/kojihub
+# kojid_files_url: https://koji.rockylinux.org/kojifiles
+
+kojid_ca_bundle: /etc/pki/tls/certs/ca-bundle.crt
+kojid_keytab: /etc/kojid.keytab
+kojid_smtp_host: smtp.rockylinux.org
+kojid_allowed_scm: "git.centos.org:/* git.rockylinux.org:/*"

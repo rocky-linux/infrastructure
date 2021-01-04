@@ -1,18 +1,24 @@
 ---
 # This playbook is meant to be used with callable variables, like adhoc or AWX.
+# Special thanks to @remyabel for assisting in improving this playbook with
+# extended security posture
 # What: Pulls keytabs for a kerberos service
 # What is expected:
-#  -> ipa_service, using this format: SVC/hostname.rockylinux.org@ROCKYLINUX.ORG
+#  -> host: The host in the inventory, this MUST be FQDN.
+#  -> ipa_service: using this format: SVC/hostname.rockylinux.org@ROCKYLINUX.ORG
+#     Note: This service MUST exist
 #  -> ipa_keytab_fullpath: The full path to the keytab. Example: /etc/gitlab/gitlab.keytab
 #  -> ipa_server: This needs to be one of the IPA servers
-#  -> ipa_owner: If applicable, the local account that will own this keytab (eg for Apache)
+#  -> ipa_owner: If applicable, the local account that can read this keytab (eg apache)
+#  -> ipa_admin: The admin user that has kerberos management capabilities (default is admin)
+#  -> ipaadmin_password: This should be the password of the admin user
 
 - name: Pull keytab from IPA
   hosts: "{{ host }}"
-  become: false
+  become: true
   gather_facts: false
   vars_files:
-    - vars/encpass.yml
+    - vars/vaults/encpass.yml
 
   tasks:
     - name: "Checking for user variables"
@@ -25,21 +31,106 @@
         success_msg: "Required variables provided"
         fail_msg: "We are missing required information"
 
-    - name: "Pulling keytab"
-      command: "ipa-getkeytab -s {{ ipa_server }} -p {{ ipa_service }} -k {{ ipa_keytab_fullpath }}"
-      register: ipakeytab_result
-      changed_when:
-        - ipakeytab_result.rc == 0
-      tags:
-        - keytab
+    - name: "Check that a keytab doesn't already exist"
+      stat:
+        path: "{{ ipa_keytab_fullpath }}"
+      register: keytab_status
+      check_mode: false
+      changed_when: "1 != 1"
 
-    - name: "Set ownership if applicable"
+    - name: "Verify keytab existence"
+      assert:
+        that:
+          - "not keytab_status.stat.exists"
+        success_msg: "Keytab doesn't exist, moving on..."
+        fail_msg: "Keytab with that name already exists, skipping."
+
+    - name: "Grant {{ host }} and {{ ipa_admin }} access to the service keytab"
+      delegate_to: "{{ ipa_server }}"
+      freeipa.ansible_freeipa.ipaservice:
+        ipaadmin_principal: "{{ ipa_admin }}"
+        ipaadmin_password: "{{ ipaadmin_password }}"
+        name: "{{ ipa_service }}"
+        allow_retrieve_keytab_user:
+          - "{{ ipa_admin }}"
+        allow_retrieve_keytab_host:
+          - "{{ host }}"
+        action: member
+
+    - name: "Grant {{ host }} and {{ ipa_admin }} access to the host keytab"
+      delegate_to: "{{ ipa_server }}"
+      freeipa.ansible_freeipa.ipahost:
+        ipaadmin_principal: "{{ ipa_admin }}"
+        ipaadmin_password: "{{ ipaadmin_password }}"
+        name: "{{ host }}"
+        state: present
+        allow_retrieve_keytab_user:
+          - "{{ ipa_admin }}"
+        managedby_host: "{{ host }}"
+        action: member
+
+    - name: "Get kerberos ticket"
+      delegate_to: "{{ ipa_server }}"
+      shell: "set -o pipefail && echo \"{{ ipaadmin_password }}\" | kinit {{ ipa_admin }}"
+      check_mode: false
+      changed_when: "1 != 1"
+      when: not keytab_status.stat.exists
+
+    - name: "Attempt to retrieve keytab"
+      delegate_to: "{{ ipa_server }}"
+      command: "ipa-getkeytab -r -s {{ ipa_server }} -p {{ ipa_service }} -k /tmp/{{ host }}.kt"
+      register: ret_result
+      check_mode: false
+      changed_when: "1 != 1"
+      failed_when: "not ('Keytab successfully retrieved' in ret_result.stderr or 'krbPrincipalKey not found' in ret_result.stderr)"
+
+    - name: "Create keytab if it didn't exist, based on the last task"
+      delegate_to: "{{ ipa_server }}"
+      command: "ipa-getkeytab -s {{ ipa_server }} -p {{ ipa_service }} -k /tmp/{{ host }}.kt"
+      when: "'krbPrincipalKey not found' in ret_result.stderr"
+
+    - name: "Destroy admin ticket"
+      delegate_to: "{{ ipa_server }}"
+      command: "kdestroy -A"
+      register: kdestroy_result
+      changed_when: "kdestroy_result.rc == 0"
+
+    - name: "Put the keytab into a register"
+      delegate_to: "{{ ipa_server }}"
+      command: "base64 /tmp/{{ host }}.kt"
+      register: keytab
+      check_mode: false
+      changed_when: "keytab.rc == 0"
+
+    - name: "Destroy local keytab"
+      delegate_to: "{{ ipa_server }}"
+      file:
+        path: "/tmp/{{ host }}.kt"
+        state: absent
+
+    - name: "Deploy keytab to {{ host }} from register"
+      copy:
+        dest: "{{ ipa_keytab_fullpath }}.b64"
+        content: "{{ keytab.stdout }}"
+        owner: "{{ ipa_owner|default('root') }}"
+        group: "{{ ipa_owner|default('root') }}"
+        mode: '0600'
+
+    - name: "Decode keytab"
+      shell: "umask 077 && base64 -d {{ ipa_keytab_fullpath }}.b64 > {{ ipa_keytab_fullpath }}"
+      changed_when: "1 != 1"
+
+    - name: "Destroy encoded keytab"
+      file:
+        path: "{{ ipa_keytab_fullpath }}.b64"
+        state: absent
+
+    - name: "Set ownership if applicable, otherwise it's root owned"
       file:
         path: "{{ ipa_keytab_fullpath }}"
-        owner: "{{ ipa_owner }}"
-        group: "{{ ipa_owner }}"
+        owner: "{{ ipa_owner|default('root') }}"
+        group: "{{ ipa_owner|default('root') }}"
         mode: '0600'
         state: file
-      when: ipa_owner
       tags:
         - keytab

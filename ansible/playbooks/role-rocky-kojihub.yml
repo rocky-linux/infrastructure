@@ -4,7 +4,7 @@
   hosts: kojihub
   become: true
   vars_files:
-  - vars/encpass.yml
+  - vars/vaults/encpass.yml
   - vars/kojihub.yml
 
   # This is to try to avoid the handler issue in pre/post tasks
@@ -21,7 +21,42 @@
       assert:
         that:
           - "not no_ansible.stat.exists"
-        msg: "/etc/no-ansible exists - skipping run on this node"
+        success_msg: "We are able to run on this node"
+        fail_msg: "/etc/no-ansible exists - skipping run on this node"
+
+    - name: Check for keytabs - web
+      stat:
+        path: /etc/keytabs/koji-web.keytab
+      register: koji_keytab
+      changed_when: "1 != 1"
+
+    - name: Check for keytabs - kojira
+      stat:
+        path: /etc/keytabs/kojira.keytab
+      register: kojira_keytab
+      changed_when: "1 != 1"
+
+    - name: Check for keytabs - gc
+      stat:
+        path: /etc/keytabs/koji-gc.keytab
+      register: gc_keytab
+      changed_when: "1 != 1"
+
+    - name: Check for keytabs - host
+      stat:
+        path: /etc/keytabs/host.keytab
+      register: host_keytab
+      changed_when: "1 != 1"
+
+    - name: Verify keytab
+      assert:
+        that:
+          - "koji_keytab.stat.exists"
+          - "kojira_keytab.stat.exists"
+          - "gc_keytab.stat.exists"
+          - "host_keytab.stat.exists"
+        success_msg: "It is likely we have all keytabs"
+        fail_msg: "There are no keytabs. Please build the keytabs."
 
     # EPEL and PowerTools are required for ipsilon to function
     # I also couldn't find an ansible built-in to do this

@@ -91,7 +91,8 @@ At a minimum, there should be `pre_tasks` and `post_tasks` that can judge whethe
       assert:
         that:
           - "not no_ansible.stat.exists"
-        msg: "/etc/no-ansible exists - skipping run on this node"
+        success_msg: "We are able to run on this node"
+        fail_msg: "/etc/no-ansible exists - skipping run on this node"
 
   # Import roles/tasks here
 

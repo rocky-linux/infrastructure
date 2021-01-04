@@ -1,5 +1,7 @@
 ---
 # koji hub settings
+# This should be the front-facing URL of koji
+#koji_url_name: koji.rockylinux.org
 
 # Use an internal CA (IPA)
 koji_internal_ca: true
@@ -13,9 +15,9 @@ koji_db_user: koji
 # This will need to change when koji_postgresql_vm is false
 koji_db_host: "{{ ansible_fqdn }}"
 
-koji_web_url: "https://{{ ansible_fqdn }}/koji"
-koji_hub_url: "https://{{ ansible_fqdn }}/kojihub"
-koji_files_url: "https://{{ ansible_fqdn }}/kojifiles"
+koji_web_url: "https://{{ koji_url_name }}/koji"
+koji_hub_url: "https://{{ koji_url_name }}/kojihub"
+koji_files_url: "https://{{ koji_url_name }}/kojifiles"
 
 # The IPA internal CA is combined with the others
 koji_web_cacert: /etc/pki/tls/certs/ca-bundle.crt
@@ -35,9 +37,9 @@ koji_admin_localuser: true
 koji_admin_localuser_name: koji
 
 # Hub Settings
-koji_hub_principal: "HTTP/{{ ansible_fqdn }}@ROCKYLINUX.ORG"
-koji_hub_proxy_principals: koji/kojiweb@ROCKYLINUX.ORG
-koji_hub_keytab: /etc/koji.keytab
+koji_hub_principal: "host/kojihub@ROCKYLINUX.ORG"
+koji_hub_proxy_principals: "HTTP/{{ inventory_hostname }}@ROCKYLINUX.ORG"
+koji_hub_keytab: /etc/keytabs/host.keytab
 koji_hub_principal_format: compile/%s@ROCKYLINUX.ORG
 # This should be sufficient even for LE
 koji_hub_ca: "{{ koji_web_cacert }}"
@@ -46,15 +48,6 @@ koji_hub_ca: "{{ koji_web_cacert }}"
 # This isn't implemented yet in the role
 koji_fas_sync: false
 koji_fas_url: https://accounts.rockylinux.org
-
-# Not implemented yet
-koji_hub_plugin_mqtt_host: mqtt.rockylinux.org
-koji_hub_plugin_mqtt_topic: koji
-koji_hub_plugin_mqtt_ca: "{{ koji_hub_ca }}"
-koji_hub_plugin_mqtt_tls_cert: /etc/pki/tls/certs/mqtt.pem
-koji_hub_plugin_mqtt_tls_key: /etc/pki/tls/certs/mqtt.key
-koji_hub_plugin_mqtt_excluded_tags:
-  - testing-tag
 
 # IPA Certs if Required
 ipa_getcert_requested_hostnames:

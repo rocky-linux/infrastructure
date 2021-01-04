@@ -16,6 +16,9 @@ roles:
   - name: rockylinux.kojihub
     src: https://github.com/rocky-linux/ansible-role-kojihub
     version: main
+  - name: rockylinux.kojid
+    src: https://github.com/rocky-linux/ansible-role-kojid
+    version: main
   - name: rockylinux.rabbitmq
     src: https://github.com/rocky-linux/ansible-role-rabbitmq
     version: main

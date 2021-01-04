@@ -5,7 +5,7 @@
   become: true
   vars_files:
   - vars/common.yml
-  - vars/encpass.yml
+  - vars/vaults/encpass.yml
   - vars/rabbitmq.yml
 
   # This is to try to avoid the handler issue in pre/post tasks
@@ -22,12 +22,13 @@
       assert:
         that:
           - "not no_ansible.stat.exists"
-        msg: "/etc/no-ansible exists - skipping run on this node"
+        success_msg: "We are able to run on this node"
+        fail_msg: "/etc/no-ansible exists - skipping run on this node"
 
     # We have separate passwords per rabbitmq env
     - name: Import rabbitmq passwords
       include_vars:
-        file: "vars/rabbitmq_{{ rabbitmq_env }}.yml"
+        file: "vars/vaults/rabbitmq_{{ rabbitmq_env }}.yml"
 
     # EPEL and PowerTools are required for ipsilon to function
     # I also couldn't find an ansible built-in to do this
