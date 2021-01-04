@@ -1,4 +1,0 @@
----
-# This will need to be vaulted
-rabbitmq_admin_password: ThisIsNotThePassword!
-rabbitmq_cookie: "X4MYneML6Ppp+ajPuG/qdD64ZjdVT1OJF8XUG/o+"

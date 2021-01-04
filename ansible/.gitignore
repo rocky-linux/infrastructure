@@ -9,3 +9,7 @@ roles/public/*
 #keep fodler holding ansible collections empty
 collections/*
 !README.md
+
+# Ignore all vaults
+playbooks/vars/vaults/*
+!playbooks/vars/vaults/README.md
