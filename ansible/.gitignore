@@ -13,3 +13,7 @@ collections/*
 # Ignore all vaults
 playbooks/vars/vaults/*
 !playbooks/vars/vaults/README.md
+
+# Ignore hidden configs
+playbooks/templates/secret/*
+!playbooks/templates/secret/README.md
