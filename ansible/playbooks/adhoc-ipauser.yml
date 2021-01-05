@@ -13,6 +13,7 @@
     - name: "Checking for user variables"
       assert:
         that:
+          - ipa_admin | mandatory
           - ipaadmin_password | mandatory
           - ipa_name | mandatory
           - ipa_first | mandatory
@@ -25,6 +26,7 @@
 
     - name: "Creating User Account"
       freeipa.ansible_freeipa.ipauser:
+        ipaadmin_principal: "{{ ipa_admin }}"
         ipaadmin_password: "{{ ipaadmin_password }}"
         name: "{{ ipa_name }}"
         first: "{{ ipa_first }}"
