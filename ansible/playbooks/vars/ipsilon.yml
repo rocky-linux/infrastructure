@@ -15,6 +15,7 @@ ipsilon_db_name: rockyipsilon
 ipsilon_httpd_hostname: "{{ inventory_hostname }}"
 
 # apache configuration for ipsilon
+apache_configure: false
 apache_listen_port: 80
 apache_listen_port_ssl: 443
 apache_create_vhosts: true

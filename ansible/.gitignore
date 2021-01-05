@@ -6,7 +6,7 @@ tmp/*
 roles/public/*
 !roles/public/Readme.md
 
-#keep fodler holding ansible collections empty
+#keep folder holding ansible collections empty
 collections/*
 !README.md
 
