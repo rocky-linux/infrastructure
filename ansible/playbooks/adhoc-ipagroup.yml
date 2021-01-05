@@ -20,17 +20,19 @@
           - ipaadmin_password | mandatory
           - ipa_group | mandatory
           - ipa_description | mandatory
-          - ipa_posix | mandatory
+          - ipa_nonposix | mandatory
         success_msg: "Required variables provided"
         fail_msg: "We are missing group information or ipa admin password"
 
-    - name: "Creating Mandatory Groups"
+    - name: "Creating New Group"
       freeipa.ansible_freeipa.ipagroup:
         ipaadmin_principal: "{{ ipa_admin }}"
         ipaadmin_password: "{{ ipaadmin_password }}"
         name: "{{ ipa_group }}"
         description: "{{ ipa_description }}"
-        nonposix: "{{ ipa_posix }}"
+        nonposix: "{{ ipa_nonposix }}"
+        membermanager_user: "{{ ipa_group_manager_user | default(omit) }}"
+        membermanager_group: "{{ ipa_group_manager_group | default(omit) }}"
       tags:
         - groups
 
