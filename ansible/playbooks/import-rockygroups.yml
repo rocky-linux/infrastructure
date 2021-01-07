@@ -7,6 +7,8 @@
     description: "{{ item.description }}"
     nonposix: false
     user: "{{ item.user | default(none) }}"
+    membermanager_user: "{{ item.managers_users | default(omit) }}"
+    membermanager_group: "{{ item.managers_groups | default(omit) }}"
   loop: "{{ ipagroups }}"
   tags:
     - groups

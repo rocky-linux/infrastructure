@@ -13,6 +13,7 @@
     - name: "Checking for user variables"
       assert:
         that:
+          - ipa_admin | mandatory
           - ipaadmin_password | mandatory
           - ipa_service | mandatory
         success_msg: "Required variables provided"
@@ -20,6 +21,7 @@
 
     - name: "Creating Kerberos Service"
       freeipa.ansible_freeipa.ipaservice:
+        ipaadmin_principal: "{{ ipa_admin }}"
         ipaadmin_password: "{{ ipaadmin_password }}"
         name: "{{ ipa_service }}"
         skip_host_check: "{{ ipa_skip_host_check | default(false) }}"
