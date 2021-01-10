@@ -1,11 +1,12 @@
 ---
 # Creates an IPA replica
-
+# Define "host" as a hostgroup name or a single host
 - name: Configure IPA server
-  hosts: ipareplicas
+  hosts: "{{ host }}"
   become: true
   vars_files:
   - vars/vaults/encpass.yml
+  - vars/ipa/ipareplica.yml
 
   # This is to try to avoid the handler issue in pre/post tasks
   handlers:
