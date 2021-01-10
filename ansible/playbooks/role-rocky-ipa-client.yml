@@ -1,8 +1,8 @@
 ---
 # Configures an IPA client for the Rocky infrastructure
-
+# Define "host" as a hostgroup name or a single host
 - name: Configure IPA client
-  hosts: ipaclients
+  hosts: "{{ host }}"
   become: true
   vars_files:
   - vars/vaults/encpass.yml
@@ -20,9 +20,6 @@
           - "not no_ansible.stat.exists"
         success_msg: "We are able to run on this node"
         fail_msg: "/etc/no-ansible exists - skipping run on this node"
-
-#   - name: Check if we can see LDAP srv records
-
 
   roles:
     - role: freeipa.ansible_freeipa.ipaclient

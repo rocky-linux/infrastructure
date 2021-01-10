@@ -5,3 +5,5 @@ ipaclient_realm: ROCKYLINUX.ORG
 ipaadmin_principal: admin
 ipaclient_no_ntp: true
 ipaclient_mkhomedir: true
+ipaclient_ssh_trust_dns: true
+ipasssd_enable_dns_updates: true

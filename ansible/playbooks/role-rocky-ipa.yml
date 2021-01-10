@@ -5,11 +5,13 @@
 # Memory: 4GB
 # Storage: 10G /var/lib/dirsrv
 # System fully up to date
+# Define "host" as a hostgroup name or a single host
 - name: Configure IPA server
-  hosts: ipaserver
+  hosts: "{{ host }}"
   become: true
   vars_files:
   - vars/vaults/encpass.yml
+  - vars/ipa/ipaserver.yml
 
   # This is to try to avoid the handler issue in pre/post tasks
   handlers:
