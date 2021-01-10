@@ -1,3 +1,4 @@
 ---
 fdns:
-  - boxbuild.rockylinux.org.
+  - rockylinux.org.
+  - aws.rockylinux.org.
