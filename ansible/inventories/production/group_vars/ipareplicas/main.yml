@@ -1,7 +1,6 @@
 ---
 
 ipaadmin_principal: admin
-ipaclient_no_ntp: true
 ipaclient_mkhomedir: true
 ipaserver_realm: ROCKYLINUX.ORG
 ipaserver_hostname: ipa002.rockylinux.org
