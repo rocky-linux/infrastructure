@@ -21,10 +21,12 @@
       freeipa.ansible_freeipa.ipadnszone:
         ipaadmin_password: '{{ ipaadmin_password }}'
         name: '{{ item }}'
+        dynamic_update: true
       with_items: '{{ rdns }}'
 
     - name: "Create Forward Domains"
       freeipa.ansible_freeipa.ipadnszone:
         ipaadmin_password: '{{ ipaadmin_password }}'
         name: '{{ item }}'
+        dynamic_update: true
       with_items: '{{ fdns }}'
