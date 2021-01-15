@@ -17,3 +17,7 @@ playbooks/vars/vaults/*
 # Ignore hidden configs
 playbooks/templates/hidden/*
 !playbooks/templates/hidden/README.md
+
+# keep the inventory generic
+inventories/staging/hosts.ini
+inventories/production/hosts.ini
