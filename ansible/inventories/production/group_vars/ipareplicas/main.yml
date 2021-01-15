@@ -3,7 +3,6 @@
 ipaadmin_principal: admin
 ipaclient_mkhomedir: true
 ipaserver_realm: ROCKYLINUX.ORG
-ipaserver_hostname: ipa002.rockylinux.org
 ipareplica_domain: rockylinux.org
 ipareplica_auto_forwarders: true
 ipareplica_setup_firewalld: true
