@@ -20,6 +20,19 @@ ipagroups:
     description: Quality Assurance Team
   - group: marketing
     description: Marketing
+  - group: rocky
+    description: Rocky Linux Team
+    user:
+      - label
+      - gmk
+      - brian
+      - hbjy
+      - jorp
+      - neil
+      - rlh
+      - rfelsburg
+      - tg
+      - bagner
   - group: rockyadm
     description: Rocky Linux Administrators - Only Admin Accounts
     user:
@@ -62,6 +75,7 @@ ipagroups:
   - group: services
     description: Rocky Linux Service Accounts
     user:
+      - userman
       - hostman
       - kerbman
       - rockykoji

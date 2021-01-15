@@ -26,7 +26,7 @@
     ipaadmin_password: "{{ ipaadmin_password }}"
     name: "{{ item.role }}"
     privilege: "{{ item.privilege }}"
-    user: "{{ item.user }}"
+    user: "{{ item.user|default(omit) }}"
   loop: "{{ ipaprivileges }}"
   when: ipaprivileges is defined
   tags:
@@ -37,7 +37,7 @@
     ipaadmin_password: "{{ ipaadmin_password }}"
     name: "{{ item.role }}"
     privilege: "{{ item.privileges }}"
-    user: "{{ item.user }}"
+    user: "{{ item.user|default(omit) }}"
   loop: "{{ iparoles }}"
   when: iparoles is defined
   tags:

@@ -2,7 +2,7 @@
 # This builds out the initial users and groups for the rocky linux infra
 - name: Create our initial users
   hosts: ipaserver
-  become: false
+  become: true
   gather_facts: false
   vars_files:
   - vars/vaults/encpass.yml
