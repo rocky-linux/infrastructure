@@ -1,0 +1,7 @@
+dn: uid={{ ipa_binder_name }},cn=sysaccounts,cn=etc,dc=rockylinux,dc=org
+add:objectclass:account
+add:objectclass:simplesecurityobject
+add:uid:{{ ipa_binder_name }}
+add:userPassword:{{ ipa_binder_password }}
+add:passwordExpirationTime:20380119031407Z
+add:nsIdleTimeout:0

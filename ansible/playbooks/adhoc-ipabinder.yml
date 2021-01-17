@@ -1,0 +1,41 @@
+---
+# This playbook is meant to be used with callable variables, like adhoc or AWX.
+# What: Creates a binder account for read-only binds
+# What is expected:
+#  -> ipa_binder_name: Bind account name, in the form of name_binder
+#  -> ipa_binder_password: Bind account password
+
+- name: Create binder account
+  hosts: ipaserver
+  become: true
+
+  tasks:
+    - name: "Check for user variables"
+      assert:
+        that:
+          - ipa_binder_name | mandatory
+          - ipa_binder_password | mandatory
+        success_msg: "Required variables provided"
+        fail_msg: "We are missing user information"
+
+    - name: "Creating bind account template - binder"
+      template:
+        src: "tmp/binder_template.update"
+        dest: "/tmp/binder.update"
+        owner: root
+        group: root
+        mode: '0600'
+      tags:
+        - users
+
+    - name: "Adding in the bind account"
+      command: "/usr/sbin/ipa-ldap-updater /tmp/binder.update"
+      register: bind_account
+      changed_when: "bind_account.rc == 0"
+      tags:
+        - users
+
+    - name: "Remove template"
+      file:
+        path: "/tmp/binder.update"
+        state: absent
