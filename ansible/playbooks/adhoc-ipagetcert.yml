@@ -1,0 +1,30 @@
+---
+# This playbook is meant to be used with callable variables, like adhoc or AWX.
+# What: Requests and signs a certificate from an IPA CA
+# What is expected:
+#  -> getcert_name: Name of the certificate (FQDN)
+#  -> getcert_owner: what account owns the certificate files
+#  -> getcert_key: path to the certificate key
+#  -> getcert_cert: path to the certificate
+#  -> getcert_postcmd: command to run after a certificate renews
+#  -> getcert_chain: true/false, should cert and key be chained together
+#  -> getcert_chain_location: location for the chain
+# TODO: Add CNAME/SAN support
+
+- name: Request and sign an IPA Certificate
+  hosts: "{{ host }}"
+  become: true
+  gather_facts: false
+  vars:
+    ipa_getcert_requested_hostnames:
+      - name: "{{ getcert_name|default(ansible_fqdn) }}"
+        owner: "{{ getcert_owner|default(omit} }}"
+        key_location: "{{ getcert_key|default(omit) }}"
+        cert_location: "{{ getcert_cert|defailt(omit) }}"
+        postcmd: "{{ getcert_postcmd|default(omit) }}"
+    ipa_getcert_chain: "{{ getcert_chain|default(omit) }}"
+    ipa_getcert_chain_location: "{{ getcert_chain_location|default(omit) }}"
+
+  roles:
+    - role: rockylinux.ipagetcert
+      state: present
