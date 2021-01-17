@@ -21,6 +21,12 @@
         success_msg: "We are able to run on this node"
         fail_msg: "/etc/no-ansible exists - skipping run on this node"
 
+    - name: Apply hostname based on inventory name
+      hostname:
+        name: "{{ inventory_hostname }}"
+        use: systemd
+      when: ansible_fqdn != inventory_hostname
+
   roles:
     - role: freeipa.ansible_freeipa.ipaclient
       state: present
