@@ -14,13 +14,12 @@
 - name: Request and sign an IPA Certificate
   hosts: "{{ host }}"
   become: true
-  gather_facts: false
   vars:
     ipa_getcert_requested_hostnames:
       - name: "{{ getcert_name|default(ansible_fqdn) }}"
-        owner: "{{ getcert_owner|default(omit} }}"
+        owner: "{{ getcert_owner|default(omit) }}"
         key_location: "{{ getcert_key|default(omit) }}"
-        cert_location: "{{ getcert_cert|defailt(omit) }}"
+        cert_location: "{{ getcert_cert|default(omit) }}"
         postcmd: "{{ getcert_postcmd|default(omit) }}"
     ipa_getcert_chain: "{{ getcert_chain|default(omit) }}"
     ipa_getcert_chain_location: "{{ getcert_chain_location|default(omit) }}"
