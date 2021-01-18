@@ -58,6 +58,7 @@
   loop:
     - httpd_can_network_connect
     - httpd_can_network_relay
+    - httpd_can_connect_ldap
     - httpd_read_user_content
 
 - name: Change fcontext to GitLab unix socket for nginx

@@ -21,7 +21,7 @@ gitlab_ssl_key: "/etc/nginx/ssl/{{ gitlab_domain }}.key"
 
 # LDAP Configuration
 gitlab_ldap_enabled: "true"
-gitlab_ldap_host: "{{ rocky_ipaserver_list[0] }}"
+gitlab_ldap_host: "{{ rocky_ipaserver_lb }}"
 gitlab_ldap_port: "389"
 gitlab_ldap_uid: "uid"
 gitlab_ldap_method: "start_tls"
