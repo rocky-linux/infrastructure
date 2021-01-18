@@ -5,10 +5,25 @@
 # Memory: 2GB
 # Storage: a piece of string
 - name: Install Prometheus
-  hosts: monitoringserver
+  hosts: monitoringservers
   become: true
+  vars_files:
+    - vars/vaults/encpass.yml
+    - vars/monitoring.yml
+    - vars/monitoring/alertmanager.yml
+    - vars/monitoring/grafana.yml
+    - vars/monitoring/prometheus.yml
+
+  # This is to try to avoid the handler issue in pre/post tasks
+  handlers:
+    - import_tasks: handlers/main.yml
 
   pre_tasks:
+    - name: Check if ansible cannot be run here
+      stat:
+        path: /etc/no-ansible
+      register: no_ansible
+
     - name: Verify if we can run ansible
       assert:
         that:
@@ -21,11 +36,24 @@
         name: python3-policycoreutils.noarch
         state: present
 
-  role:
+  roles:
+    - role: rockylinux.ipagetcert
+      state: present
     - role: cloudalchemy.prometheus
+      state: present
     - role: cloudalchemy.alertmanager
+      state: present
+    - role: cloudalchemy.grafana
+      state: present
 
   post_tasks:
+    - name: Open firewalld ports
+      ansible.posix.firewalld:
+        port: "{{ item.port }}"
+        permanent: "{{ item.permanent }}"
+        state: "{{ item.state }}"
+      loop: "{{ monitoring_server_firewall_rules }}"
+
     - name: Touching run file that ansible has ran here
       file:
         path: /var/log/ansible.run

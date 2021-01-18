@@ -1,6 +1,6 @@
 ---
 # Vars for ipsilon
-ipsilon_fqdn: idp.rockylinux.org
+ipsilon_fqdn: accounts.rockylinux.org
 ipsilon_databases:
   - name: rockyipsilon
 
