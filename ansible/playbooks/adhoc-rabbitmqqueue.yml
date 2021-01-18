@@ -1,0 +1,84 @@
+---
+# This playbook is meant to be used with callable variables, like adhoc or AWX.
+# What: Creates RabbitMQ Users
+# Required parameters:
+#   -> username: The username to create in RabbitMQ, which should match an LDAP
+#                name or the CN of a certificate. Note that if it's a hostname
+#                it must be the FQDN.
+#   -> queue_name: Name of the queue to create. This should be setup with a
+#                  prefix_suffix name, where prefix is the username, and
+#                  the suffix is a service name.
+#   -> routing_keys: A list to be used as routing keys.
+# Optional:
+#   -> write_queues: A list of queues name prefixes that which the user will
+#                    be allowed to publish.
+#   -> thresholds: A dictionary with two keys "warning" and "critical" - The
+#                  values are numbers. In the event we have a monitoring system
+#                  this can be a number of messages that could cause an alert.
+#   -> vhost: The vhost this queue will be part of. The default is /pubsub.
+
+- name: Create a User
+  hosts: rabbitmq
+  become: false
+  gather_facts: false
+  vars_files:
+  - vars/vaults/encpass.yml
+  - vars/rabbitmq.yml
+
+  tasks:
+    - name: "Checking for user variables"
+      assert:
+        that:
+          - username != "admin"
+          - username != "guest"
+          - username != "mq-monitoring"
+        success_msg: "Required variables provided"
+        fail_msg: "Username is reserved"
+      tags:
+        - rabbitmq
+
+    - name: "Validate username queue name"
+      assert:
+        that:
+          - "queue_name.startswith(username)"
+      tags:
+        - rabbitmq
+
+    - name: "Creating User Account"
+      community.rabbitmq.rabbitmq_user:
+        user: "{{ username }}"
+        vhost: "{{ vhost|default('/pubsub') }}"
+        read_priv: "^(zmq\\.topic)|^(amq\\.topic)|({{ username  }}.*)$"
+        write_priv: "^(amq\\.topic)|({{ username  }}.*){% for queue in write_queues|default([]) %}|({{ queue  }}.*){% endfor %}$"
+        configure_priv: "^$"
+        state: present
+      tags:
+        - rabbitmq
+
+    - name: "Create {{ queue_name }}"
+      delegate_to: "{{ rabbitmq_cluster_list[0] }}"
+      community.rabbitmq.rabbitmq_queue:
+        name: "{{ queue_name }}"
+        vhost: "{{ vhost|default('/pubsub') }}"
+        auto_delete: false
+        durable: true
+        message_ttl: "{{ message_ttl|default('null') }}"
+        state: present
+        login_user: admin
+        login_password: "{{ rabbitmq_admin_password }}"
+      tags:
+        - rabbitmq
+
+    - name: "Bind {{ queue_name }} to amq.topic exchange"
+      delegate_to: "{{ rabbitmq_cluster_list[0] }}"
+      community.rabbitmq.rabbitmq_binding:
+        name: "amq.topic"
+        destination: "{{ queue_name }}"
+        destination_type: queue
+        routing_key: "{{ item }}"
+        vhost: "{{ vhost|default('/pubsub') }}"
+        state: present
+        login_user: admin
+        login_password: "{{ rabbitmq_admin_password }}"
+      tags:
+        - rabbitmq

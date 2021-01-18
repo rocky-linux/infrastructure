@@ -1,0 +1,5 @@
+---
+# mqtt settings
+mqtt_tls_ca_cert: "/etc/pki/tls/certs/ca-bundle.crt"
+mqtt_tls_cert: "/etc/pki/tls/certs/{{ ansible_fqdn }}.crt"
+mqtt_tls_key: "/etc/pki/tls/private/{{ ansible_fqdn }}.key"

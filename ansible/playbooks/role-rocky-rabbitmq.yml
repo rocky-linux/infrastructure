@@ -1,0 +1,77 @@
+---
+# Stands up a RabbitMQ Cluster
+- name: Configure RabbitMQ
+  hosts: rabbitmq
+  become: true
+  vars_files:
+  - vars/common.yml
+  - vars/vaults/encpass.yml
+  - vars/rabbitmq.yml
+
+  # This is to try to avoid the handler issue in pre/post tasks
+  handlers:
+    - import_tasks: handlers/main.yml
+
+  pre_tasks:
+    - name: Check if ansible cannot be run here
+      stat:
+        path: /etc/no-ansible
+      register: no_ansible
+
+    - name: Verify if we can run ansible
+      assert:
+        that:
+          - "not no_ansible.stat.exists"
+        success_msg: "We are able to run on this node"
+        fail_msg: "/etc/no-ansible exists - skipping run on this node"
+
+    # We have separate passwords per rabbitmq env
+    - name: Import rabbitmq passwords
+      include_vars:
+        file: "vars/vaults/rabbitmq_{{ rabbitmq_env }}.yml"
+
+    # EPEL and PowerTools are required for ipsilon to function
+    # I also couldn't find an ansible built-in to do this
+    - name: Enable the PowerTools repository
+      ini_file:
+        dest: /etc/yum.repos.d/CentOS-Linux-PowerTools.repo
+        section: powertools
+        option: enabled
+        value: 1
+        owner: root
+        group: root
+        mode: '0644'
+
+    # The CentOS extras repos has epel-release provided
+    - name: Enable the EPEL repository
+      yum:
+        name: epel-release
+        state: present
+      tags:
+        - packages
+
+    # This will change eventually to a rocky-release-messaging repo or to a
+    # rocky-release-rabbitmq repo
+    - name: Install centos rabbitmq
+      yum:
+        name: centos-release-rabbitmq
+        state: present
+      tags:
+        - packages
+
+  roles:
+    - role: rockylinux.ipagetcert
+      state: present
+      when: rabbitmq_private
+
+    - role: rockylinux.rabbitmq
+      state: present
+
+  post_tasks:
+    - name: Touching run file that ansible has ran here
+      file:
+        path: /var/log/ansible.run
+        state: touch
+        mode: '0644'
+        owner: root
+        group: root

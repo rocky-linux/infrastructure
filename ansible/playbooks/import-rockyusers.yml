@@ -8,7 +8,7 @@
     name: "{{ item.name }}"
     first: "{{ item.first }}"
     last: "{{ item.last }}"
-    email: "{{ item.email }}"
+    email: "{{ item.email|default(omit) }}"
     password: "{{ item.password }}"
     title: "{{ item.title }}"
     loginshell: "{{ item.loginshell }}"
@@ -23,7 +23,7 @@
     name: "{{ item.name }}"
     first: "{{ item.first }}"
     last: "{{ item.last }}"
-    email: "{{ item.email }}"
+    email: "{{ item.email|default(omit) }}"
     password: "{{ item.password }}"
     title: "{{ item.title }}"
     loginshell: "{{ item.loginshell }}"
@@ -38,7 +38,7 @@
     name: "{{ item.name }}"
     first: "{{ item.first }}"
     last: "{{ item.last }}"
-    email: "{{ item.email }}"
+    email: "{{ item.email|default(omit) }}"
     password: "{{ item.password }}"
     title: "{{ item.title }}"
     loginshell: "{{ item.loginshell }}"
@@ -46,3 +46,25 @@
   loop: "{{ svcusers }}"
   tags:
     - users
+
+- name: "Creating bind account template - binder"
+  template:
+    src: "tmp/binder.update"
+    dest: "/tmp/binder.update"
+    owner: root
+    group: root
+    mode: '0600'
+  tags:
+    - users
+
+- name: "Adding in the bind account - binder"
+  command: "/usr/sbin/ipa-ldap-updater /tmp/binder.update"
+  register: bind_account
+  changed_when: "bind_account.rc == 0"
+  tags:
+    - users
+
+- name: "Remove template"
+  file:
+    path: "/tmp/binder.update"
+    state: absent

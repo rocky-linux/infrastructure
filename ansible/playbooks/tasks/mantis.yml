@@ -1,0 +1,28 @@
+---
+# Configure mantis
+- name: Configure SELinux booleans
+  seboolean:
+    name: "{{ item }}"
+    persistent: true
+    state: true
+  with_items:
+    - httpd_can_network_connect_db
+    - httpd_can_network_connect
+    - httpd_can_sendmail
+
+- name: Install necessary packages
+  yum:
+    name: "{{ mantis_pkg }}"
+    state: present
+  vars:
+    mantis_pkg:
+      - php
+      - php-ldap
+      - httpd
+      - mod_ssl
+      - php-pgsql
+      - php-mbstring
+      - php-curl
+      - openldap
+  tags:
+    - packages

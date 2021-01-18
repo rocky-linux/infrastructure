@@ -1,0 +1,29 @@
+---
+# This playbook is meant to be used with callable variables, like adhoc or AWX.
+# What: Creates dns zones in the idm infrastructure based on the variables
+#       provided.
+
+- name: Create a DNS Zone
+  hosts: ipaserver
+  become: false
+  gather_facts: false
+  vars_files:
+  - vars/vaults/encpass.yml
+
+  tasks:
+    - name: "Checking for user variables"
+      assert:
+        that:
+          - ipa_admin | mandatory
+          - ipaadmin_password | mandatory
+          - ipa_zone | mandatory
+        success_msg: "Required variables provided"
+        fail_msg: "We are missing zone information or ipa admin password"
+
+    - name: "Creating DNS Zone"
+      freeipa.ansible_freeipa.ipadnszone:
+        ipaadmin_principal: "{{ ipa_admin }}"
+        ipaadmin_password: "{{ ipaadmin_password }}"
+        name: "{{ ipa_zone }}"
+      tags:
+        - dns

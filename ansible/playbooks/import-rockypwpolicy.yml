@@ -1,0 +1,16 @@
+---
+# Creates the first set of groups for the IdM Infrastructure
+- name: "Setting up password policies"
+  freeipa.ansible_freeipa.ipapwpolicy:
+    ipaadmin_password: "{{ ipaadmin_password }}"
+    name: "{{ item.group }}"
+    minlife: "{{ item.minlife | default(0) }}"
+    maxlife: "{{ item.maxlife | default(84) }}"
+    history: "{{ item.history | default(5) }}"
+    priority: "{{ item.priority | default(1) }}"
+    lockouttime: "{{ item.lockout | default(300) }}"
+    minlength: "{{ item.minlength | default(8) }}"
+    maxfile: "{{ item.maxfail | default(5) }}"
+  loop: "{{ ipapwpolicies }}"
+  tags:
+    - groups

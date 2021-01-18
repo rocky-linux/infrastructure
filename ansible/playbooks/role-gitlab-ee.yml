@@ -4,6 +4,7 @@
   hosts: gitlabservers
   become: true
   vars_files:
+  - vars/common.yml
   - vars/gitlab.yml
 
   # This is to try to avoid the handler issue in pre/post tasks
@@ -20,7 +21,8 @@
       assert:
         that:
           - "not no_ansible.stat.exists"
-        msg: "/etc/no-ansible exists - skipping un on this node"
+        success_msg: "We are able to run on this node"
+        fail_msg: "/etc/no-ansible exists - skipping un on this node"
 
     - name: Install SELinux packages
       package:
@@ -28,6 +30,10 @@
         state: present
 
   roles:
+    - role: geerlingguy.certbot
+      state: present
+      when: not gitlab_create_self_signed_cert
+
     - role: geerlingguy.gitlab
       state: present
 

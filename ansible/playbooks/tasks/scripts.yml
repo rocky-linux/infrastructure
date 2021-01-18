@@ -1,0 +1,9 @@
+---
+# Common scripts that rocky uses on nodes
+- name: Lock Wrapper script
+  copy:
+    src: "usr/local/bin/lock-wrapper"
+    dest: "/usr/local/bin/lock-wrapper"
+    owner: root
+    group: root
+    mode: '0755'

@@ -6,6 +6,18 @@ tmp/*
 roles/public/*
 !roles/public/Readme.md
 
-#keep fodler holding ansible collections empty
+#keep folder holding ansible collections empty
 collections/*
 !README.md
+
+# Ignore all vaults
+playbooks/vars/vaults/*
+!playbooks/vars/vaults/README.md
+
+# Ignore hidden configs
+playbooks/templates/hidden/*
+!playbooks/templates/hidden/README.md
+
+# keep the inventory generic
+inventories/staging/hosts.ini
+inventories/production/hosts.ini

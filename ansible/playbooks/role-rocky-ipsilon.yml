@@ -4,7 +4,7 @@
   hosts: ipsilon
   become: true
   vars_files:
-  - vars/encpass.yml
+  - vars/vaults/encpass.yml
   - vars/ipsilon.yml
 
   # This is to try to avoid the handler issue in pre/post tasks
@@ -21,7 +21,8 @@
       assert:
         that:
           - "not no_ansible.stat.exists"
-        msg: "/etc/no-ansible exists - skipping run on this node"
+        success_msg: "We are able to run on this node"
+        fail_msg: "/etc/no-ansible exists - skipping run on this node"
 
     # EPEL and PowerTools are required for ipsilon to function
     # I also couldn't find an ansible built-in to do this
@@ -61,6 +62,12 @@
       state: present
 
   post_tasks:
+    - name: Start and enable httpd
+      service:
+        name: httpd
+        state: running
+        enabled: true
+
     - name: Touching run file that ansible has ran here
       file:
         path: /var/log/ansible.run

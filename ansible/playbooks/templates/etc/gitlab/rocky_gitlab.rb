@@ -40,7 +40,7 @@ gitlab_rails['ldap_servers'] = YAML.load <<-'EOS'
     password: '{{ gitlab_ldap_password }}'
     allow_username_or_email_login: true
     base: '{{ gitlab_ldap_base }}'
-    user_filter: ''
+    user_filter: '{{ gitlab_ldap_user_filter }}'
     group_base: '{{ gitlab_ldap_group_dn }}'
     admin_group: '{{ gitlab_ldap_admin_group }}'
     sync_ssh_keys: true
@@ -122,3 +122,13 @@ registry_nginx['ssl_certificate_key'] = "{{ gitlab_registry_nginx_ssl_certificat
 # https://gitlab.com/gitlab-org/omnibus-gitlab/blob/master/README.md#changing-gitlab-yml-settings
 nginx['enable'] = false
 nginx['external_users'] = ['nginx']
+
+{% if gitlab_external_db %}
+postgresql['enable'] = false
+gitlab_rails['db_adapter'] = 'postgresql'
+gitlab_rails['db_encoding'] = 'unicode'
+gitlab_rails['db_host'] = '{{ gitlab_external_db_host }}'
+gitlab_rails['db_port'] = '{{ gitlab_external_db_port }}'
+gitlab_rails['db_username'] = '{{ gitlab_external_db_user }}'
+gitlab_rails['db_password'] = '{{ gitlab_external_db_password }}'
+{% endif %}

@@ -58,6 +58,7 @@
   loop:
     - httpd_can_network_connect
     - httpd_can_network_relay
+    - httpd_can_connect_ldap
     - httpd_read_user_content
 
 - name: Change fcontext to GitLab unix socket for nginx
@@ -69,7 +70,7 @@
 - name: Apply fcontext to GitLab unix socket for nginx
   command: restorecon -v /var/opt/gitlab/gitlab-workhorse/sockets/socket
   register: restorecon_result
-  changed_when: "restorecon_result == 0"
+  changed_when: "restorecon_result.rc == 0"
 
 - name: Add firewall rules - http/s
   ansible.posix.firewalld:

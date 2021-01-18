@@ -1,0 +1,44 @@
+---
+svcusers:
+  - name: hostman
+    first: Host
+    last: Manager
+    password: ThisIsNotMyPassword1!
+    title: System Account - Host Manager
+    loginshell: /sbin/nologin
+  - name: kerbman
+    first: Kerberos
+    last: Manager
+    password: ThisIsNotMyPassword1!
+    title: System Account - Kerberos Key Manager
+    loginshell: /sbin/nologin
+  - name: userman
+    first: User
+    last: Manager
+    password: ThisIsNotMyPassword1!
+    title: System Account - User Manager
+    loginshell: /sbin/nologin
+  - name: rockykoji
+    first: Koji
+    last: Manager
+    password: ThisIsNotMyPassword1!
+    title: System Account - Koji Manager
+    loginshell: /sbin/nologin
+  - name: pubsub_federation
+    first: pubsub
+    last: federation
+    password: ThisIsNotMyPassword1!
+    title: System Account - pubsub federator
+    loginshell: /sbin/nologin
+  - name: rockypubsub
+    first: rocky
+    last: pubsub
+    password: ThisIsNotMyPassword1!
+    title: System Account - pubsub
+    loginshell: /sbin/nologin
+  - name: rockyautomation
+    first: Rocky
+    last: Automation
+    password: ThisIsNotMyPassword1!
+    title: System Account - Automation
+    loginshell: /sbin/nologin

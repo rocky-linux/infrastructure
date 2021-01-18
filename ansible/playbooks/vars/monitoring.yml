@@ -1,4 +1,37 @@
 ---
+# monitoring
+
+monitoring_server_firewall_rules:
+  - port: 80/tcp
+    permanent: true
+    state: enabled
+  - port: 443/tcp
+    permanent: true
+    state: enabled
+  - port: 9100/tcp
+    permanent: true
+    state: enabled
+  - port: 3000/tcp
+    permanent: true
+    state: enabled
+  - port: 9090/tcp
+    permanent: true
+    state: enabled
+  - port: 9093/tcp
+    permanent: true
+    state: enabled
+
+monitoring_tls_ca_cert: "/etc/pki/tls/certs/ca-bundle.crt"
+monitoring_tls_cert: "/etc/pki/tls/certs/{{ ansible_fqdn }}.crt"
+monitoring_tls_key: "/etc/pki/tls/private/{{ ansible_fqdn }}.key"
+
+ipa_getcert_requested_hostnames:
+  - name: "{{ ansible_fqdn }}"
+    owner: grafana
+    key_location: "{{ monitoring_tls_key }}"
+    cert_location: "{{ monitoring_tls_cert }}"
+    postcmd: "/bin/systemctl restart grafana"
+
 # prometheus_targets:
 #   node:
 #     - targets:

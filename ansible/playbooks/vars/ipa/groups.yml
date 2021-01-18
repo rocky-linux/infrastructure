@@ -1,0 +1,98 @@
+---
+ipagroups:
+  - group: infrastructure
+    description: Infrastructure Team
+    user:
+      - label
+      - neil
+      - rlh
+      - rfelsburg
+      - tg
+      - bagner
+  - group: operations
+    description: Operations Team
+    user:
+      - rlh
+      - rfelsburg
+  - group: development
+    description: Development Team
+  - group: qa
+    description: Quality Assurance Team
+  - group: marketing
+    description: Marketing
+  - group: rocky
+    description: Rocky Linux Team
+    user:
+      - label
+      - gmk
+      - brian
+      - hbjy
+      - jorp
+      - neil
+      - rlh
+      - rfelsburg
+      - tg
+      - bagner
+  - group: rockyadm
+    description: Rocky Linux Administrators - Only Admin Accounts
+    user:
+      - label2
+      - gmk2
+      - brian2
+      - hbjy2
+      - jorp2
+      - neil2
+      - rlh2
+      - rfelsburg2
+      - tg2
+      - bagner2
+  - group: gitadm
+    description: Rocky Linux GitLab Admins
+    user:
+      - label
+      - neil
+      - rlh
+      - rfelsburg
+      - tg
+      - hbjy
+  - group: gitusers
+    description: Rocky Linux GitLab Users
+    user:
+      - label
+      - neil
+      - rlh
+      - rfelsburg
+      - tg
+      - hbjy
+      - rockyautomation
+    managers_users:
+      - label
+      - neil
+      - rlh
+      - rfelsburg
+      - tg
+      - hbjy
+  - group: services
+    description: Rocky Linux Service Accounts
+    user:
+      - userman
+      - hostman
+      - kerbman
+      - rockykoji
+      - pubsub_federation
+      - rockypubsub
+      - rockyautomation
+  - group: iam
+    description: Rocky Linux Identity Management
+    user:
+      - label
+    managers_users:
+      - label
+  - group: releng
+    description: Rocky Linux Release Engineering
+    user:
+      - label
+    managers_users:
+      - label
+  - group: mq_pub_readonly
+    description: RabbitMQ ReadOnly

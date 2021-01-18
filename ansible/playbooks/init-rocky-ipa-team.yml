@@ -2,15 +2,15 @@
 # This builds out the initial users and groups for the rocky linux infra
 - name: Create our initial users
   hosts: ipaserver
-  become: false
+  become: true
   gather_facts: false
   vars_files:
-  - vars/encpass.yml
-  - vars/users.yml
-  - vars/adminusers.yml
-  - vars/svcusers.yml
-  - vars/groups.yml
-  - vars/ipaprivs.yml
+  - vars/vaults/encpass.yml
+  - vars/ipa/users.yml
+  - vars/ipa/adminusers.yml
+  - vars/ipa/svcusers.yml
+  - vars/ipa/groups.yml
+  - vars/ipa/ipaprivs.yml
 
   tasks:
     - name: "Checking for user variables"

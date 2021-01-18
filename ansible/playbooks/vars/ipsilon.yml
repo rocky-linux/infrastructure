@@ -1,5 +1,6 @@
 ---
 # Vars for ipsilon
+ipsilon_fqdn: accounts.rockylinux.org
 ipsilon_databases:
   - name: rockyipsilon
 
@@ -14,6 +15,7 @@ ipsilon_db_name: rockyipsilon
 ipsilon_httpd_hostname: "{{ inventory_hostname }}"
 
 # apache configuration for ipsilon
+apache_configure: false
 apache_listen_port: 80
 apache_listen_port_ssl: 443
 apache_create_vhosts: true
@@ -24,12 +26,12 @@ apache_ssl_cipher_suite: "PROFILE=SYSTEM"
 # be certificate_file, certificate_key_file, and certificate_chain_file
 apache_ignore_missing_ssl_certificate: true
 apache_vhosts:
-  - servername: "{{ inventory_hostname }}"
+  - servername: "{{ ipsilon_fqdn }}"
     documentroot: /var/www/html
     serveradmin: identitymanagement@rockylinux.org
     extra_parameters: |
-      CustomLog logs/{{ inventory_hostname }}_access.log combined
-      ErrorLog logs/{{ inventory_hostname }}_error.log
+      CustomLog logs/{{ ipsilon_fqdn }}_access.log combined
+      ErrorLog logs/{{ ipsilon_fqdn }}_error.log
       AccessFileName .htaccess
       Header always set X-Frame-Options "SAMEORIGIN"
       Header always set X-Xss-Protection "1; mode=block"
@@ -38,8 +40,8 @@ apache_vhosts:
       RewriteEngine On
       RewriteCond $1 !^.well-known
       RewriteCond %{HTTPS} !=on
-      RewriteRule ^/?(.*) https://{{ inventory_hostname }}/$1 [R,L]
-  - servername: "{{ inventory_hostname }}"
+      RewriteRule ^/?(.*) https://{{ ipsilon_fqdn }}/$1 [R,L]
+  - servername: "{{ ipsilon_fqdn }}"
     documentroot: /var/www/html
     serveradmin: identitymanagement@rockylinux.org
     extra_parameters: |
@@ -50,8 +52,8 @@ apache_vhosts:
       Header always set X-Xss-Protection "1; mode=block"
       Header always set X-Content-Type-Options "nosniff"
       Header always set Referrer-Policy "same-origin"
-      ErrorLog logs/ssl-{{ inventory_hostname }}_error.log
-      TransferLog logs/ssl-{{ inventory_hostname }}_access.log
+      ErrorLog logs/ssl-{{ ipsilon_fqdn }}_error.log
+      TransferLog logs/ssl-{{ ipsilon_fqdn }}_access.log
       LogLevel warn
       <Files ~ "\.(cgi|shtml|phtml|php3?)$">
         SSLOptions +StdEnvVars

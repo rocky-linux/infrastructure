@@ -1,11 +1,11 @@
 ---
 # Creates an IPA replica
-
+# Define "host" as a hostgroup name or a single host
 - name: Configure IPA server
-  hosts: ipareplicas
+  hosts: "{{ host }}"
   become: true
   vars_files:
-  - vars/encpass.yml
+  - vars/vaults/encpass.yml
 
   # This is to try to avoid the handler issue in pre/post tasks
   handlers:
@@ -21,7 +21,8 @@
       assert:
         that:
           - "not no_ansible.stat.exists"
-        msg: "/etc/no-ansible exists - skipping run on this node"
+        success_msg: "We are able to run on this node"
+        fail_msg: "/etc/no-ansible exists - skipping run on this node"
 
     - name: Ensure 'dns=none' is set for Network Manager
       ini_file:

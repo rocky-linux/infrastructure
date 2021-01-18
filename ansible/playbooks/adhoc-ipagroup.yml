@@ -1,0 +1,49 @@
+---
+# This playbook is meant to be used with callable variables, like adhoc or AWX.
+# What: Creates groups in the idm infrastructure based on the variables provided
+# You MUST provide an ipa_admin user to run this.
+# If group is going to be a fas group (exposed in noggin), ensure ipa_fas is
+# set to true.
+
+- name: Create our initial users
+  hosts: ipaserver
+  become: false
+  gather_facts: false
+  vars_files:
+  - vars/vaults/encpass.yml
+
+  tasks:
+    - name: "Checking for user variables"
+      assert:
+        that:
+          - ipa_admin | mandatory
+          - ipaadmin_password | mandatory
+          - ipa_group | mandatory
+          - ipa_description | mandatory
+          - ipa_nonposix | mandatory
+        success_msg: "Required variables provided"
+        fail_msg: "We are missing group information or ipa admin password"
+
+    - name: "Creating New Group"
+      freeipa.ansible_freeipa.ipagroup:
+        ipaadmin_principal: "{{ ipa_admin }}"
+        ipaadmin_password: "{{ ipaadmin_password }}"
+        name: "{{ ipa_group }}"
+        description: "{{ ipa_description }}"
+        nonposix: "{{ ipa_nonposix }}"
+        membermanager_user: "{{ ipa_group_manager_user | default(omit) }}"
+        membermanager_group: "{{ ipa_group_manager_group | default(omit) }}"
+      tags:
+        - groups
+
+    - name: "Prepare FAS if required"
+      shell: "set -o pipefail && echo \"{{ ipaadmin_password  }}\" | kinit {{ ipa_admin }}"
+      check_mode: false
+      changed_when: "1 != 1"
+      when: ipa_fas
+
+    - name: "Apply FAS"
+      command: "ipa group-mod --fasgroup {{ ipa_group }}"
+      check_mode: false
+      changed_when: "1 != 1"
+      when: ipa_fas

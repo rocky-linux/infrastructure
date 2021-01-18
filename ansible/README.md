@@ -75,7 +75,7 @@ The ansible configuration declares our defaults for our ansible host. This is es
 
 ### Pre flight and post flight
 
-At a minimum, there should be `pre_tasks` and `post_tasks` that can judge whether ansible has been can or has been run on a system. Some playbooks will not necessarily need this (eg if you're running an adhoc playbook to create a user). But operations done on a host should at least have these in the playbook, with an optional handlers include.
+At a minimum, there should be `pre_tasks` and `post_tasks` that can judge whether ansible can or has been run on a system. Some playbooks will not necessarily need this (eg if you're running an adhoc playbook to create a user). But operations done on a host should at least have these in the playbook, with an optional `handlers:` include.
 
 ```
   handlers:
@@ -91,7 +91,8 @@ At a minimum, there should be `pre_tasks` and `post_tasks` that can judge whethe
       assert:
         that:
           - "not no_ansible.stat.exists"
-        msg: "/etc/no-ansible exists - skipping run on this node"
+        success_msg: "We are able to run on this node"
+        fail_msg: "/etc/no-ansible exists - skipping run on this node"
 
   # Import roles/tasks here
 
@@ -115,7 +116,7 @@ Ensure that you use relevant tags where necessary for your tasks.
 
 ### Roles
 
-If you are using roles or collections, you will need to list them in `./roles/requirements.yml`. For example, we use the freeipa collection and a mysql role from geerlingguy.
+If you are using roles or collections, you will need to list them in `./roles/requirements.yml`. For example, we use the `freeipa` collection and a `mysql` role from `geerlingguy`.
 
 ```
 ---
