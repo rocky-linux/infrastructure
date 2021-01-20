@@ -76,6 +76,12 @@
       state: present
 
   post_tasks:
+    - name: Enable the sigul bridge
+      systemd:
+        name: sigul_bridge
+        state: running
+        enabled: true
+
     - name: Touching run file that ansible has ran here
       file:
         path: /var/log/ansible.run

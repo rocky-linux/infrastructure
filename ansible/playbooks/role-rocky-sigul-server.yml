@@ -63,6 +63,12 @@
       state: present
 
   post_tasks:
+    - name: Enable the sigul server
+      systemd:
+        name: sigul_server
+        state: running
+        enabled: true
+
     - name: Touching run file that ansible has ran here
       file:
         path: /var/log/ansible.run
