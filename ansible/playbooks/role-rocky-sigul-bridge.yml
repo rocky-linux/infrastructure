@@ -1,12 +1,12 @@
 ---
 # Stands up an ipsilon instance for simple SSO
-- name: Configure koji hub and web server
-  hosts: kojihub
+- name: Configure Sigul Bridge
+  hosts: sigulbridge
   become: true
   vars_files:
   - vars/vaults/encpass.yml
   - vars/common.yml
-  - vars/kojihub.yml
+  - vars/sigul_bridge.yml
 
   # This is to try to avoid the handler issue in pre/post tasks
   handlers:
@@ -25,37 +25,16 @@
         success_msg: "We are able to run on this node"
         fail_msg: "/etc/no-ansible exists - skipping run on this node"
 
-    - name: Check for keytabs - web
+    - name: Check for keytabs - sigul
       stat:
-        path: /etc/keytabs/koji-web.keytab
-      register: koji_keytab
-      changed_when: "1 != 1"
-
-    - name: Check for keytabs - kojira
-      stat:
-        path: /etc/keytabs/kojira.keytab
-      register: kojira_keytab
-      changed_when: "1 != 1"
-
-    - name: Check for keytabs - gc
-      stat:
-        path: /etc/keytabs/koji-gc.keytab
-      register: gc_keytab
-      changed_when: "1 != 1"
-
-    - name: Check for keytabs - host
-      stat:
-        path: /etc/keytabs/host.keytab
-      register: host_keytab
+        path: /etc/sigul.keytab
+      register: sigul_keytab
       changed_when: "1 != 1"
 
     - name: Verify keytab
       assert:
         that:
-          - "koji_keytab.stat.exists"
-          - "kojira_keytab.stat.exists"
-          - "gc_keytab.stat.exists"
-          - "host_keytab.stat.exists"
+          - "sigul_keytab.stat.exists"
         success_msg: "It is likely we have all keytabs"
         fail_msg: "There are no keytabs. Please build the keytabs."
 
@@ -89,27 +68,20 @@
         gpgkey: https://download.copr.fedorainfracloud.org/results/nalika/rockylinux-tools/pubkey.gpg
         enabled: true
 
-  # Right now, we are not sure how or where we'll get our certificates. So we
-  # are presenting a choice by setting a variable, koji_internal_ca. There is a
-  # change that we will have to do internal certs for mqtt anyway.
-  # TODO: We need an MQTT role and pre_tasks for the keytabs for this role
   roles:
-    - role: geerlingguy.certbot
+    - role: rockylinux.sigul
       state: present
-      when: not koji_internal_ca
 
     - role: rockylinux.ipagetcert
       state: present
-      when: koji_internal_ca
-
-    - role: geerlingguy.postgresql
-      state: present
-      when: koji_postgresql_vm
-
-    - role: rockylinux.kojihub
-      state: present
 
   post_tasks:
+    - name: Enable the sigul bridge
+      systemd:
+        name: sigul_bridge
+        state: running
+        enabled: true
+
     - name: Touching run file that ansible has ran here
       file:
         path: /var/log/ansible.run
