@@ -24,6 +24,9 @@ roles:
   - name: rockylinux.rabbitmq
     src: https://github.com/rocky-linux/ansible-role-rabbitmq
     version: main
+  - name: rockylinux.sigul
+    src: https://github.com/rocky-linux/ansible-role-sigul
+    version: main
 
 collections:
   # freeipa
