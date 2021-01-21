@@ -35,18 +35,18 @@
 
     - name: Override system-auth and password-auth
       copy:
-        src: "etc/authselect/custom/sssd-aoc/{{ ansible_distribution }}-{{ ansible_distribution_major_version }}-system-auth"
+        src: "etc/authselect/custom/sssd-rocky/{{ ansible_distribution }}-{{ ansible_distribution_major_version }}-system-auth"
         dest: "{{ item }}"
         owner: root
         group: root
         mode: '0644'
       loop:
-        - /etc/authselect/custom/sssd-aoc/system-auth
-        - /etc/authselect/custom/sssd-aoc/password-auth
+        - /etc/authselect/custom/sssd-rocky/system-auth
+        - /etc/authselect/custom/sssd-rocky/password-auth
 
     - name: Select New Profile
       command: >
-        /usr/bin/authselect select custom/sssd-aoc
+        /usr/bin/authselect select custom/sssd-rocky
         without-nullok
         with-faillock
         with-mkhomedir
