@@ -1,0 +1,18 @@
+---
+# mantis vars
+mantis_version: 2.24.2
+mantis_checksum: "sha256:c1b483c8395a0fb1249bcc50ada203db584d819f4f6f606b1d1eec42c5205cb8"
+mantis_pkg:
+  - php
+  - php-ldap
+  - httpd
+  - mod_ssl
+  - php-pgsql
+  - php-mbstring
+  - php-curl
+  - openldap
+mantis_db_name: mantis
+mantis_db_user: mantis
+#mantis_db_pass: ThisIsNotThePassword!
+mantis_binder_user: "uid=mantis_binder,cn=sysaccounts,cn=etc,dc=rockylinux,dc=org"
+#mantis_binder_pass: ThisIsNotThePassword!

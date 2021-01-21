@@ -1,0 +1,40 @@
+<?php
+$g_hostname               = 'build-a-box.labs.angelsofclockwork.net';
+$g_db_type                = 'pgsql';
+$g_database_name          = '{{ mantis_db_name }}';
+$g_db_username            = '{{ mantis_db_user }}';
+$g_db_password            = '{{ mantis_db_pass }}';
+
+$g_default_timezone       = 'UTC';
+
+$g_crypto_master_salt     = 'DDQF2sdgdPycpzfWNSOt4KelQlz7h0kb9HHxaUFpYXk=';
+
+# Added
+$g_login_method          = 'LDAP';
+$g_ldap_server           = '{{ rocky_ipaserver_lb }}';
+$g_ldap_root_dn          = '{{ rocky_ldap_user_basedn }}';
+$g_ldap_organization     = '(objectClass=posixAccount)';
+$g_ldap_protocol_version = 3;
+$g_ldap_network_timeout  = 30;
+$g_ldap_follow_referrals = ON;
+$g_ldap_bind_dn          = '{{ mantis_binder_user }}';
+$g_ldap_bind_passwd      = '{{ mantis_binder_pass }}';
+$g_ldap_uid_field        = 'uid';
+$g_ldap_realname_field   = 'cn';
+$g_use_ldap_realname     = ON;
+$g_use_ldap_email        = ON;
+
+$g_webmaster_email       = 'infrastructure@rockylinux.org';
+$g_from_email            = 'noreply@rockylinux.org';
+$g_return_path_email     = 'noreply@rockylinux.org';
+$g_from_name             = 'Rocky Linux Bugzilla';
+$g_allow_file_upload     = ON;
+$g_file_upload_method    = DATABASE; # or DISK
+$g_dropzone_enabled      = ON;
+$g_show_realname         = ON;
+$g_allowed_files         = 'log,patch,txt';
+$g_disallowed_files      = 'exe,tar,tgz,tar.gz,pl,sh';
+$g_window_title          = 'Rocky Bugzilla';
+$g_allow_signup          = OFF;
+$g_allow_anonymous_login = ON;
+$g_anonymous_account     = 'anonymous';
