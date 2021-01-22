@@ -1,0 +1,48 @@
+WSGIDaemonProcess kdcproxy processes=2 threads=15 maximum-requests=1000 \
+  display-name=%{GROUP}
+WSGIImportScript /usr/lib/python3.6/site-packages/kdcproxy/__init__.py \
+  process-group=kdcproxy application-group=kdcproxy
+WSGIScriptAlias /KdcProxy /usr/lib/python3.6/site-packages/kdcproxy/__init__.py
+WSGIScriptReloading Off
+
+<VirtualHost *:80>
+  ServerName accounts.rockylinux.org
+  ServerAlias accounts.rockylinux.org {{ ansible_fqdn }}
+  RewriteEngine On
+  RewriteCond %{HTTPS}  !=on
+  RewriteRule ^/?(.*) https://%{SERVER_NAME}/$1 [R,L]
+</VirtualHost>
+
+<VirtualHost *:443>
+  ServerName accounts.rockylinux.org
+  ServerAlias accounts.rockylinux.org {{ ansible_fqdn }}
+  RequestHeader set X-Forwarded-Proto https
+  SSLCertificateFile /etc/pki/tls/certs/noggin.crt
+  SSLCertificateKeyFile /etc/pki/tls/private/noggin.key
+</VirtualHost>
+
+<Location "/">
+  ProxyPreserveHost On
+  ProxyPass http://127.0.0.1:5000/
+  ProxyPassReverse http://127.0.0.1:5000/
+  <RequireAll>
+    Require all granted
+    Include /etc/httpd/conf/blacklist.conf
+  </RequireAll>
+</Location>
+
+<Location "/KdcProxy">
+  Satisfy Any
+  WSGIProcessGroup kdcproxy
+  WSGIApplicationGroup kdcproxy
+  ProxyPass "!"
+  ProxyPassReverse "!"
+  <RequireAll>
+    Require all granted
+    Include /etc/httpd/conf/blacklist.conf
+  </RequireAll>
+</Location>
+
+ServerSignature Off
+ServerTokens Prod
+ErrorDocument 403 "<h3>Your IP is on the blacklist.</h3><p>Please contact <a href="mailto:infrastructure@rockylinux.org">Rocky Linux Staff</a> to see if this can be corrected.</p>"
