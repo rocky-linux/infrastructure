@@ -19,7 +19,7 @@
         success_msg: "Required variables provided"
         fail_msg: "We are missing user information or ipa admin password"
 
-    - name: "Creating User Account"
+    - name: "Enabling User Account"
       freeipa.ansible_freeipa.ipauser:
         ipaadmin_principal: "{{ ipa_admin }}"
         ipaadmin_password: "{{ ipaadmin_password }}"
