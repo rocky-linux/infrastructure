@@ -28,6 +28,9 @@ rabbitmq_enable_public: false
 # into account when setting this variable.
 rabbitmq_cluster_list: "{{ groups['rabbitmq'] }}"
 rabbitmq_ldap_servers: "{{ rocky_ipaserver_list }}"
+rabbitmq_ldap_bind_dn: "uid=rabbitmq_binder,cn=sysaccounts,cn=etc,dc=rockylinux,dc=org"
+rabbitmq_ldap_bind_pw: "{{ rabbitmq_binder_password }}"
+rabbitmq_ldap_basedn: "{{ rocky_ldap_account_basedn }}"
 
 # Messaging queues are generally private
 rabbitmq_private: true
@@ -37,3 +40,5 @@ ipa_getcert_requested_hostnames:
     key_location: "{{ rabbitmq_tls_key }}"
     cert_location: "{{ rabbitmq_tls_cert }}"
     postcmd: "/bin/systemctl restart rabbitmq-server"
+    cnames:
+      - "rabbitmq-{{ rabbitmq_env }}.rockylinux.org"
