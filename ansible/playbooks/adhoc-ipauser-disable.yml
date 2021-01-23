@@ -16,25 +16,14 @@
           - ipa_admin | mandatory
           - ipaadmin_password | mandatory
           - ipa_name | mandatory
-          - ipa_first | mandatory
-          - ipa_last | mandatory
-          - ipa_email | mandatory
-          - ipa_password | mandatory
-          - ipa_title | mandatory
         success_msg: "Required variables provided"
         fail_msg: "We are missing user information or ipa admin password"
 
-    - name: "Creating User Account"
+    - name: "Disabling User Account"
       freeipa.ansible_freeipa.ipauser:
         ipaadmin_principal: "{{ ipa_admin }}"
         ipaadmin_password: "{{ ipaadmin_password }}"
         name: "{{ ipa_name }}"
-        first: "{{ ipa_first }}"
-        last: "{{ ipa_last }}"
-        email: "{{ ipa_email }}"
-        password: "{{ ipa_password }}"
-        title: "{{ ipa_title }}"
-        loginshell: "{{ ipa_loginshell|default('/sbin/nologin', True) }}"
-        update_password: on_create
+        state: disabled
       tags:
         - users
