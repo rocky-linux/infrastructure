@@ -14,15 +14,35 @@
   yum:
     name: "{{ mantis_pkg }}"
     state: present
-  vars:
-    mantis_pkg:
-      - php
-      - php-ldap
-      - httpd
-      - mod_ssl
-      - php-pgsql
-      - php-mbstring
-      - php-curl
-      - openldap
   tags:
     - packages
+
+- name: Download the bugtracker
+  get_url:
+    url: "http://downloads.sourceforge.net/mantisbt/mantisbt-{{ mantis_version }}.tar.gz"
+    dest: "/tmp/mantisbt-{{ mantis_version }}.tar.gz"
+    checksum: "{{ mantis_checksum }}"
+
+- name: Extract mantis
+  unarchive:
+    src: "/tmp/mantisbt-{{ mantis_version }}.tar.gz"
+    dest: "/var/www"
+    owner: apache
+    group: apache
+    remote_src: true
+
+- name: Configure mantis
+  template:
+    src: "var/www/mantis/config/config_inc.php.j2"
+    dest: "/var/www/mantisbt-{{ mantis_version }}/config/config_inc.php"
+    owner: apache
+    group: apache
+    mode: '0640'
+
+- name: Configure httpd
+  template:
+    src: "etc/httpd/conf.d/mantis.conf.j2"
+    dest: "/etc/httpd/conf.d/mantis.conf"
+    owner: root
+    group: root
+    mode: '0644'

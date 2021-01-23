@@ -1,0 +1,33 @@
+<VirtualHost *:80>
+  ServerAdmin infrastructure@rockylinux.org
+  DocumentRoot "/var/www/mantisbt-{{ mantis_version }}"
+  ServerName bugs.rockylinux.org
+  TransferLog /var/log/httpd/mantis_access.log
+  ErrorLog /var/log/httpd/mantis_error.log
+  <Directory "/var/www/mantisbt-{{ mantis_version }}/">
+    Options MultiViews FollowSymlinks
+    AllowOverride All
+    Order allow,deny
+    Allow from all
+  </Directory>
+</VirtualHost>
+
+<VirtualHost *:443>
+  SSLEngine on
+  SSLHonorCipherOrder on
+  SSLCipherSuite PROFILE=SYSTEM
+  SSLProxyCipherSuite PROFILE=SYSTEM
+  SSLCertificateFile /etc/pki/tls/certs/bugs.rockylinux.org.crt
+  SSLCertificateKeyFile /etc/pki/tls/private/bugs.rockylinux.org.key
+  ServerAdmin infrastructure@rockylinux.org
+  DocumentRoot "/var/www/mantisbt-{{ mantis_version }}"
+  ServerName bugs.rockylinux.org
+  TransferLog /var/log/httpd/mantis_access.log
+  ErrorLog /var/log/httpd/mantis_error.log
+  <Directory "/var/www/mantisbt-{{ mantis_version }}/">
+    Options MultiViews FollowSymlinks
+    AllowOverride All
+    Order allow,deny
+    Allow from all
+  </Directory>
+</VirtualHost>
