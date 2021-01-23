@@ -7,12 +7,12 @@ auth        [success=done ignore=ignore default=die]     pam_sss.so require_cert
 auth        sufficient                                   pam_fprintd.so                                         {include if "with-fingerprint"}
 auth        sufficient                                   pam_u2f.so cue                                         {include if "with-pam-u2f"}
 auth        required                                     pam_u2f.so cue nouserok                                {include if "with-pam-u2f-2fa"}
-auth        [default=1 ignore=ignore success=ok]         pam_succeed_if.so uid >= 1000 quiet
+auth        [default=1 ignore=ignore success=ok]         pam_usertype.so isregular
 auth        [default=1 ignore=ignore success=ok]         pam_localuser.so                                       {exclude if "with-smartcard"}
 auth        [default=2 ignore=ignore success=ok]         pam_localuser.so                                       {include if "with-smartcard"}
 auth        [success=done authinfo_unavail=ignore ignore=ignore default=die] pam_sss.so try_cert_auth           {include if "with-smartcard"}
 auth        sufficient                                   pam_unix.so {if not "without-nullok":nullok} try_first_pass
-auth        requisite                                    pam_succeed_if.so uid >= 1000 quiet_success
+auth        [default=1 ignore=ignore success=ok]         pam_usertype.so isregular
 auth        sufficient                                   pam_sss.so forward_pass
 auth        required                                     pam_faillock.so authfail audit deny=5 unlock_time=900 fail_interval=900       {include if "with-faillock"}
 auth        required                                     pam_deny.so
@@ -20,8 +20,8 @@ auth        required                                     pam_deny.so
 account     required                                     pam_access.so                                          {include if "with-pamaccess"}
 account     required                                     pam_faillock.so                                        {include if "with-faillock"}
 account     required                                     pam_unix.so
-account     sufficient                                   pam_localuser.so
-account     sufficient                                   pam_succeed_if.so uid < 1000 quiet
+account     sufficient                                   pam_localuser.so                                       {exclude if "with-files-access-provider"}
+account     sufficient                                   pam_usertype.so issystem
 account     [default=bad success=ok user_unknown=ignore] pam_sss.so
 account     required                                     pam_permit.so
 
