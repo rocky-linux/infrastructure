@@ -1,5 +1,5 @@
 ---
 # RabbitMQ Staging Vars
-rabbitmq_cluster_name: "rabbitstage"
+rabbitmq_cluster_name: "rabbit"
 rabbitmq_cluster_list: "{{ groups['rabbitmq'] }}"
 rabbitmq_env: "staging"
