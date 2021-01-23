@@ -26,6 +26,13 @@ iparoles:
       - "Netgroups Administrators"
     user:
       - hostman
+  - role: Kerberos Managers
+    description: Kerberos Key Managers
+    privileges:
+      - "Privileges - Kerberos Managers"
+      - "Service Administrators"
+    user:
+      - kerbman
   - role: IPA User Managers
     description: Rocky IPA User Managers responsible for idm flow
     privileges:

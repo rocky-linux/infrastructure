@@ -10,7 +10,7 @@
   become: false
   gather_facts: false
   vars_files:
-  - vars/vaults/encpass.yml
+  - vars/vaults/userman.yml
 
   tasks:
     - name: "Checking for user variables"
