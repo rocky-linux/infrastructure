@@ -1,0 +1,37 @@
+---
+# Configure relay
+- name: Ensure postfix is installed
+  yum:
+    name:
+      - postfix
+      - cyrus-sasl-plain
+    state: present
+
+- name: Add password map
+  template:
+    src: etc/postfix/sasl_passwd.j2
+    dest: /etc/postfix/sasl_passwd
+    owner: root
+    group: root
+    mode: '0600'
+  notify: rehash_postfix_sasl
+
+- name: Add relay information to postfix
+  blockinfile:
+    path: /etc/postfix/main.cf
+    marker: "## ANSIBLE MANAGED ##"
+    block: |
+      smtp_tls_note_starttls_offer = yes
+      relayhost = [{{ smtp_relayhost }}]:587
+      smtp_use_tls = yes
+      smtp_sasl_auth_enable = yes
+      smtp_sasl_security_options =
+      smtp_sasl_password_maps = hash:/etc/postfix/sasl_passwd
+      smtp_tls_CAfile = /etc/pki/tls/certs/ca-bundle.crt
+  notify: restart_postfix
+
+- name: Ensure postfix is running and enabled
+  service:
+    name: postfix
+    state: running
+    enabled: true
