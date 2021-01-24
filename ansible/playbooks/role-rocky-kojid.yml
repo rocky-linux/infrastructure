@@ -28,13 +28,13 @@
     - name: Check for keytabs - kojid
       stat:
         path: /etc/kojid.keytab
-      register: kojid_keytab
+      register: kojid_keytab_check
       changed_when: "1 != 1"
 
     - name: Verify keytab
       assert:
         that:
-          - "kojid_keytab.stat.exists"
+          - "kojid_keytab_check.stat.exists"
         success_msg: "It is likely we have all keytabs"
         fail_msg: "There are no keytabs. Please build the keytabs."
 
@@ -77,6 +77,9 @@
       state: present
 
   post_tasks:
+    - name: "Setup shared filesystem mount"
+      import_tasks: tasks/koji_efs.yml
+
     - name: Touching run file that ansible has ran here
       file:
         path: /var/log/ansible.run

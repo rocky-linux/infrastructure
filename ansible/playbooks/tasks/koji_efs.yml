@@ -1,0 +1,21 @@
+---
+# Sets up the EFS mount for /mnt/koji {{ koji_efs_mount_path }}
+# Requires amazon-efs-utils; included
+#
+- name: Installing amazon-efs-utils
+  yum:
+    name: amazon-efs-utils
+    state: present
+  tags:
+    - amazon_efs_utils
+    - packages
+
+- name: "Creating and mounting {{ koji_efs_fsid }} at {{ koji_efs_mount_path }}"
+  ansible.posix.mount:
+    path: "{{ koji_efs_mount_path }}"
+    src: "{{ koji_efs_fsid }}:/"
+    fstype: "{{ koji_efs_fs_type }}"
+    opts: "{{ koji_efs_fs_opts | join(',') }}"
+    state: "{{ koji_efs_fs_state | default('mounted') }}"
+  tags:
+    - mounts
