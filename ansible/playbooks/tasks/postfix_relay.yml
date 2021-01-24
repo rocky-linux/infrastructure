@@ -33,5 +33,5 @@
 - name: Ensure postfix is running and enabled
   service:
     name: postfix
-    state: running
+    state: restarted
     enabled: true
