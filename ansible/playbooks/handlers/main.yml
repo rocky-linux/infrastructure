@@ -37,3 +37,11 @@
   service:
     name: noggin
     state: restarted
+
+- name: rehash_postfix_sasl
+  command: "postmap /etc/postfix/sasl_passwd"
+
+- name: restart_postfix
+  service:
+    name: postfix
+    state: restarted

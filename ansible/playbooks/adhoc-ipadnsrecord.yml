@@ -42,3 +42,16 @@
         state: "{{ ipa_presence }}"
       tags:
         - dns
+
+    # We try to do this just in case because if a certificate is being issued
+    # that wants a CNAME, the host has to "manage" said host. However, if the
+    # host doesn't exist, we'll ignore it.
+    - name: "Creating host object for CNAME"
+      freeipa.ansible_freeipa.ipahost:
+        ipaadmin_principal: "{{ ipa_admin|default('admin') }}"
+        ipaadmin_password: "{{ ipaadmin_password }}"
+        name: "{{ ipa_name }}.{{ ipa_zone }}"
+        force: true
+        managedby:
+          - "{{ ipa_name_value[:-1] }}"
+      ignore_errors: true
