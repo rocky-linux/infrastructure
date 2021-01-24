@@ -50,6 +50,10 @@
     group: root
     state: link
 
+- name: Symlink the hash
+  command: "openssl rehash /etc/gitlab/trusted-certs"
+  changed_when: "1 != 1"
+
 - name: Turn on necessary SELinux booleans
   ansible.posix.seboolean:
     name: "{{ item }}"
