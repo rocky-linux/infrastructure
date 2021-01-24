@@ -67,3 +67,6 @@ gitlab_external_db: true
 gitlab_external_db_host: db.rockylinux.org
 gitlab_external_db_user: gitlab
 gitlab_external_db_password: "{{ gitlab_db_pass }}"
+
+gitlab_trusted_proxies:
+  - 10.100.20.20/32

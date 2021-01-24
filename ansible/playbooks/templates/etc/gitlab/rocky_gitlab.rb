@@ -132,3 +132,7 @@ gitlab_rails['db_port'] = '{{ gitlab_external_db_port }}'
 gitlab_rails['db_username'] = '{{ gitlab_external_db_user }}'
 gitlab_rails['db_password'] = '{{ gitlab_external_db_password }}'
 {% endif %}
+
+{% if gitlab_trusted_proxies %}
+gitlab_rails['trusted_proxies'] = '{{ gitlab_trusted_proxies | map("to_json") | join(", ") }}'
+{% endif %}
