@@ -6,7 +6,7 @@
   vars_files:
     - vars/buildsys.yml
 
-  handers:
+  handlers:
     - import_tasks: handlers/main.yml
 
   pre_tasks:
