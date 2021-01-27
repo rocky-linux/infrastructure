@@ -167,3 +167,23 @@ When initializing the ansible host, you should be in `./infrastructure/ansible` 
 % cd infrastructure/ansible
 % ansible-playbook playbooks/init-rocky-ansible-host.yml
 ```
+
+## Initializing the environment
+
+To get a base environment, you will need to run the playbooks in this order.
+
+```
+# Ansible host
+init-rocky-ansible-host.yml
+# First IPA server
+role-rocky-ipa.yml
+# Replicas
+role-rocky-ipa-replica.yml
+# Base users, groups, and DNS
+init-rocky-ipa-team.yml
+init-rocky-ipa-internal-dns.yml
+# All clients should be listed under [ipaclients]
+role-rocky-ipa-client.yml
+# All systems should be hardened
+init-rocky-system-config.yml
+```
