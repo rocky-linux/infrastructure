@@ -38,3 +38,4 @@ collections:
   - name: ansible.posix
   - name: ktdreyer.koji_ansible
   - name: netbox.netbox
+  - name: community.aws

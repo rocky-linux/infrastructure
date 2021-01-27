@@ -4,7 +4,7 @@
   hosts: "{{ host }}"
   become: true
 
-  handers:
+  handlers:
     - import_tasks: handlers/main.yml
 
   pre_tasks:

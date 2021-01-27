@@ -17,14 +17,14 @@
   vars:
     ipa_getcert_requested_hostnames:
       - name: "{{ getcert_name|default(ansible_fqdn) }}"
-        owner: "{{ getcert_owner|default(omit) }}"
-        key_location: "{{ getcert_key|default(omit) }}"
-        cert_location: "{{ getcert_cert|default(omit) }}"
-        nss_db_dir: "{{ getcert_nss_db_dir|default(omit) }}"
+        owner: "{{ getcert_owner|default('root') }}"
+        key_location: "{{ getcert_key|default('/etc/pki/tls/private/newcert.key') }}"
+        cert_location: "{{ getcert_cert|default('/etc/pki/tls/certs/newcert.crt') }}"
+        nss_db_dir: "{{ getcert_nss_db_dir|default('/etc/pki/tls/db') }}"
         nss_nickname: "{{ getcert_nss_nickname|default(ansible_fqdn) }}"
-        postcmd: "{{ getcert_postcmd|default(omit) }}"
-    ipa_getcert_chain: "{{ getcert_chain|default(omit) }}"
-    ipa_getcert_chain_location: "{{ getcert_chain_location|default(omit) }}"
+        postcmd: "{{ getcert_postcmd|default(false) }}"
+    ipa_getcert_chain: "{{ getcert_chain|default(false) }}"
+    ipa_getcert_chain_location: "{{ getcert_chain_location|default('/etc/pki/tls/chain') }}"
     ipa_getcert_nss: "{{ getcert_nss|default(false) }}"
 
   roles:

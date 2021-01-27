@@ -1,0 +1,8 @@
+---
+# Koji common
+koji_efs_mount_path: /mnt/koji
+koji_efs_fsid: whatever.amazonaws.com
+koji_efs_fs_type: efs
+koji_efs_fs_opts:
+  - tls
+  - iam
