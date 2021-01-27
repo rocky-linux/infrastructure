@@ -75,10 +75,13 @@
         name: "amq.topic"
         destination: "{{ queue_name }}"
         destination_type: queue
-        routing_key: "{{ item }}"
+        routing_key: "{{ routing_item }}"
         vhost: "{{ vhost|default('/pubsub') }}"
         state: present
         login_user: admin
         login_password: "{{ rabbitmq_admin_password }}"
+      loop: "{{ routing_keys }}"
+      loop_control:
+        loop_var: routing_item
       tags:
         - rabbitmq
