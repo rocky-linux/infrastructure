@@ -11,4 +11,4 @@ ipa_getcert_requested_hostnames:
   - name: "{{ ansible_fqdn }}"
     owner: sigul
     nss_db_dir: "{{ sigul_nss_dir }}"
-    nss_nickname: "{{ sigul_bridge_cert_nickname }}"
+    nss_nickname: "{{ sigul_server_cert_nickname }}"
