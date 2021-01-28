@@ -10,6 +10,20 @@
     - amazon_efs_utils
     - packages
 
+- name: "Gathering ec2 facts"
+  amazon.aws.ec2_metadata_facts:
+  tags:
+    - mounts
+
+# "you can use /etc/hosts" https://github.com/aws/efs-utils/issues/1
+- name: "Install custom hosts file because ~~fml~~ amazon said so."
+  ansible.builtin.lineinfile:
+    path: /etc/hosts
+    line: "{{ koji_efs_fs_ip_map[ansible_ec2_placement_availability_zone] }} {{ koji_efs_fsid }}"
+    create: yes
+  tags:
+    - mounts
+
 - name: "Creating and mounting {{ koji_efs_fsid }} at {{ koji_efs_mount_path }}"
   ansible.posix.mount:
     path: "{{ koji_efs_mount_path }}"

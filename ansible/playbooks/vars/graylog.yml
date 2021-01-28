@@ -1,0 +1,31 @@
+---
+# graylog
+graylog_server_firewall_rules:
+  - port: 9000/tcp
+    permanent: true
+    state: enabled
+  - port: 1514/tcp
+    permanent: true
+    state: enabled
+  - port: 1514/udp
+    permanent: true
+    state: enabled
+
+graylog_tls_ca_cert: "/etc/pki/tls/certs/ca-bundle.crt"
+graylog_tls_cert: "/etc/pki/tls/certs/{{ ansible_fqdn }}.crt"
+graylog_tls_key: "/etc/pki/tls/private/{{ ansible_fqdn }}.key"
+
+ipa_getcert_requested_hostnames:
+  - name: "{{ ansible_fqdn }}"
+    owner: graylog
+    key_location: "{{ monitoring_tls_key }}"
+    cert_location: "{{ monitoring_tls_cert }}"
+    postcmd: "/bin/systemctl restart graylog-server"
+    cnames:
+      - "graylog.rockylinux.org"
+
+graylog_ipa_dnsrecord_zone_name: rockylinux.org
+graylog_ipa_dnsrecord_name: graylog
+graylog_ipa_dnsrecord_record_type: CNAME
+graylog_ipa_dnsrecord_record_value: graylog002.rockylinux.org.
+graylog_ipa_dnsrecord_state: present
