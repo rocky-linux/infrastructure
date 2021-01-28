@@ -79,7 +79,7 @@
     - name: Enable the sigul bridge
       systemd:
         name: sigul_bridge
-        state: running
+        state: restarted
         enabled: true
 
     - name: Touching run file that ansible has ran here
