@@ -1,0 +1,16 @@
+---
+matterbridge_config:
+  binary_checksum: "0a321cbc90ba467d05c1bd5ec7a1c3b10fb2ba142710311b015f5e8235d39fe6"
+  version: 1.21.0
+
+mbridge_bot_nick: rlf
+mbridge_bridge_name: rlf
+mbridge_irc_channel: '#irc'
+mbridge_irc_ignore_nicks:
+mbridge_irc_label: IRC
+mbridge_irc_network_server: irc.freenode.net:6697
+mbridge_mattermost_channel: testing
+mbridge_mattermost_ignore_nicks:
+mbridge_mattermost_label: MM
+mbridge_mattermost_server: ws.chat.rockylinux.org
+mbridge_mattermost_team: rocky-linux

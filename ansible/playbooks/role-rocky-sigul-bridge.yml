@@ -28,13 +28,13 @@
     - name: Check for keytabs - sigul
       stat:
         path: /etc/sigul.keytab
-      register: sigul_keytab
+      register: sigul_keytab_register
       changed_when: "1 != 1"
 
     - name: Verify keytab
       assert:
         that:
-          - "sigul_keytab.stat.exists"
+          - "sigul_keytab_register.stat.exists"
         success_msg: "It is likely we have all keytabs"
         fail_msg: "There are no keytabs. Please build the keytabs."
 
@@ -79,7 +79,7 @@
     - name: Enable the sigul bridge
       systemd:
         name: sigul_bridge
-        state: running
+        state: restarted
         enabled: true
 
     - name: Touching run file that ansible has ran here

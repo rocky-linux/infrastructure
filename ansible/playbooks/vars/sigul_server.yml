@@ -3,11 +3,12 @@
 sigul_type: server
 sigul_server_cert_nickname: "sigul-server"
 sigul_nss_dir: /etc/pki/tls/sigul
-sigul_bridge_name: "sigul-bridge.rockylinux.org"
+sigul_bridge_name: ""
 
 # ipa-getcert variables
-getcert_name: "{{ ansible_fqdn }}"
-getcert_owner: sigul
-getcert_nss_db_dir: "{{ sigul_nss_dir }}"
-getcert_nss_nickname: "{{ sigul_bridge_cert_nickname }}"
-getcert_nss: true
+ipa_getcert_nss: true
+ipa_getcert_requested_hostnames:
+  - name: "{{ ansible_fqdn }}"
+    owner: sigul
+    nss_db_dir: "{{ sigul_nss_dir }}"
+    nss_nickname: "{{ sigul_server_cert_nickname }}"
