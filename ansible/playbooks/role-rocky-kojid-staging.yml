@@ -6,8 +6,8 @@
   vars_files:
   - vars/vaults/encpass.yml
   - vars/common.yml
-  - vars/production/kojihub.yml
-  - vars/production/koji-common.yml
+  - vars/staging/kojid.yml
+  - vars/staging/koji-common.yml
 
   # This is to try to avoid the handler issue in pre/post tasks
   handlers:
@@ -26,37 +26,16 @@
         success_msg: "We are able to run on this node"
         fail_msg: "/etc/no-ansible exists - skipping run on this node"
 
-    - name: Check for keytabs - web
+    - name: Check for keytabs - kojid
       stat:
-        path: /etc/keytabs/koji-web.keytab
-      register: koji_keytab
-      changed_when: "1 != 1"
-
-    - name: Check for keytabs - kojira
-      stat:
-        path: /etc/keytabs/kojira.keytab
-      register: kojira_keytab
-      changed_when: "1 != 1"
-
-    - name: Check for keytabs - gc
-      stat:
-        path: /etc/keytabs/koji-gc.keytab
-      register: gc_keytab
-      changed_when: "1 != 1"
-
-    - name: Check for keytabs - host
-      stat:
-        path: /etc/keytabs/host.keytab
-      register: host_keytab
+        path: /etc/kojid.keytab
+      register: kojid_keytab_check
       changed_when: "1 != 1"
 
     - name: Verify keytab
       assert:
         that:
-          - "koji_keytab.stat.exists"
-          - "kojira_keytab.stat.exists"
-          - "gc_keytab.stat.exists"
-          - "host_keytab.stat.exists"
+          - "kojid_keytab_check.stat.exists"
         success_msg: "It is likely we have all keytabs"
         fail_msg: "There are no keytabs. Please build the keytabs."
 
@@ -95,19 +74,7 @@
   # change that we will have to do internal certs for mqtt anyway.
   # TODO: We need an MQTT role and pre_tasks for the keytabs for this role
   roles:
-    - role: geerlingguy.certbot
-      state: present
-      when: not koji_internal_ca
-
-    - role: rockylinux.ipagetcert
-      state: present
-      when: koji_internal_ca
-
-    - role: geerlingguy.postgresql
-      state: present
-      when: koji_postgresql_vm
-
-    - role: rockylinux.kojihub
+    - role: rockylinux.kojid
       state: present
 
   post_tasks:

@@ -6,8 +6,8 @@
   vars_files:
   - vars/vaults/encpass.yml
   - vars/common.yml
-  - vars/production/kojihub.yml
-  - vars/production/koji-common.yml
+  - vars/staging/kojihub.yml
+  - vars/staging/koji-common.yml
 
   # This is to try to avoid the handler issue in pre/post tasks
   handlers:

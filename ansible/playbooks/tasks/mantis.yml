@@ -29,6 +29,7 @@
     dest: "/var/www"
     owner: apache
     group: apache
+    mode: '0644'
     remote_src: true
 
 - name: Configure mantis
