@@ -39,17 +39,6 @@
       notify:
         - reload_networkmanager
 
-    - name: Ensure resolv.conf is pointing to main master
-      template:
-        src: etc/resolv.conf.j2
-        dest: /etc/resolv.conf
-        owner: root
-        group: root
-        mode: '0644'
-        backup: true
-      notify:
-        - reload_networkmanager
-
   roles:
     - role: freeipa.ansible_freeipa.ipareplica
       state: present
