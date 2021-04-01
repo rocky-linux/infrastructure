@@ -3,7 +3,7 @@
 roles:
   - name: geerlingguy.mysql
   # monitoring
-  - name: cloudalchemy.node-exporter
+  - name: cloudalchemy.node_exporter
   - name: cloudalchemy.prometheus
   - name: cloudalchemy.alertmanager
   - name: cloudalchemy.grafana
