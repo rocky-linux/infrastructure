@@ -1,0 +1,3 @@
+warn_list:
+  - internal-error
+  - syntax-check

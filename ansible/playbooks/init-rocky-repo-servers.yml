@@ -1,0 +1,34 @@
+---
+# Preps a system to be a repository
+- name: Configure repository system
+  hosts: "{{ host }}"
+  become: true
+
+  handlers:
+    - import_tasks: handers/main.yml
+
+  pre_tasks:
+    - name: Check if ansible cannot be run here
+      stat:
+        path: /etc/no-ansible
+      register: no_ansible
+
+    - name: Verify if we can run ansible
+      assert:
+        that:
+          - "not no_ansible.stat.exists"
+        success_msg: "We are not able to run on this node"
+        fail_msg: "/etc/no-ansible exists - skipping run on this node"
+
+  tasks:
+    - name: Configure repository system
+      import_tasks: tasks/repository.yml
+
+  post_tasks:
+    - name: Touching run file that ansible has ran here
+      file:
+        path: /var/log/ansible.run
+        state: touch
+        mode: '0644'
+        owner: root
+        group: root
