@@ -40,11 +40,11 @@
     state: absent
 
 - name: Noggin installation
-  shell:
-    cmd: "/home/noggin/.local/bin/poetry install --no-dev --extras deploy"
-    chdir: "/opt/noggin/noggin"
+  command: "/home/noggin/.local/bin/poetry install --no-dev --extras deploy"
   become: true
   become_user: noggin
+  args:
+    chdir: "/opt/noggin/noggin"
 
 - name: Get the noggin poetry virtualenv
   shell:
@@ -52,6 +52,7 @@
     chdir: "/opt/noggin/noggin"
   become: true
   become_user: noggin
+  changed_when: "1 != 1"
   register: virtualenv_location
 
 - name: Deploy start up script
