@@ -1,3 +1,4 @@
 ---
 - name: Add kernel boot options to all kernels and default config
   command: /usr/sbin/grubby --update-kernel=ALL --args "{{ grub_boot_options }}"
+  changed_when: "1 != 1"
