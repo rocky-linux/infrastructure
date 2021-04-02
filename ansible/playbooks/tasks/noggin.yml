@@ -1,0 +1,79 @@
+---
+- name: Ensure python is installed
+  yum:
+    name:
+      - python3
+      - python3-pip
+
+- name: Ensure noggin user exists
+  user:
+    name: noggin
+    comment: "Noggin FAS"
+
+- name: Create noggin directory
+  file:
+    path: /opt/noggin
+    state: directory
+    mode: '0700'
+    owner: noggin
+    group: noggin
+
+- name: Deploy noggin
+  git:
+    repo: https://github.com/fedora-infra/noggin.git
+    dest: /opt/noggin/noggin
+    update: true
+    version: main
+  become: true
+  become_user: noggin
+
+- name: Noggin user must install poetry
+  pip:
+    name: poetry
+    executable: pip3
+  become: true
+  become_user: noggin
+
+- name: Remove any pycache
+  file:
+    path: "/home/noggin/.cache/pypoetry"
+    state: absent
+
+- name: Noggin installation
+  shell:
+    cmd: "/home/noggin/.local/bin/poetry install --no-dev --extras deploy"
+    chdir: "/opt/noggin/noggin"
+  become: true
+  become_user: noggin
+
+- name: Get the noggin poetry virtualenv
+  shell:
+    cmd: "poetry env list | awk '{print $1}'"
+    chdir: "/opt/noggin/noggin"
+  become: true
+  become_user: noggin
+  register: virtualenv_location
+
+- name: Deploy start up script
+  template:
+    src: "opt/noggin/start_noggin.sh.j2"
+    dest: "/opt/noggin/start_noggin.sh"
+    mode: '0750'
+    user: noggin
+    group: noggin
+
+- name: Deploy systemd unit
+  copy:
+    src: "etc/systemd/system/noggin.service"
+    dest: "/etc/systemd/system/noggin.service"
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Deploy noggin configuration
+  template:
+    src: "opt/noggin/noggin.cfg.j2"
+    dest: "/opt/noggin/noggin.cfg"
+    owner: noggin
+    group: noggin
+    mode: '0600'
