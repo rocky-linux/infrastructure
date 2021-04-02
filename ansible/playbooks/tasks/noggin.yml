@@ -43,6 +43,7 @@
   command: "/home/noggin/.local/bin/poetry install --no-dev --extras deploy"
   become: true
   become_user: noggin
+  changed_when: "1 != 1"
   args:
     chdir: "/opt/noggin/noggin"
 
