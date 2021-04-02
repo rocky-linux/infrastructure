@@ -1,7 +1,7 @@
 ---
 # Installs the mantis bug tracker
 - name: Configure MantisBT
-  hosts: "{{ host }}"
+  hosts: "bugtracker"
   become: true
 
   handlers:

@@ -77,3 +77,9 @@
     owner: noggin
     group: noggin
     mode: '0600'
+
+# The only way to run it properly, at least on EL8, is we need this line
+- name: Add missing create_app call
+  lineinfile:
+    path: "/opt/noggin/noggin/noggin/app.py"
+    line: "app = create_app()"
