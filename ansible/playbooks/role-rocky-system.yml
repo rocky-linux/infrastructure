@@ -1,0 +1,46 @@
+---
+# No idea if this is an antipattern. Manage the system.
+#
+- name: Manage the basic aspects of the system
+  hosts: all
+  become: true
+
+  # This is to try to avoid the handler issue in pre/post tasks
+  handlers:
+    - import_tasks: handlers/main.yml
+
+  pre_tasks:
+    - name: Check if ansible cannot be run here
+      stat:
+        path: /etc/no-ansible
+      register: no_ansible
+
+    - name: Verify if we can run ansible
+      assert:
+        that:
+          - "not no_ansible.stat.exists"
+        success_msg: "We are able to run on this node"
+        fail_msg: "/etc/no-ansible exists - skipping run on this node"
+
+  tasks:
+    - name: Install/Update Base System packages
+      dnf:
+        name:
+          - sudo
+        update_only: true
+        state: latest
+      register: dnf_result
+
+    - name: "List changed packages"
+      debug:
+        var: dnf_result.results
+      when: dnf_result.results | length > 0
+
+  post_tasks:
+    - name: Touching run file that ansible has ran here
+      file:
+        path: /var/log/ansible.run
+        state: touch
+        mode: '0644'
+        owner: root
+        group: root
