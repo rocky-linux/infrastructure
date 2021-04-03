@@ -1,0 +1,30 @@
+# included tasks from role-rocky-gitlab-runner
+---
+- name: Download and install gitlab runner rpm
+  block:
+    - name: Install gitlab gpg key
+      ansible.builtin.rpm_key:
+        state: present
+        key: https://packages.gitlab.com/runner/gitlab-runner/gpgkey/runner-gitlab-runner-366915F31B487241.pub.gpg
+        fingerprint: "3018 3AC2 C4E2 3A40 9EFB  E705 9CE4 5ABC 8807 21D4"
+
+    - name: Download gitlab runner RPM
+      get_url:
+        url: "https://packages.gitlab.com/runner/gitlab-runner/packages/el/8/gitlab-runner-13.10.0-1.x86_64.rpm/download.rpm"
+        checksum: "sha256:3baa809dced03e9fbec615b378c85d0224306ca270ef5cb9ed64de982857ea5d"
+        dest: /tmp/gitlab-runner.rpm
+      register: download_rpm
+
+    - name: Install downloaded RPM
+      dnf:
+        name: /tmp/gitlab-runner.rpm
+      when: download_rpm.changed != 0
+  when: do_install == 'true'
+  become: true
+
+- name: Create gitlab-runner user
+  become: yes
+  user:
+    name: gitlab-runner
+    shell: /bin/bash
+    system: yes
