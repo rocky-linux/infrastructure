@@ -34,6 +34,7 @@ roles:
     src: https://git.rockylinux.org/infrastructure/public/ansible/ansible-role-wikijs.git
     scm: git
     version: develop
+  - name: riemers.gitlab-runner
 
 collections:
   # freeipa

@@ -1,7 +1,7 @@
 ---
 # mantis vars
-mantis_version: 2.24.2
-mantis_checksum: "sha256:c1b483c8395a0fb1249bcc50ada203db584d819f4f6f606b1d1eec42c5205cb8"
+mantis_version: 2.25.0
+mantis_checksum: "sha256:d8973d3677ecb2ccbfee95e2267b3128049fbdcc59aa1f007686a342d93a4c0a"
 mantis_pkg:
   - php
   - php-ldap
@@ -11,8 +11,21 @@ mantis_pkg:
   - php-mbstring
   - php-curl
   - openldap
-mantis_db_name: mantis
+  - php-json
+mantis_db_host: db.rockylinux.org
+mantis_db_name: mantisdb
 mantis_db_user: mantis
-#mantis_db_pass: ThisIsNotThePassword!
-mantis_binder_user: "uid=mantis_binder,cn=sysaccounts,cn=etc,dc=rockylinux,dc=org"
-#mantis_binder_pass: ThisIsNotThePassword!
+mantis_binder_user: "{{ rocky_ldap_bind_dn }}"
+mantis_binder_pass: "{{ rocky_ldap_bind_pw }}"
+
+# Vault
+# mantis_db_pass: ThisIsNotThePassword!
+
+ipa_getcert_requested_hostnames:
+  - name: "{{ ansible_fqdn }}"
+    owner: apache
+    key_location: "/etc/pki/tls/private/bugs.rockylinux.org.key"
+    cert_location: "/etc/pki/tls/certs/bugs.rockylinux.org.crt"
+    postcmd: "/bin/systemctl reload httpd"
+    cnames:
+      - "bugs.rockylinux.org"
