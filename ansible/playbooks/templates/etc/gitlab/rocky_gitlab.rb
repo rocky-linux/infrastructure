@@ -136,3 +136,6 @@ gitlab_rails['db_password'] = '{{ gitlab_external_db_password }}'
 {% if gitlab_trusted_proxies %}
 gitlab_rails['trusted_proxies'] = '{{ gitlab_trusted_proxies | map("to_json") | join(", ") }}'
 {% endif %}
+
+gitlab_rails['gravatar_enabled'] = true
+gitlab_rails['gravatar_ssl_url'] = "https://seccdn.libravatar.org/avatar/%{hash}?s=%{size}&d=retro"

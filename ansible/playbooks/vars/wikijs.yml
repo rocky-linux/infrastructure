@@ -1,0 +1,109 @@
+---
+# wikijs vars
+firewall_rules:
+  - port: 443/tcp
+    permanent: true
+    state: enabled
+  - port: 9100/tcp
+    permanent: true
+    state: enabled
+
+tls_ca_cert: "/etc/pki/tls/certs/ca-bundle.crt"
+tls_cert: "/etc/pki/tls/certs/{{ ansible_fqdn }}.crt"
+tls_key: "/etc/pki/tls/private/{{ ansible_fqdn }}.key"
+
+ipa_getcert_requested_hostnames:
+  - name: "{{ ansible_fqdn }}"
+    owner: nginx
+    key_location: "{{ tls_key }}"
+    cert_location: "{{ tls_cert }}"
+    postcmd: "/bin/systemctl reload nginx"
+
+wikijs_dbtype: postgres
+wikijs_db:
+  host: "db.rockylinux.org"
+  port: 5432
+  user: wikijs
+  password: " {{ _wikijs_db_rw_pass }} "
+  dbname: wikijs_db
+  ssl: true
+
+
+####################
+### NGINX CONFIG ###
+####################
+
+
+# no demo config/template
+nginx_config_html_demo_template_enable: false
+
+nginx_config_selinux: true
+nginx_config_selinux_enforcing: true
+
+nginx_config_start: true
+
+nginx_config_debug_output: true
+nginx_config_debug_tasks: true
+
+# nginx_config_cleanup: true
+
+nginx_config_http_template_enable: true
+nginx_config_main_template_enable: true
+
+nginx_config_http_template:
+  default:
+    template_file: http/default.conf.j2
+    conf_file_name: default.conf
+    conf_file_location: /etc/nginx/conf.d/
+    servers:
+      redirect_https:
+        listen:
+          v6:
+            ip: '[::]'  # Wrap in square brackets for IPv6 addresses
+            port: 80
+            opts: ['default_server']
+          v4:
+            ip: ''  # Wrap in square brackets for IPv6 addresses
+            port: 80
+            opts: ['default_server']
+        server_name: "{{ ansible_fqdn }}"
+        error_page: /usr/share/nginx/html
+        access_log:
+          - name: main
+            location: /var/log/nginx/access.log
+        error_log:
+          location: /var/log/nginx/error.log
+          level: warn
+        root: "{{ wikijs_dir }}"
+        https_redirect: $host
+      wikijs_server:
+        listen:
+          v6:
+            ip: '[::]'  # Wrap in square brackets for IPv6 addresses
+            port: 443
+            ssl: true
+            opts: ['http2', 'default_server']
+          v4:
+            ip: ''  # Wrap in square brackets for IPv6 addresses
+            port: 443
+            ssl: true
+            opts: ['http2', 'default_server']
+        ssl:
+          cert: "{{ tls_cert }}"
+          key: "{{ tls_key }}"
+        server_name: "{{ ansible_fqdn }}"
+        error_page: /usr/share/nginx/html
+        access_log:
+          - name: main
+            location: /var/log/nginx/access.log
+        error_log:
+          location: /var/log/nginx/error.log
+          level: warn
+        root: "{{ wikijs_dir }}"
+        web_server:
+          locations:
+            default:
+              location: /
+              custom_options:
+                - "proxy_pass http://localhost:3000/;"
+          http_demo_conf: false
