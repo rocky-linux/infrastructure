@@ -33,7 +33,7 @@
     remote_src: true
 
 - name: Generate crypto salt
-  shell: "cat /dev/urandom | head -c 64 | base64 --wrap=0"
+  shell: "set -o pipefail && cat /dev/urandom | head -c 64 | base64 --wrap=0"
   changed_when: "1 != 1"
   register: cryptosalt_string
 
