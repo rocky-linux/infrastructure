@@ -20,6 +20,7 @@
           - ipa_admin | mandatory
           - ipaadmin_password | mandatory
           - ipa_name | mandatory
+          - ticket_id | mandatory
         success_msg: "Required variables provided"
         fail_msg: "We are missing user information or ipa admin password"
 
@@ -47,7 +48,6 @@
         - fasGitLabUsername
         - fasIRCNick
         - fasRHBZEmail
-        - fasStatusNote
         - fasWebsiteURL
         - fasgpgkeyid
         - fasLocale
@@ -62,6 +62,16 @@
         - ipaSshPubKey
         - telephoneNumber
         - homePhone
+
+    - name: "Set FAS Status Note"
+      community.general.ldap_attr:
+        dn: "uid={{ ipa_name }},cn=users,cn=accounts,dc=rockylinux,dc=org"
+        name: "fasStatusNote"
+        values: "Account Disabled: {{ ticket_id }}"
+        state: exact
+        server_uri: ldap://localhost/
+        bind_dn: "uid={{ ipa_admin }},cn=users,cn=accounts,dc=rockylinux,dc=org"
+        bind_pw: "{{ ipaadmin_password }}"
 
     - name: "Set FAS Account Information to Private"
       community.general.ldap_attr:
