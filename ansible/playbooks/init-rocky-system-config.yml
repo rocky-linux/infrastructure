@@ -1,7 +1,10 @@
 ---
 # Basic system configuration. All hardening should also be imported here.
+# Use --extra-vars="host=..." and specify a hostname in the inventory or
+# provide an ansible host group name. You can also just use "all" if you
+# want to ensure all systems are up to date on the configuration.
 - name: Configure system
-  hosts: all
+  hosts: "{{ host }}"
   become: true
 
   # This is to try to avoid the handler issue in pre/post tasks

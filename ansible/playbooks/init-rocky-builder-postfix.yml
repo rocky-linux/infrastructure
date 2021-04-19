@@ -1,0 +1,36 @@
+---
+# Configures postfix on buildsystems
+- name: Configure Buildsys Relay
+  hosts: "buildsys"
+  become: true
+  vars_files:
+    - vars/buildsys.yml
+
+  handlers:
+    - import_tasks: handlers/main.yml
+
+  pre_tasks:
+    - name: Check if ansible cannot be run here
+      stat:
+        path: /etc/no-ansible
+      register: no_ansible
+
+    - name: Verify if we can run ansible
+      assert:
+        that:
+          - "not no_ansible.stat.exists"
+        success_msg: "We are not able to run on this node"
+        fail_msg: "/etc/no-ansible exists - skipping run on this node"
+
+  tasks:
+    - name: Deploy Postfix Relay
+      import_tasks: tasks/postfix_relay.yml
+
+  post_tasks:
+    - name: Touching run file that ansible has ran here
+      file:
+        path: /var/log/ansible.run
+        state: touch
+        mode: '0644'
+        owner: root
+        group: root

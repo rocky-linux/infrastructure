@@ -3,7 +3,7 @@
 roles:
   - name: geerlingguy.mysql
   # monitoring
-  - name: cloudalchemy.node-exporter
+  - name: cloudalchemy.node_exporter
   - name: cloudalchemy.prometheus
   - name: cloudalchemy.alertmanager
   - name: cloudalchemy.grafana
@@ -24,6 +24,17 @@ roles:
   - name: rockylinux.rabbitmq
     src: https://github.com/rocky-linux/ansible-role-rabbitmq
     version: main
+  - name: rockylinux.sigul
+    src: https://github.com/rocky-linux/ansible-role-sigul
+    version: main
+  - name: rockylinux.matterbridge
+    src: https://github.com/NeilHanlon/ansible-role-matterbridge
+    version: master
+  - name: rockylinux.wikijs
+    src: https://git.rockylinux.org/infrastructure/public/ansible/ansible-role-wikijs.git
+    scm: git
+    version: develop
+  - name: riemers.gitlab-runner
 
 collections:
   # freeipa
@@ -35,3 +46,11 @@ collections:
   - name: ansible.posix
   - name: ktdreyer.koji_ansible
   - name: netbox.netbox
+  - name: community.aws
+  - name: containers.podman
+  - name: nginxinc.nginx_core
+    version: 0.3.0
+# - name: rockylinux.taiga
+#   source: https://github.com/rocky-linux/taiga-ansible.git
+#   type: git
+#   version: master

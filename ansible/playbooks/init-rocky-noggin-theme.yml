@@ -1,0 +1,40 @@
+---
+# (Re)deploys the noggin theme
+- name: Deploy Noggin Theme
+  hosts: "idp"
+  become: true
+
+  handlers:
+    - import_tasks: handlers/main.yml
+
+  pre_tasks:
+    - name: Check if ansible cannot be run here
+      stat:
+        path: /etc/no-ansible
+      register: no_ansible
+
+    - name: Verify if we can run ansible
+      assert:
+        that:
+          - "not no_ansible.stat.exists"
+        success_msg: "We are not able to run on this node"
+        fail_msg: "/etc/no-ansible exists - skipping run on this node"
+
+  tasks:
+    - name: Deploy Rocky Noggin Theme
+      git:
+        repo: https://github.com/rocky-linux/noggin-theme.git
+        dest: /opt/noggin/noggin/noggin/themes/rocky
+        update: true
+        version: main
+      become_user: noggin
+      notify: restart_noggin
+
+  post_tasks:
+    - name: Touching run file that ansible has ran here
+      file:
+        path: /var/log/ansible.run
+        state: touch
+        mode: '0644'
+        owner: root
+        group: root

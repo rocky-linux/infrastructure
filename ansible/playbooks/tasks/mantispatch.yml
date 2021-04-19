@@ -1,0 +1,25 @@
+---
+# Patch up various pieces of mantis to customize it. We do not rely on local
+# bug tracker accounts. We are doing regex instead of just replacing the
+# file as a whole. Should make it easier to deal with upgrades in theory.
+- name: Change signup_page.php to Account Services
+  replace:
+    path: "/var/www/mantisbt-{{ mantis_version }}/{{ item }}"
+    regexp: 'signup_page.php'
+    replace: 'https://accounts.rockylinux.org'
+  with_items:
+    - core/print_api.php
+    - lost_pwd_page.php
+    - login_page.php
+
+- name: Change special signup_page.php reference
+  replace:
+    path: "/var/www/mantisbt-{{ mantis_version }}/core/layout_api.php"
+    regexp: "' . helper_mantis_url( 'signup_page.php' ) . '"
+    replace: 'https://accounts.rockylinux.org'
+
+- name: Remove LDAP from checks for signup button
+  lineinfile:
+    path: "/var/www/mantisbt-{{ mantis_version }}/login_page.php"
+    state: absent
+    regex: 'LDAP != config_get_global'

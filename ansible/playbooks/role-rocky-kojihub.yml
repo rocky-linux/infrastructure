@@ -5,7 +5,9 @@
   become: true
   vars_files:
   - vars/vaults/encpass.yml
-  - vars/kojihub.yml
+  - vars/common.yml
+  - vars/production/kojihub.yml
+  - vars/production/koji-common.yml
 
   # This is to try to avoid the handler issue in pre/post tasks
   handlers:
@@ -109,6 +111,9 @@
       state: present
 
   post_tasks:
+    - name: "Setup shared filesystem mount"
+      import_tasks: tasks/koji_efs.yml
+
     - name: Touching run file that ansible has ran here
       file:
         path: /var/log/ansible.run

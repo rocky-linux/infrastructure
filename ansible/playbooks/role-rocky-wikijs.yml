@@ -1,0 +1,69 @@
+---
+# WikiJS
+- name: Install and manage Wikijs
+  hosts: wiki
+  become: false
+  vars_files:
+    - vars/vaults/hostman.yml
+    - vars/vaults/wikijs.yml
+    - vars/wikijs.yml
+
+  # This is to try to avoid the handler issue in pre/post tasks
+  handlers:
+    - import_tasks: handlers/main.yml
+
+  pre_tasks:
+    - name: Check if ansible cannot be run here
+      stat:
+        path: /etc/no-ansible
+      register: no_ansible
+
+    - name: Verify if we can run ansible
+      assert:
+        that:
+          - "not no_ansible.stat.exists"
+        success_msg: "We are able to run on this node"
+        fail_msg: "/etc/no-ansible exists - skipping run on this node"
+
+    - name: Install SELinux packages
+      become: true
+      package:
+        name: python3-policycoreutils.noarch
+        state: present
+
+  roles:
+    - role: rockylinux.ipagetcert
+      become: true
+      state: present
+      tags: ['certs']
+
+    - role: rockylinux.wikijs
+      tags: ['wikijs']
+      become: true
+
+    # Define variables in vars/wikijs.yml
+    - role: nginxinc.nginx_core.nginx
+      tags: ['nginx']
+      become: true
+    - role: nginxinc.nginx_core.nginx_config
+      tags: ['nginx']
+      become: true
+
+  post_tasks:
+    - name: Open firewalld ports
+      become: true
+      ansible.posix.firewalld:
+        port: "{{ item.port }}"
+        permanent: "{{ item.permanent }}"
+        state: "{{ item.state }}"
+        immediate: yes
+      loop: "{{ firewall_rules }}"
+
+    - name: Touching run file that ansible has ran here
+      become: true
+      file:
+        path: /var/log/ansible.run
+        state: touch
+        mode: '0644'
+        owner: root
+        group: root

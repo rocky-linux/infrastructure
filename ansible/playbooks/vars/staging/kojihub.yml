@@ -1,0 +1,119 @@
+---
+# koji hub settings
+# This should be the front-facing URL of koji
+#koji_url_name: kojistg.rockylinux.org
+
+# Use an internal CA (IPA)
+koji_internal_ca: true
+
+# Use postgresql on this machine rather than managed service
+koji_postgresql_vm: true
+
+# Database settings
+koji_db_name: koji
+koji_db_user: koji
+# This will need to change when koji_postgresql_vm is false
+koji_db_host: "{{ ansible_fqdn }}"
+
+koji_web_url: "https://{{ koji_url_name }}/koji"
+koji_hub_url: "https://{{ koji_url_name }}/kojihub"
+koji_files_url: "https://{{ koji_url_name }}/kojifiles"
+
+# The IPA internal CA is combined with the others
+# Change before deployment or store in vault
+koji_hub_secret: cK5XCuzMSXJfgA7yFvXkGwFu
+koji_web_cacert: /etc/pki/tls/certs/ca-bundle.crt
+koji_web_tls_cert: "/etc/pki/tls/certs/{{ ansible_fqdn }}.crt"
+koji_web_tls_key: "/etc/pki/tls/private/{{ ansible_fqdn }}.key"
+
+# Kojira
+koji_kojira: true
+koji_kojira_user: kojira
+koji_kojira_user_kerb: kojira/kojistg.rockylinux.org
+koji_kojira_principal: kojira/kojistg.rockylinux.org@ROCKYLINUX.ORG
+koji_kojira_keytab: /etc/keytabs/kojira.keytab
+
+# MBS
+koji_mbs: true
+koji_mbs_user: mbs
+koji_mbs_user_kerb: mbs/mbs.rockylinux.org
+koji_mbs_principal: mbs/mbs.rockylinux.org@ROCKYLINUX.ORG
+koji_mbs_keytab: /etc/keytabs/mbs.keytab
+
+# GC
+koji_gc_keytab: /etc/keytabs/koji-gc.keytab
+koji_gc_principal: koji-gc/kojistg.rockylinux.org@ROCKYLINUX.ORG
+
+# Sigul
+koji_sigul: true
+koji_sigul_user: sigul
+koji_sigul_user_kerb: sigul/sigul.rockylinux.org
+koji_sigul_principal: sigul/sigul.rockylinux.org@ROCKYLINUX.ORG
+
+# NFS? We need a place.
+koji_nfs: false
+koji_mount: /mnt/koji
+koji_nfs_path: nfs.rockylinux.org:/export/koji
+
+# Koji Admin Settings
+koji_admin_client: true
+koji_admin_user: rockykoji
+koji_admin_principal: rockykoji@ROCKYLINUX.ORG
+koji_admin_localuser: true
+koji_admin_localuser_name: koji
+
+# Hub Settings
+koji_hub_principal: "host/kojihub@ROCKYLINUX.ORG"
+koji_hub_proxy_principals: "HTTP/{{ inventory_hostname }}@ROCKYLINUX.ORG"
+koji_hub_keytab: /etc/keytabs/host.keytab
+koji_hub_principal_format: compile/%s@ROCKYLINUX.ORG
+# This should be sufficient even for LE
+koji_hub_ca: "{{ koji_web_cacert }}"
+
+# Koji FAS Syncing
+# This isn't implemented yet in the role
+koji_fas_sync: false
+koji_fas_url: https://accounts.rockylinux.org
+
+# IPA Certs if Required
+ipa_getcert_requested_hostnames:
+  - name: "{{ ansible_fqdn }}"
+    owner: apache
+    key_location: "{{ koji_web_tls_key }}"
+    cert_location: "{{ koji_web_tls_cert }}"
+    postcmd: "/bin/systemctl reload httpd"
+
+# postgresql vars
+postgresql_restarted_state: "restarted"
+postgresql_python_library: python3-psycopg2
+postgresql_user: postgres
+postgresql_group: postgres
+postgresql_hba_entries:
+  - type: local
+    database: koji
+    user: koji
+    auth_method: trust
+  - type: local
+    database: all
+    user: postgres
+    auth_method: peer
+  - type: host
+    database: koji
+    user: koji
+    address: '10.100.1.0/24'
+    auth_method: md5
+
+postgresql_databases:
+  - name: "{{ koji_db_name }}"
+    owner: "{{ koji_db_user }}"
+
+postgresql_users:
+  - name: "{{ koji_db_user }}"
+    password: "{{ koji_db_pass }}"
+    role_attr_flags: "NOCREATEDB,NOSUPERUSER,NOCREATEROLE"
+    db: "{{ koji_db_name }}"
+    state: present
+
+postgresql_global_config_options:
+  - option: listen_addresses
+    value: '*'

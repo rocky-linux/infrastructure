@@ -20,9 +20,35 @@ koji_hub_url: "https://{{ koji_url_name }}/kojihub"
 koji_files_url: "https://{{ koji_url_name }}/kojifiles"
 
 # The IPA internal CA is combined with the others
+# Change before deployment or store in vault
+koji_hub_secret: cK5XCuzMSXJfgA7yFvXkGwFu
 koji_web_cacert: /etc/pki/tls/certs/ca-bundle.crt
 koji_web_tls_cert: "/etc/pki/tls/certs/{{ ansible_fqdn }}.crt"
 koji_web_tls_key: "/etc/pki/tls/private/{{ ansible_fqdn }}.key"
+
+# Kojira
+koji_kojira: true
+koji_kojira_user: kojira
+koji_kojira_user_kerb: kojira/koji.rockylinux.org
+koji_kojira_principal: kojira/koji.rockylinux.org@ROCKYLINUX.ORG
+koji_kojira_keytab: /etc/keytabs/kojira.keytab
+
+# MBS
+koji_mbs: true
+koji_mbs_user: mbs
+koji_mbs_user_kerb: mbs/mbs.rockylinux.org
+koji_mbs_principal: mbs/mbs.rockylinux.org@ROCKYLINUX.ORG
+koji_mbs_keytab: /etc/keytabs/mbs.keytab
+
+# GC
+koji_gc_keytab: /etc/keytabs/koji-gc.keytab
+koji_gc_principal: koji-gc/koji.rockylinux.org@ROCKYLINUX.ORG
+
+# Sigul
+koji_sigul: true
+koji_sigul_user: sigul
+koji_sigul_user_kerb: sigul/sigul.rockylinux.org
+koji_sigul_principal: sigul/sigul.rockylinux.org@ROCKYLINUX.ORG
 
 # NFS? We need a place.
 koji_nfs: false

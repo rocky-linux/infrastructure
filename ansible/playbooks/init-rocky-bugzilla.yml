@@ -1,10 +1,15 @@
 ---
 # Installs the mantis bug tracker
 - name: Configure MantisBT
-  hosts: "{{ host }}"
+  hosts: "bugtracker"
   become: true
+  vars_files:
+  - vars/common.yml
+  - vars/vaults/encpass.yml
+  - vars/vaults/mantis.yml
+  - vars/mantis.yml
 
-  handers:
+  handlers:
     - import_tasks: handlers/main.yml
 
   pre_tasks:
@@ -20,11 +25,31 @@
         success_msg: "We are not able to run on this node"
         fail_msg: "/etc/no-ansible exists - skipping run on this node"
 
+  roles:
+    - role: rockylinux.ipagetcert
+      state: present
+
   tasks:
     - name: Deploy Mantis
       import_tasks: tasks/mantis.yml
 
   post_tasks:
+    - name: Open firewalld ports
+      ansible.posix.firewalld:
+        service: "{{ item }}"
+        permanent: true
+        immediate: true
+        state: enabled
+      with_items:
+        - http
+        - https
+
+    - name: Ensure httpd is enabled and running
+      service:
+        name: httpd
+        enabled: true
+        state: started
+
     - name: Touching run file that ansible has ran here
       file:
         path: /var/log/ansible.run

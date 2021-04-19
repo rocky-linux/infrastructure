@@ -1,2 +1,26 @@
 ---
 # Account Services
+- name: Install packages
+  package:
+    name:
+      - httpd
+      - mod_ssl
+      - python3
+      - python3-setuptools
+      - python3-kdcproxy
+    state: present
+
+- name: Deploy relevant httpd configuration
+  template:
+    src: "etc/httpd/conf.d/id.conf.j2"
+    dest: "/etc/httpd/conf.d/id.conf"
+    owner: root
+    group: root
+    mode: '0644'
+  notify: restart_httpd
+
+- name: Enable and start
+  systemd:
+    name: httpd
+    state: running
+    enabled: true

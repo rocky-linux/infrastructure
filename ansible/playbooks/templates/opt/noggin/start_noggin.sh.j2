@@ -1,0 +1,14 @@
+#!/bin/bash
+export PATH=/home/noggin/.local/bin:/home/noggin/bin:/usr/local/bin:/usr/bin:/usr/local/sbin:/usr/sbin
+export NOGGIN_CONFIG_PATH=/opt/noggin/noggin.cfg
+export FLASK_DEBUG=1
+export FLASK_APP=/opt/noggin/noggin/noggin/app.py
+source /home/noggin/.cache/pypoetry/virtualenvs/{{ virtualenv_location.stdout }}/bin/activate
+cd /opt/noggin/noggin
+#/home/noggin/.local/bin/poetry run flask run -h 0.0.0.0
+# --certfile=/etc/pki/tls/certs/noggin.crt \
+# --keyfile=/etc/pki/tls/private/noggin.key \
+gunicorn -w 3 \
+ --env NOGGIN_CONFIG_PATH=/opt/noggin/noggin.cfg \
+ --bind tcp://0.0.0.0:5000 \
+ noggin.app:app

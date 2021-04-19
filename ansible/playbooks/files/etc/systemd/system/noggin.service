@@ -1,0 +1,16 @@
+[Unit]
+Description=noggin
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Environment=FLASK_APP=/opt/noggin/noggin/noggin/app.py
+Environment=NOGGIN_CONFIG_PATH=/opt/noggin/noggin.cfg
+Environment=FLASK_DEBUG=1
+User=noggin
+WorkingDirectory=/opt/noggin/noggin
+ExecStart=/bin/bash /opt/noggin/start_noggin.sh
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

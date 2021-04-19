@@ -1,0 +1,62 @@
+---
+# Init koji
+- name: kinit as koji admin using password
+  shell: "set -o pipefail && echo \"{{ rockykoji_password }}\" | kinit rockykoji@ROCKYLINUX.ORG"
+  check_mode: false
+  changed_when: "1 != 1"
+  become: yes
+  become_user: koji
+  when: rockykoji_has_password | bool
+
+- name: kinit as koji admin using keytab
+  shell: "set -o pipefail && kinit -kt /home/koji/.koji/keytab koji/rockykoji@ROCKYLINUX.ORG"
+  check_mode: false
+  changed_when: "1 != 1"
+  become: yes
+  become_user: koji
+  when: not rockykoji_has_password | bool
+
+- name: Import current necessary tags
+  shell: "set -o pipefail && koji add-tag {{ item }}"
+  changed_when: "1 != 1"
+  become: yes
+  become_user: koji
+  loop:
+    - build-modules
+    - dist-rocky8
+    - dist-rocky8-build
+    - dist-rocky8-compose
+    - dist-rocky8-extras
+    - dist-rocky8-gcc-toolset-9-build
+    - dist-rocky8-modular-buildrequires
+    - dist-rocky8-module-compose
+    - dist-rocky8-plus
+    - dist-rocky8-rust-bootstrap
+    - dist-rocky8-rust-bootstrap-build
+    - dist-rocky8-updates
+    - dist-rocky8-updates-build
+    - dist-rocky8_0-updates-build
+    - dist-rocky8_1-gcc-toolset-9-build
+    - dist-rocky8_1-updates-build
+    - dist-rocky8_2-updates-build
+    - dist-rocky8_3-updates-build
+    - dist-rocky8_4-updates-build
+    - dist-rocky9
+    - el8
+    - el8_0
+    - el8_1
+    - el8_2
+    - el8_3
+    - el8_4
+    - el8_infra
+    - el9
+    - el9_infra
+    - eln
+    - modular-updates-candidate
+    - module-rocky-8.0.0-build
+    - module-rocky-8.1.0-build
+    - module-rocky-8.2.0-build
+    - module-rocky-8.3.0-build
+    - module-rocky-8.4.0-build
+    - trash
+    - trashcan

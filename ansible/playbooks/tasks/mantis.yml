@@ -1,7 +1,7 @@
 ---
 # Configure mantis
 - name: Configure SELinux booleans
-  seboolean:
+  ansible.posix.seboolean:
     name: "{{ item }}"
     persistent: true
     state: true
@@ -14,15 +14,79 @@
   yum:
     name: "{{ mantis_pkg }}"
     state: present
-  vars:
-    mantis_pkg:
-      - php
-      - php-ldap
-      - httpd
-      - mod_ssl
-      - php-pgsql
-      - php-mbstring
-      - php-curl
-      - openldap
   tags:
     - packages
+
+- name: Download the bugtracker
+  get_url:
+    url: "http://downloads.sourceforge.net/mantisbt/mantisbt-{{ mantis_version }}.tar.gz"
+    dest: "/tmp/mantisbt-{{ mantis_version }}.tar.gz"
+    checksum: "{{ mantis_checksum }}"
+
+- name: Extract mantis
+  unarchive:
+    src: "/tmp/mantisbt-{{ mantis_version }}.tar.gz"
+    dest: "/var/www"
+    owner: apache
+    group: apache
+    mode: '0644'
+    remote_src: true
+
+- name: Generate crypto salt
+  shell: "set -o pipefail && cat /dev/urandom | head -c 64 | base64 --wrap=0"
+  changed_when: "1 != 1"
+  register: cryptosalt_string
+
+- name: Configure mantis
+  template:
+    src: "var/www/mantis/config/config_inc.php.j2"
+    dest: "/var/www/mantisbt-{{ mantis_version }}/config/config_inc.php"
+    owner: apache
+    group: apache
+    mode: '0640'
+
+- name: Deploy plugins from Mantis GitHub
+  git:
+    repo: "https://github.com/mantisbt-plugins/{{ item }}.git"
+    dest: "/var/www/mantisbt-{{ mantis_version }}/plugins/{{ item }}"
+    update: true
+    version: master
+  with_items:
+    - Snippets
+
+- name: Deploy custom libravatar plugin
+  git:
+    repo: "https://github.com/nazunalika/mantisbt-libravatar.git"
+    dest: "/var/www/mantisbt-{{ mantis_version }}/plugins/Libravatar"
+    update: true
+    version: main
+
+- name: Configure httpd
+  template:
+    src: "etc/httpd/conf.d/mantis.conf.j2"
+    dest: "/etc/httpd/conf.d/mantis.conf"
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Database import template
+  template:
+    src: "tmp/mantis_import.sql.j2"
+    dest: "/tmp/mantis_import.sql.j2"
+    owner: root
+    group: root
+    mode: '0600'
+
+# We will need to generate this
+# name: Import database if required
+# community.general.postgresql_db:
+#   name: "{{ mantis_db_name }}"
+#   target: /tmp/mantis_import.sql
+#   owner: "{{ mantis_db_user }}"
+#   state: restore
+#   login_host: "{{ mantis_db_host }}"
+#   login_user: "{{ mantis_db_user }}"
+#   login_password: "{{ mantis_db_pass }}"
+
+- name: Patch up some pages
+  import_tasks: mantispatch.yml

@@ -54,7 +54,7 @@
     # rocky-release-rabbitmq repo
     - name: Install centos rabbitmq
       yum:
-        name: centos-release-rabbitmq
+        name: centos-release-rabbitmq-38
         state: present
       tags:
         - packages

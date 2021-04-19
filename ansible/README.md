@@ -167,3 +167,238 @@ When initializing the ansible host, you should be in `./infrastructure/ansible` 
 % cd infrastructure/ansible
 % ansible-playbook playbooks/init-rocky-ansible-host.yml
 ```
+
+## Initializing the environment
+
+To get a base environment, you will need to run the playbooks in this order.
+
+```
+# Ansible host
+init-rocky-ansible-host.yml
+# First IPA server
+role-rocky-ipa.yml
+# Replicas
+role-rocky-ipa-replica.yml
+# Base users, groups, and DNS
+init-rocky-ipa-team.yml
+init-rocky-ipa-internal-dns.yml
+# All clients should be listed under [ipaclients]
+role-rocky-ipa-client.yml
+# All systems should be hardened
+init-rocky-system-config.yml
+```
+
+## Current Set
+
+```
+.
+├── README.md
+├── ansible.cfg
+├── collections
+│   └── Readme.md
+├── files -> playbooks/files
+├── handlers -> playbooks/handlers
+├── inventories
+│   ├── production
+│   │   ├── group_vars
+│   │   │   ├── chronyservers
+│   │   │   │   └── main.yml
+│   │   │   ├── ipa
+│   │   │   │   └── main.yml
+│   │   │   ├── ipaclients
+│   │   │   │   └── main.yml
+│   │   │   ├── ipareplicas
+│   │   │   │   └── main.yml
+│   │   │   ├── ipaserver
+│   │   │   │   └── main.yml
+│   │   │   └── rabbitmq
+│   │   │       └── main.yml
+│   │   └── hosts.ini
+│   └── staging
+│       ├── group_vars
+│       │   ├── chronyservers
+│       │   │   └── main.yml
+│       │   ├── ipa
+│       │   │   └── main.yml
+│       │   ├── ipaclients
+│       │   │   └── main.yml
+│       │   ├── ipareplicas
+│       │   │   └── main.yml
+│       │   ├── ipaserver
+│       │   │   └── main.yml
+│       │   └── rabbitmq
+│       │       └── main.yml
+│       └── hosts.ini
+├── playbooks
+│   ├── adhoc-facts-refresh.yml
+│   ├── adhoc-ipabinder.yml
+│   ├── adhoc-ipadnsrecord.yml
+│   ├── adhoc-ipadnszone.yml
+│   ├── adhoc-ipagetcert.yml
+│   ├── adhoc-ipagetkeytab.yml
+│   ├── adhoc-ipagroup.yml
+│   ├── adhoc-ipaservice.yml
+│   ├── adhoc-ipauser-disable.yml
+│   ├── adhoc-ipauser-enable.yml
+│   ├── adhoc-ipauser.yml
+│   ├── adhoc-rabbitmqqueue.yml
+│   ├── adhoc-rabbitmquser.yml
+│   ├── files
+│   │   ├── etc
+│   │   │   ├── authselect
+│   │   │   │   └── custom
+│   │   │   │       └── sssd-rocky
+│   │   │   │           ├── CentOS-8-system-auth -> RedHat-8-system-auth
+│   │   │   │           └── RedHat-8-system-auth
+│   │   │   ├── gitlab
+│   │   │   ├── pam.d
+│   │   │   │   ├── CentOS-7-system-auth-ac -> RedHat-7-system-auth-ac
+│   │   │   │   └── RedHat-7-system-auth-ac
+│   │   │   ├── rockybanner
+│   │   │   └── sudoers.d
+│   │   │       └── cis
+│   │   ├── tmp
+│   │   └── usr
+│   │       └── local
+│   │           └── bin
+│   │               └── lock-wrapper
+│   ├── handlers
+│   │   └── main.yml
+│   ├── import-rockygroups.yml
+│   ├── import-rockyipaprivs.yml
+│   ├── import-rockypwpolicy.yml
+│   ├── import-rockysudo.yml
+│   ├── import-rockyusers.yml
+│   ├── init-rocky-account-services.yml
+│   ├── init-rocky-ansible-host.yml
+│   ├── init-rocky-bugzilla.yml
+│   ├── init-rocky-builder-postfix.yml
+│   ├── init-rocky-chrony.yml
+│   ├── init-rocky-install-kvm-hosts.yml
+│   ├── init-rocky-ipa-internal-dns.yml
+│   ├── init-rocky-ipa-team.yml
+│   ├── init-rocky-noggin-theme.yml
+│   ├── init-rocky-system-config.yml
+│   ├── rocky-rocky-gitlab-ee.yml
+│   ├── role-rocky-graylog.yml
+│   ├── role-rocky-ipa-client.yml
+│   ├── role-rocky-ipa-replica.yml
+│   ├── role-rocky-ipa.yml
+│   ├── role-rocky-ipsilon.yml
+│   ├── role-rocky-kojid.yml
+│   ├── role-rocky-kojihub.yml
+│   ├── role-rocky-monitoring.yml
+│   ├── role-rocky-mqtt.yml
+│   ├── role-rocky-node_exporter.yml
+│   ├── role-rocky-rabbitmq.yml
+│   ├── role-rocky-sigul-bridge.yml
+│   ├── role-rocky-sigul-server.yml
+│   ├── tasks
+│   │   ├── account_services.yml
+│   │   ├── auditd.yml
+│   │   ├── authentication.yml
+│   │   ├── chrony.yml
+│   │   ├── gitlab-reconfigure.yml
+│   │   ├── grub.yml
+│   │   ├── harden.yml
+│   │   ├── koji_efs.yml
+│   │   ├── main.yml
+│   │   ├── mantis.yml
+│   │   ├── postfix_relay.yml
+│   │   ├── rabbitmq-reconfigure.yml
+│   │   ├── scripts.yml
+│   │   ├── ssh_config.yml
+│   │   └── variable_loader_common.yml
+│   ├── templates
+│   │   ├── etc
+│   │   │   ├── audit
+│   │   │   │   └── rules.d
+│   │   │   │       └── collection.rules.j2
+│   │   │   ├── chrony.conf.j2
+│   │   │   ├── gitlab
+│   │   │   │   └── rocky_gitlab.rb
+│   │   │   ├── httpd
+│   │   │   │   └── conf.d
+│   │   │   │       ├── id.conf.j2
+│   │   │   │       └── mantis.conf.j2
+│   │   │   ├── modprobe.d
+│   │   │   │   └── cis.conf.j2
+│   │   │   ├── nginx
+│   │   │   │   ├── conf.d
+│   │   │   │   │   └── omnibus.conf.j2
+│   │   │   │   └── nginx.conf.j2
+│   │   │   ├── postfix
+│   │   │   │   └── sasl_passwd.j2
+│   │   │   ├── resolv.conf.j2
+│   │   │   ├── rsyslog.d
+│   │   │   ├── ssh
+│   │   │   │   ├── CentOS-7-sshd_config.j2 -> RedHat-7-sshd_config.j2
+│   │   │   │   ├── CentOS-8-sshd_config.j2 -> RedHat-8-sshd_config.j2
+│   │   │   │   ├── RedHat-7-sshd_config.j2
+│   │   │   │   └── RedHat-8-sshd_config.j2
+│   │   │   └── sssd
+│   │   ├── hidden
+│   │   │   ├── README.md
+│   │   │   └── home
+│   │   │       └── noggin
+│   │   │           └── noggin.cfg
+│   │   ├── tmp
+│   │   │   ├── binder.update
+│   │   │   └── binder_template.update
+│   │   └── var
+│   │       └── www
+│   │           └── mantis
+│   │               └── config
+│   │                   └── config_inc.php.j2
+│   └── vars
+│       ├── CentOS.yml -> RedHat.yml
+│       ├── RedHat.yml
+│       ├── buildsys.yml
+│       ├── chrony.yml
+│       ├── chronyserver.yml
+│       ├── common.yml
+│       ├── gitlab.yml
+│       ├── graylog.yml
+│       ├── ipa
+│       │   ├── adminusers.yml
+│       │   ├── agreements.yml
+│       │   ├── fdns.yml
+│       │   ├── groups.yml
+│       │   ├── ipaclient.yml
+│       │   ├── ipaprivs.yml
+│       │   ├── ipareplica.yml
+│       │   ├── ipaserver.yml
+│       │   ├── rdns.yml
+│       │   ├── sudorules.yml
+│       │   ├── svcusers.yml
+│       │   └── users.yml
+│       ├── ipaserver.yml
+│       ├── ipsilon.yml
+│       ├── koji-common.yml
+│       ├── kojid.yml
+│       ├── kojihub.yml
+│       ├── mantis.yml
+│       ├── matterbridge.yml
+│       ├── monitoring
+│       │   └── README.md
+│       ├── monitoring.yml
+│       ├── mqtt.yml
+│       ├── rabbitmq.yml
+│       ├── sigul_bridge.yml
+│       ├── sigul_server.yml
+│       └── vaults
+│           └── README.md
+├── roles
+│   ├── local
+│   │   └── Readme.md
+│   ├── public
+│   │   └── Readme.md
+│   └── requirements.yml
+├── ssh_config
+├── tasks -> playbooks/tasks
+├── templates -> playbooks/templates
+├── tmp
+│   ├── Readme.md
+│   └── ansible.log
+└── vars -> playbooks/vars
+```

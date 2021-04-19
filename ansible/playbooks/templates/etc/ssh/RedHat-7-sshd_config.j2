@@ -62,7 +62,6 @@ AuthorizedKeysFile	.ssh/authorized_keys
 # To disable tunneled clear text passwords, change to no here!
 #PasswordAuthentication yes
 #PermitEmptyPasswords no
-PasswordAuthentication yes
 
 # Change to no to disable s/key passwords
 #ChallengeResponseAuthentication yes
@@ -154,3 +153,8 @@ Ciphers aes256-ctr,aes192-ctr,aes128-ctr
 AuthorizedKeysCommand /usr/bin/sss_ssh_authorizedkeys
 AuthorizedKeysCommandUser nobody
 ChallengeResponseAuthentication yes
+PasswordAuthentication no
+
+{% if 'gitlabservers' in group_names %}
+AllowUsers git@* *@10.*
+{% endif %}
