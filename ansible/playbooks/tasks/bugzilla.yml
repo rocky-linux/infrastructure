@@ -1,0 +1,54 @@
+---
+# Configure Bugzilla
+- name: Configure SELinux booleans
+  ansible.posix.seboolean:
+    name: "{{ item }}"
+    persistent: true
+    state: true
+  with_items:
+    - httpd_can_network_connect_db
+    - httpd_can_network_connect
+    - httpd_can_sendmail
+
+- name: Install necessary packages
+  yum:
+    name: "{{ bugzilla_pkg }}"
+    state: present
+  tags:
+    - packages
+
+- name: Download the bugtracker
+  get_url:
+    url: "https://ftp.mozilla.org/pub/mozilla.org/webtools/bugzilla-{{ bugzilla_version }}.tar.gz"
+    dest: "/tmp/bugzilla-{{ bugzilla_version }}.tar.gz"
+    checksum: "{{ bugzilla_checksum }}"
+
+- name: Create initial directory
+  file:
+    path: "/var/www/bugzilla"
+    state: directory
+    mode: '0750'
+    owner: root
+    group: apache
+
+- name: Extract bugzilla
+  unarchive:
+    src: "/tmp/bugzilla-{{ bugzilla_version }}.tar.gz"
+    dest: "/var/www/bugzilla"
+    owner: root
+    group: apache
+    mode: '0640'
+    remote_src: true
+    extra_opts:
+      - '--strip-components=1'
+
+- name: Configure httpd
+  template:
+    src: "etc/httpd/conf.d/bugzilla.conf.j2"
+    dest: "/etc/httpd/conf.d/bugzilla.conf"
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Install necessary pieces
+  import_tasks: bugzilla_install.yml

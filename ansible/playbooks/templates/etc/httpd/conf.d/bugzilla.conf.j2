@@ -1,0 +1,37 @@
+<VirtualHost *:80>
+  ServerAdmin infrastructure@rockylinux.org
+  DocumentRoot "{{ bugzilla_dir }}"
+  ServerName bugs.rockylinux.org
+  TransferLog /var/log/httpd/bugzilla_access.log
+  ErrorLog /var/log/httpd/bugzilla_error.log
+  <Directory "{{ bugzilla_dir }}/">
+    AddHandler cgi-script .cgi
+    DirectoryIndex index.cgi
+    Options MultiViews FollowSymlinks ExecCGI FollowSymLinks
+    AllowOverride All
+    Order allow,deny
+    Allow from all
+  </Directory>
+</VirtualHost>
+
+<VirtualHost *:443>
+  SSLEngine on
+  SSLHonorCipherOrder on
+  SSLCipherSuite PROFILE=SYSTEM
+  SSLProxyCipherSuite PROFILE=SYSTEM
+  SSLCertificateFile /etc/pki/tls/certs/bugs.rockylinux.org.crt
+  SSLCertificateKeyFile /etc/pki/tls/private/bugs.rockylinux.org.key
+  ServerAdmin infrastructure@rockylinux.org
+  DocumentRoot "{{ bugzilla_dir }}"
+  ServerName bugs.rockylinux.org
+  TransferLog /var/log/httpd/bugzilla_access.log
+  ErrorLog /var/log/httpd/bugzilla_error.log
+  <Directory "{{ bugzilla_dir }}/">
+    AddHandler cgi-script .cgi
+    DirectoryIndex index.cgi
+    Options MultiViews FollowSymlinks ExecCGI FollowSymLinks
+    AllowOverride All
+    Order allow,deny
+    Allow from all
+  </Directory>
+</VirtualHost>

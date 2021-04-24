@@ -1,13 +1,13 @@
 ---
-# Installs Bugzilla
-- name: Configure Bugzilla
+# Installs the mantis bug tracker
+- name: Configure MantisBT
   hosts: "bugtracker"
   become: true
   vars_files:
   - vars/common.yml
   - vars/vaults/encpass.yml
   - vars/vaults/mantis.yml
-  - vars/bugzilla.yml
+  - vars/mantis.yml
 
   handlers:
     - import_tasks: handlers/main.yml
@@ -31,7 +31,7 @@
 
   tasks:
     - name: Deploy Mantis
-      import_tasks: tasks/bugzilla.yml
+      import_tasks: tasks/mantis.yml
 
   post_tasks:
     - name: Open firewalld ports
