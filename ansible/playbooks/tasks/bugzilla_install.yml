@@ -16,8 +16,9 @@
   when: not conf_result.stat.exists
 
 - name: Run checksetup.pl
-  shell: "set -o pipefail && /usr/bin/perl checksetup.pl /var/www/bugzilla/answer"
-  chdir: "{{ bugzilla_dir }}"
+  shell: "set -o pipefail && /usr/bin/perl checksetup.pl {{ bugzilla_dir }}/answer"
+  args:
+    chdir: "{{ bugzilla_dir }}"
   changed_when: "1 != 1"
   when: not conf_result.stat.exists
 
@@ -31,8 +32,9 @@
 
 - name: Install the proper modules
   shell: "set -o pipefail && /usr/bin/perl install-module.pl {{ item }}"
-  chdir: "{{ bugzilla_dir }}"
   changed_when: "1 != 1"
+  args:
+    chdir: "{{ bugzilla_dir }}"
   with_items:
     - 'Net::SAML2'
     - 'HTML::FormatText::WithLinks'
@@ -45,7 +47,8 @@
 
 - name: Re-run checksetup.pl
   shell: "set -o pipefail && /usr/bin/perl checksetup.pl"
-  chdir: "{{ bugzilla_dir }}"
+  args:
+    chdir: "{{ bugzilla_dir }}"
   changed_when: "1 != 1"
 
 - name: Remove answer file
