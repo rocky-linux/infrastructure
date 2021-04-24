@@ -1,0 +1,37 @@
+---
+# This playbook is meant to be used with callable variables, like adhoc or AWX.
+# What: Deletes a project in gitlab. THERE MUST BE A GOOD REASON FOR YOU TO
+#       RUN THIS. THIS IS NOT REVERSIBLE.
+# What is expected:
+#   -> gitlab_api_token: You must provide an API token to perform this.
+#   -> gitlab_project_name: Name of the project
+#   -> gitlab_group_name: Id or Path to the group in which the project is
+#                         is placed. This is not optional.
+#   -> gitlab_description: Description of your project
+#   -> gitlab_visibility: public, internal, private. Default is private.
+
+- name: Delete a gitlab project
+  hosts: localhost
+  become: false
+  gather_facts: false
+  vars:
+    gitlab_endpoint: "https://git.rockylinux.org/"
+
+  tasks:
+    - name: "Checking for user variables"
+      assert:
+        that:
+          - gitlab_api_token | mandatory
+          - gitlab_project_name | mandatory
+          - gitlab_group_name | mandatory
+        success_msg: "Required variables provided"
+        fail_msg: "We are missing our required variables"
+
+    - name: "Deleting GitLab Project"
+      community.general.gitlab_project:
+        api_url: "{{ gitlab_endpoint }}"
+        api_token: "{{ gitlab_api_token }}"
+        name: "{{ gitlab_project_name }}"
+        state: absent
+        validate_certs: true
+      delegate_to: localhost

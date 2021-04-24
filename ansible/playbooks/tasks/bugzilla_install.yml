@@ -1,0 +1,54 @@
+---
+# Install bugzilla properly, including modules and stuff
+
+- name: Check for a localconfig file
+  stat:
+    path: "{{ bugzilla_dir }}/localconfig"
+  register: conf_result
+
+- name: Deploy answer file
+  template:
+    src: "var/www/bugzilla/answer"
+    dest: "{{ bugzilla_dir }}/answer"
+    owner: root
+    group: apache
+    mode: "0640"
+  when: not conf_result.stat.exists
+
+- name: Run checksetup.pl
+  shell: "set -o pipefail && /usr/bin/perl checksetup.pl /var/www/bugzilla/answer"
+  chdir: "{{ bugzilla_dir }}"
+  changed_when: "1 != 1"
+  when: not conf_result.stat.exists
+
+- name: Deploy proper configuration
+  template:
+    src: "var/www/bugzilla/localconfig.j2"
+    dest: "{{ bugzilla_dir }}/localconfig"
+    owner: root
+    group: apache
+    mode: '0640'
+
+- name: Install the proper modules
+  shell: "set -o pipefail && /usr/bin/perl install-module.pl {{ item }}"
+  chdir: "{{ bugzilla_dir }}"
+  changed_when: "1 != 1"
+  with_items:
+    - 'Net::SAML2'
+    - 'HTML::FormatText::WithLinks'
+    - 'PatchReader'
+    - 'Crypt::OpenSSL::Verify'
+    - 'Crypt::OpenSSL::RSA'
+    - 'JSON::RPC'
+    - 'XML::Twig'
+    - 'Template::Plugin::GD::Image'
+
+- name: Re-run checksetup.pl
+  shell: "set -o pipefail && /usr/bin/perl checksetup.pl"
+  chdir: "{{ bugzilla_dir }}"
+  changed_when: "1 != 1"
+
+- name: Remove answer file
+  file:
+    path: "{{ bugzilla_dir }}/answer"
+    state: absent

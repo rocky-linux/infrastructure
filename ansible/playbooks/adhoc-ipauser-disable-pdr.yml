@@ -1,0 +1,84 @@
+---
+# This playbook is meant to be used with callable variables, like adhoc or AWX.
+# What: Disables users in the idm infrastructure based on the variables provided.
+#       This is primarily used in the event a user wishes to have their personal
+#       information removed from the project. However, signing of the agreements
+#       in Account Services cannot be removed and should still be available
+#       for the RESF to query.
+
+- name: Disable a User - PDR
+  hosts: ipaserver
+  become: false
+  gather_facts: false
+  vars_files:
+  - vars/vaults/userman.yml
+
+  tasks:
+    - name: "Checking for user variables"
+      assert:
+        that:
+          - ipa_admin | mandatory
+          - ipaadmin_password | mandatory
+          - ipa_name | mandatory
+          - ticket_id | mandatory
+        success_msg: "Required variables provided"
+        fail_msg: "We are missing user information or ipa admin password"
+
+    - name: "Disabling User Account"
+      freeipa.ansible_freeipa.ipauser:
+        ipaadmin_principal: "{{ ipa_admin }}"
+        ipaadmin_password: "{{ ipaadmin_password }}"
+        name: "{{ ipa_name }}"
+        state: disabled
+      tags:
+        - users
+
+    - name: "Remove personal information attributes"
+      community.general.ldap_attr:
+        dn: "uid={{ ipa_name }},cn=users,cn=accounts,dc=rockylinux,dc=org"
+        name: "{{ item }}"
+        values: []
+        state: exact
+        server_uri: ldap://localhost/
+        bind_dn: "uid={{ ipa_admin }},cn=users,cn=accounts,dc=rockylinux,dc=org"
+        bind_pw: "{{ ipaadmin_password }}"
+      with_items:
+        - fasGPGKeyId
+        - fasGitHubUsername
+        - fasGitLabUsername
+        - fasIRCNick
+        - fasRHBZEmail
+        - fasWebsiteURL
+        - fasgpgkeyid
+        - fasLocale
+        - fasTimezone
+        - homePhone
+        - homePostalAddress
+        - postalAddress
+        - postalCode
+        - postOfficeBox
+        - st
+        - street
+        - ipaSshPubKey
+        - telephoneNumber
+        - homePhone
+
+    - name: "Set FAS Status Note"
+      community.general.ldap_attr:
+        dn: "uid={{ ipa_name }},cn=users,cn=accounts,dc=rockylinux,dc=org"
+        name: "fasStatusNote"
+        values: "Account Disabled: {{ ticket_id }}"
+        state: exact
+        server_uri: ldap://localhost/
+        bind_dn: "uid={{ ipa_admin }},cn=users,cn=accounts,dc=rockylinux,dc=org"
+        bind_pw: "{{ ipaadmin_password }}"
+
+    - name: "Set FAS Account Information to Private"
+      community.general.ldap_attr:
+        dn: "uid={{ ipa_name }},cn=users,cn=accounts,dc=rockylinux,dc=org"
+        name: "fasisprivate"
+        values: "TRUE"
+        state: exact
+        server_uri: ldap://localhost/
+        bind_dn: "uid={{ ipa_admin }},cn=users,cn=accounts,dc=rockylinux,dc=org"
+        bind_pw: "{{ ipaadmin_password }}"

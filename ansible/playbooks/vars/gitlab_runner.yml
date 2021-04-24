@@ -1,0 +1,9 @@
+---
+gitlab_runner_coordinator_url: https://git.rockylinux.org
+gitlab_runner_registration_token: "{{ _reg_token }}"
+gitlab_runner_runners:
+  - name: "{{ ansible_fqdn }}"
+    executor: shell
+    tags: []
+
+gitlab_runner_timeout_stop_seconds: 60

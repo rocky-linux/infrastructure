@@ -1,0 +1,11 @@
+$answer{'db_host'}   = '{{ bugzilla_db_host }}';
+$answer{'db_driver'} = 'pg';
+$answer{'db_port'}   = 0;
+$answer{'db_name'}   = '{{ bugzilla_db_name }}';
+$answer{'db_user'}   = '{{ bugzilla_db_user }}';
+$answer{'db_pass'}   = '{{ bugzilla_db_pass }}';
+$answer{'urlbase'} = 'https://bugs.rockylinux.org/';
+$answer{'ADMIN_EMAIL'} = 'infrastructure@rockylinux.org';
+$answer{'ADMIN_PASSWORD'} = '{{ bugzilla_admin_password }}';
+$answer{'ADMIN_REALNAME'} = 'Infrastructure';
+$answer{'NO_PAUSE'} = 1

@@ -1,0 +1,48 @@
+---
+# Creates a Gitlab runner and registers it w/ tags
+- name: Install and Provision Gitlab Runner
+  hosts: gitlab_runners
+  become: true
+  vars_files:
+  - vars/common.yml
+  - vars/gitlab_runner.yml
+  - vars/vaults/encpass.yml
+
+  # This is to try to avoid the handler issue in pre/post tasks
+  handlers:
+    - import_tasks: handlers/main.yml
+
+  pre_tasks:
+    - name: Check if ansible cannot be run here
+      stat:
+        path: /etc/no-ansible
+      register: no_ansible
+
+    - name: Verify if we can run ansible
+      assert:
+        that:
+          - "not no_ansible.stat.exists"
+        success_msg: "We are able to run on this node"
+        fail_msg: "/etc/no-ansible exists - skipping un on this node"
+
+    - name: Install SELinux packages
+      package:
+        name: python3-policycoreutils.noarch
+        state: present
+
+  tasks:
+    - name: Install and configure runner
+      import_tasks: tasks/gitlab-runner.yml
+
+  roles:
+    - role: riemers.gitlab-runner
+      state: present
+
+  post_tasks:
+    - name: Touching run file that ansible has ran here
+      file:
+        path: /var/log/ansible.run
+        state: touch
+        mode: '0644'
+        owner: root
+        group: root

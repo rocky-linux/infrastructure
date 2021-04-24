@@ -1,0 +1,40 @@
+---
+# This playbook is meant to be used with callable variables, like adhoc or AWX.
+# What: Creates a group in gitlab. Use this to create a group that may not
+#       exist and wish to have projects in.
+# What is expected:
+#   -> gitlab_api_token: You must provide an API token to perform this.
+#   -> gitlab_group_name: Name of the group you wish to create.
+#   -> gitlab_parent_group: Id or full path of parent group if required.
+#                           For example: "infrastructure/Public"
+#   -> gitlab_description: Description of your group
+#   -> gitlab_visibility: public, internal, private. Default is private.
+
+- name: Create a gitlab group
+  hosts: localhost
+  become: false
+  gather_facts: false
+  vars:
+    gitlab_endpoint: "https://git.rockylinux.org/"
+
+  tasks:
+    - name: "Checking for user variables"
+      assert:
+        that:
+          - gitlab_api_token | mandatory
+          - gitlab_group_name | mandatory
+        success_msg: "Required variables provided"
+        fail_msg: "We are missing our required variables"
+
+    - name: "Creating GitLab Group"
+      community.general.gitlab_group:
+        api_token: "{{ gitlab_api_token }}"
+        api_url: "{{ gitlab_endpoint }}"
+        name: "{{ gitlab_group_name }}"
+        description: "{{ gitlab_description|default(omit) }}"
+        parent: "{{ gitlab_parent_group|default(omit) }}"
+        state: present
+        validate_certs: true
+        visibility: "{{ gitlab_visibility|default('private') }}"
+      delegate_to: localhost
+      register: gitlab_group_return

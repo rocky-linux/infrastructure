@@ -1,0 +1,52 @@
+---
+# bugzilla vars
+bugzilla_version: 5.0.6
+bugzilla_checksum: "sha256:dd41a4b0a3a1df0d193bc056f2e3711d7b5605718a00bf6e5d4177bf1be86f77"
+bugzilla_dir: "/var/www/bugzilla"
+bugzilla_pkg:
+  - perl
+  - perl-CPAN
+  - perl-DBD-Pg
+  - perl-LDAP
+  - perl-JSON-RPC-CGI
+  - perl-JSON-RPC-Daemon
+  - perl-JSON-RPC-Apache2
+  - perl-JSON-XS
+  - perl-XMLRPC-Lite
+  - perl-CGI
+  - perl-DateTime
+  - perl-DateTime-TimeZone
+  - perl-Template-Toolkit
+  - perl-Email-Sender
+  - perl-Email-MIME
+  - perl-List-MoreUtils
+  - perl-Math-Random-ISAAC
+  - perl-GD
+  - patchutils
+  - httpd
+  - mod_ssl
+  - mod_perl
+  - mod_perl-devel
+  - httpd-devel
+  - gd-devel
+  - graphviz
+  - patchutils
+  - gcc
+  - openssl-devel
+  - wget
+  - curl
+bugzilla_db_host: db.rockylinux.org
+bugzilla_db_name: bugzilla_db
+bugzilla_db_user: bugzilla
+
+# Vault
+# bugzilla_db_pass: ThisIsNotThePassword!
+
+ipa_getcert_requested_hostnames:
+  - name: "{{ ansible_fqdn }}"
+    owner: apache
+    key_location: "/etc/pki/tls/private/bugs.rockylinux.org.key"
+    cert_location: "/etc/pki/tls/certs/bugs.rockylinux.org.crt"
+    postcmd: "/bin/systemctl reload httpd"
+    cnames:
+      - "bugs.rockylinux.org"
