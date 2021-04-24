@@ -25,7 +25,7 @@
 
 - name: Create initial directory
   file:
-    path: "/var/www/bugzilla"
+    path: "{{ bugzilla_dir }}"
     state: directory
     mode: '0750'
     owner: root
@@ -34,7 +34,7 @@
 - name: Extract bugzilla
   unarchive:
     src: "/tmp/bugzilla-{{ bugzilla_version }}.tar.gz"
-    dest: "/var/www/bugzilla"
+    dest: "{{ bugzilla_dir }}"
     owner: root
     group: apache
     mode: '0640'

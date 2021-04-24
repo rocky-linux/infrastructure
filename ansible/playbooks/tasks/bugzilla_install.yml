@@ -3,13 +3,13 @@
 
 - name: Check for a localconfig file
   stat:
-    path: "/var/www/bugzilla/localconfig"
+    path: "{{ bugzilla_dir }}/localconfig"
   register: conf_result
 
 - name: Deploy answer file
   template:
     src: "var/www/bugzilla/answer"
-    dest: "/var/www/bugzilla/answer"
+    dest: "{{ bugzilla_dir }}/answer"
     owner: root
     group: apache
     mode: "0640"
@@ -17,21 +17,21 @@
 
 - name: Run checksetup.pl
   shell: "set -o pipefail && /usr/bin/perl checksetup.pl /var/www/bugzilla/answer"
-  chdir: "/var/www/bugzilla"
+  chdir: "{{ bugzilla_dir }}"
   changed_when: "1 != 1"
   when: not conf_result.stat.exists
 
 - name: Deploy proper configuration
   template:
     src: "var/www/bugzilla/localconfig.j2"
-    dest: "/var/www/bugzilla/localconfig"
+    dest: "{{ bugzilla_dir }}/localconfig"
     owner: root
     group: apache
     mode: '0640'
 
 - name: Install the proper modules
   shell: "set -o pipefail && /usr/bin/perl install-module.pl {{ item }}"
-  chdir: "/var/www/bugzilla"
+  chdir: "{{ bugzilla_dir }}"
   changed_when: "1 != 1"
   with_items:
     - 'Net::SAML2'
@@ -45,10 +45,10 @@
 
 - name: Re-run checksetup.pl
   shell: "set -o pipefail && /usr/bin/perl checksetup.pl"
-  chdir: "/var/www/bugzilla"
+  chdir: "{{ bugzilla_dir }}"
   changed_when: "1 != 1"
 
 - name: Remove answer file
   file:
-    path: "/var/www/bugzilla/answer"
+    path: "{{ bugzilla_dir }}/answer"
     state: absent
