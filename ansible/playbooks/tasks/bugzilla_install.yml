@@ -37,13 +37,14 @@
     chdir: "{{ bugzilla_dir }}"
   with_items:
     - 'Net::SAML2'
+    - 'Template'
+    - 'Template::Plugin::GD::Image'
     - 'HTML::FormatText::WithLinks'
     - 'PatchReader'
     - 'Crypt::OpenSSL::Verify'
     - 'Crypt::OpenSSL::RSA'
     - 'JSON::RPC'
     - 'XML::Twig'
-    - 'Template::Plugin::GD::Image'
 
 - name: Re-run checksetup.pl
   shell: "set -o pipefail && /usr/bin/perl checksetup.pl"
