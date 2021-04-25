@@ -45,6 +45,7 @@
     - 'Crypt::OpenSSL::RSA'
     - 'JSON::RPC'
     - 'XML::Twig'
+    - 'Test::Taint'
 
 - name: Re-run checksetup.pl
   shell: "set -o pipefail && /usr/bin/perl checksetup.pl"
