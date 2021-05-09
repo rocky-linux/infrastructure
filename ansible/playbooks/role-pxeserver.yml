@@ -1,0 +1,45 @@
+---
+# Variables for the infrastructure are in inventory/pxeinventory
+- name: Configure PXE Server
+  hosts: pxeserver
+  become: true
+
+  # This is to try to avoid the handler issue in pre/post tasks
+  handlers:
+    - include: handlers/main.yml
+
+  pre_tasks:
+    - name: Check if ansible cannot be run here
+      stat:
+        path: /etc/no-ansible
+      register: no_ansible
+
+    - name: Verify if we can run ansible
+      assert:
+        that:
+          - "not no_ansible.stat.exists"
+        msg: "/etc/no-ansible exists - skipping run on this node"
+        #- name: Verify parameters
+        #  assert:
+        #    that:
+        #      - '{{ pxeboot_nameservers }}'
+        #      - '{{ pxeboot_server_address }}'
+        #      - '{{ pxeboot_netmask }}'
+        #      - '{{ pxeboot_gateway }}'
+        #      - '{{ pxeboot_subnet }}'
+        #      - '{{ pxeboot_next_server }}'
+        #      - '{{ pxeboot_range_low }}'
+        #      - '{{ pxeboot_range_high }}'
+
+  roles:
+    - role: pxeserver
+      state: present
+
+  post_tasks:
+    - name: Touching run file that ansible has ran here
+      file:
+        path: /var/log/ansible.run
+        state: touch
+        mode: '0644'
+        owner: root
+        group: root

@@ -1,0 +1,12 @@
+[pxeserver]
+vmtest1.i.gensoukyou.net ansible_host=10.21.3.31
+
+[pxeserver:vars]
+pxeboot_nameservers=10.21.254.1
+pxeboot_server_address=10.21.3.31
+pxeboot_netmask=255.255.255.0
+pxeboot_gateway=10.21.3.1
+pxeboot_subnet=10.21.3.0
+pxeboot_next_server=127.0.0.1
+pxeboot_range_low=10.21.3.10
+pxeboot_range_high=10.21.3.20
