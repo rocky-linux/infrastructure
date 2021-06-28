@@ -12,4 +12,4 @@ kojid_distribution: Rocky
 kojid_ca_bundle: /etc/pki/tls/certs/ca-bundle.crt
 kojid_keytab: /etc/kojid.keytab
 kojid_smtp_host: smtp.rockylinux.org
-kojid_allowed_scm: "git.centos.org:/* git.rockylinux.org:/*"
+kojid_allowed_scm: "git.rockylinux.org:/staging/rpms/*:off:/var/srpmproc/srpmproc_wrapper git.rockylinux.org:/rocky/*:off:/var/srpmproc/srpmproc_wrapper git.rockylinux.org:/original/rpms/*:off:/var/srpmproc/srpmproc_wrapper"
