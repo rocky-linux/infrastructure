@@ -39,10 +39,10 @@ gitlab_download_validate_certs: true
 
 # Email and SMTP configuration (For the future)
 # Email configuration.
-gitlab_email_enabled: "false"
-gitlab_email_from: "gitlab@rockylinux.org"
+gitlab_email_enabled: "true"
+gitlab_email_from: "git@rockylinux.org"
 gitlab_email_display_name: "Gitlab"
-gitlab_email_reply_to: "gitlab@rockylinux.org"
+gitlab_email_reply_to: "noreply@rockylinux.org"
 # SMTP configuration
 gitlab_smtp_enable: "false"
 gitlab_smtp_address: "smtp.gmail.com"
