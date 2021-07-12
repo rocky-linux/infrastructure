@@ -1,0 +1,40 @@
+---
+# Manage bootstrap hosts
+#
+- name: Manage and configure bootstrap hosts
+  hosts: bootstrap_staging
+  become: true
+  vars_files:
+    - vars/mounts/bootstrap_staging.yml
+
+  # This is to try to avoid the handler issue in pre/post tasks
+  handlers:
+    - import_tasks: handlers/main.yml
+
+  pre_tasks:
+    - name: Check if ansible cannot be run here
+      stat:
+        path: /etc/no-ansible
+      register: no_ansible
+
+    - name: Verify if we can run ansible
+      assert:
+        that:
+          - "not no_ansible.stat.exists"
+        success_msg: "We are able to run on this node"
+        fail_msg: "/etc/no-ansible exists - skipping run on this node"
+
+  tasks:
+    - include_tasks: tasks/efs_mount.yml
+      loop: "{{ mounts }}"
+
+    - include_tasks: tasks/srpmproc.yml
+
+  post_tasks:
+    - name: Touching run file that ansible has ran here
+      file:
+        path: /var/log/ansible.run
+        state: touch
+        mode: '0644'
+        owner: root
+        group: root

@@ -1,0 +1,64 @@
+---
+# pinnwand
+
+firewall_rules:
+  - port: 443/tcp
+    permanent: true
+    state: enabled
+  - port: 9100/tcp
+    permanent: true
+    state: enabled
+
+tls_ca_cert: "/etc/pki/tls/certs/ca-bundle.crt"
+tls_cert: "/etc/pki/tls/certs/{{ ansible_fqdn }}.crt"
+tls_key: "/etc/pki/tls/private/{{ ansible_fqdn }}.key"
+
+ipa_getcert_requested_hostnames:
+  - name: "{{ ansible_fqdn }}"
+    owner: nginx
+    key_location: "{{ tls_key }}"
+    cert_location: "{{ tls_cert }}"
+    postcmd: "/bin/systemctl reload nginx"
+
+pinnwand_config:
+  database:
+    scheme: postgresql
+    username: pinnwand
+    password: "{{ _pinnwand_db_rw_pass }}"
+    hostname: "db.rockylinux.org"
+    port: 5432
+    database: pinnwand_db
+  paste_size: 10485760
+  preferred_lexers: []
+  logo_path: /opt/pinnwand/logo.png
+  page_path: /tmp
+  page_list:
+    - about
+    - removal
+    - expiry
+  footer: ''
+  paste_help: ''
+  report_email: 'abuse@rockylinux.org'
+  expiries:
+    - name: 1hour
+      time: 3600
+    - name: 1day
+      time: 86400
+    - name: 1week
+      time: 604800
+    - name: forever
+      time: 4294967294
+  ratelimits:
+    - name: read
+      capacity: 100
+      consume: 1
+      refill: 2
+    - name: create
+      capacity: 2
+      consume: 2
+      refill: 1
+    - name: delete
+      capacity: 2
+      consume: 2
+      refill: 1
+  spamscore: 50

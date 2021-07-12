@@ -188,6 +188,15 @@ role-rocky-ipa-client.yml
 init-rocky-system-config.yml
 ```
 
+### Initializing a base system
+
+```
+# All clients should be listed under [ipaclients]
+role-rocky-ipa-client.yml
+# All systems should be hardened
+init-rocky-system-config.yml
+```
+
 ## Current Set
 
 ```
