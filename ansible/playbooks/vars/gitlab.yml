@@ -68,5 +68,18 @@ gitlab_external_db_host: db.rockylinux.org
 gitlab_external_db_user: gitlab
 gitlab_external_db_password: "{{ gitlab_db_pass }}"
 
+gitlab_registry_enable: true
+gitlab_registry_external_url: "https://git.rockylinux.org:5050"
+gitlab_registry_nginx_ssl_certificate: "{{ gitlab_ssl_certificate }}"
+gitlab_registry_nginx_ssl_certificate_key: "{{ gitlab_registry_nginx_ssl_certificate_key }}"
 gitlab_trusted_proxies:
   - 10.100.20.20/32
+
+ipa_getcert_requested_hostnames:
+  - name: "{{ ansible_fqdn }}"
+    owner: nginx
+    key_location: "{{ gitlab_ssl_key }}"
+    cert_location: "{{ gitlab_ssl_cert }}"
+    postcmd: "/bin/systemctl restart nginx"
+    cnames:
+      - "git.rockylinux.org"
