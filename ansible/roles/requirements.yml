@@ -11,6 +11,7 @@ roles:
   - name: geerlingguy.postgresql
   - name: geerlingguy.php
   - name: geerlingguy.nodejs
+  - name: geerlingguy.certbot
   - name: riemers.gitlab-runner
 
 
