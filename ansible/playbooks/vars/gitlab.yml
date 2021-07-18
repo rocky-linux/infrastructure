@@ -68,7 +68,7 @@ gitlab_external_db_host: db.rockylinux.org
 gitlab_external_db_user: gitlab
 gitlab_external_db_password: "{{ gitlab_db_pass }}"
 
-gitlab_registry_enable: true
+gitlab_registry_enable: "true"
 gitlab_registry_external_url: "https://git.rockylinux.org:5050"
 gitlab_registry_nginx_ssl_certificate: "{{ gitlab_ssl_certificate }}"
 gitlab_registry_nginx_ssl_certificate_key: "{{ gitlab_registry_nginx_ssl_certificate_key }}"
