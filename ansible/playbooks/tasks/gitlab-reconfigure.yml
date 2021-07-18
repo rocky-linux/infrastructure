@@ -65,6 +65,11 @@
     - httpd_can_connect_ldap
     - httpd_read_user_content
 
+- name: Stop nginx
+  service:
+    name: nginx
+    state: stopped
+
 - name: Change fcontext to GitLab unix socket for nginx
   community.general.sefcontext:
     target: "/var/opt/gitlab/gitlab-workhorse/sockets/socket"
