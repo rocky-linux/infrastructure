@@ -58,8 +58,7 @@ gitlab_smtp_ca_path: "/etc/pki/tls/certs"
 gitlab_smtp_ca_file: "/etc/pki/tls/certs/ca-bundle.crt"
 
 # In case of reverse proxy
-gitlab_nginx_listen_port: 8080
-gitlab_nginx_listen_https: "false"
+gitlab_nginx_listen_https: "true"
 
 gitlab_default_theme: 2
 
@@ -71,7 +70,7 @@ gitlab_external_db_password: "{{ gitlab_db_pass }}"
 gitlab_registry_enable: "true"
 gitlab_registry_external_url: "https://git.rockylinux.org:5050"
 gitlab_registry_nginx_ssl_certificate: "{{ gitlab_ssl_certificate }}"
-gitlab_registry_nginx_ssl_certificate_key: "{{ gitlab_registry_nginx_ssl_certificate_key }}"
+gitlab_registry_nginx_ssl_certificate_key: "{{ gitlab_ssl_certificate_key }}"
 gitlab_trusted_proxies:
   - 10.100.20.20/32
 
@@ -80,6 +79,6 @@ ipa_getcert_requested_hostnames:
     owner: nginx
     key_location: "{{ gitlab_ssl_key }}"
     cert_location: "{{ gitlab_ssl_cert }}"
-    postcmd: "/bin/systemctl restart nginx"
+    postcmd: "/usr/local/bin/fix_gitlab_certs.sh"
     cnames:
       - "git.rockylinux.org"

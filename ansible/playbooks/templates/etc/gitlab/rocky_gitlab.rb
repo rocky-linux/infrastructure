@@ -18,6 +18,7 @@ gitlab_rails['gitlab_default_theme'] = "{{ gitlab_default_theme }}"
 nginx['redirect_http_to_https'] = {{ gitlab_redirect_http_to_https }}
 nginx['ssl_certificate'] = "{{ gitlab_ssl_certificate }}"
 nginx['ssl_certificate_key'] = "{{ gitlab_ssl_certificate_key }}"
+letsencrypt['enable'] = false
 
 # The directory where Git repositories will be stored.
 git_data_dirs({"default" => {"path" => "{{ gitlab_git_data_dir }}"} })
@@ -120,8 +121,8 @@ registry_nginx['ssl_certificate_key'] = "{{ gitlab_registry_nginx_ssl_certificat
 
 # To change other settings, see:
 # https://gitlab.com/gitlab-org/omnibus-gitlab/blob/master/README.md#changing-gitlab-yml-settings
-nginx['enable'] = false
-nginx['external_users'] = ['nginx']
+#nginx['enable'] = false
+#nginx['external_users'] = ['nginx']
 
 {% if gitlab_external_db %}
 postgresql['enable'] = false
