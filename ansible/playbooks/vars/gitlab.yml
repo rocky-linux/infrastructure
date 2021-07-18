@@ -18,6 +18,8 @@ gitlab_ssl_certificate: "/etc/gitlab/ssl/{{ gitlab_domain }}.crt"
 gitlab_ssl_certificate_key: "/etc/gitlab/ssl/{{ gitlab_domain }}.key"
 gitlab_ssl_cert: "/etc/pki/tls/certs/{{ gitlab_domain }}.crt"
 gitlab_ssl_key: "/etc/pki/tls/private/{{ gitlab_domain }}.key"
+gitlab_ipa_cert: "true"
+gitlab_certbot: "false"
 
 # LDAP Configuration
 gitlab_ldap_enabled: "true"

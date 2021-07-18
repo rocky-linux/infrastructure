@@ -7,7 +7,7 @@
     group: root
     mode: '0644'
     remote_src: true
-  when: not gitlab_create_self_signed_cert
+  when: "not gitlab_create_self_signed_cert|bool"
 
 - name: Copy keys from ipa-getcert directory
   copy:
@@ -17,7 +17,7 @@
     group: root
     mode: '0600'
     remote_src: true
-  when: not gitlab_create_self_signed_cert
+  when: "not gitlab_create_self_signed_cert|bool"
 
 - name: Symlink the IPA CA
   file:
@@ -43,7 +43,7 @@
   register: gitlab_ctl_result
   changed_when: "gitlab_ctl_result.rc == 0"
   when:
-    - gitlab_reconfigure_only
+    - "gitlab_reconfigure_only is defined and (gitlab_reconfigure_only|bool)"
 
 - name: Add firewall rules - http/s
   ansible.posix.firewalld:

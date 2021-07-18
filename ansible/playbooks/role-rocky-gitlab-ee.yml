@@ -30,9 +30,17 @@
         state: present
 
   roles:
+    - role: rockylinux.ipagetcert
+      state: present
+      when:
+        - "not gitlab_create_self_signed_cert|bool"
+        - "gitlab_ipa_cert|bool"
+
     - role: geerlingguy.certbot
       state: present
-      when: not gitlab_create_self_signed_cert
+      when:
+        - "not gitlab_create_self_signed_cert|bool"
+        - "gitlab_certbot|bool"
 
     - role: geerlingguy.gitlab
       state: present
