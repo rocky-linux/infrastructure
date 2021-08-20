@@ -1,18 +1,12 @@
 ---
-# Creates the first monitoring server
-# Reccommended specs
-# CPU: 2 cores
-# Memory: 2GB
-# Storage: a piece of string
-- name: Install Prometheus
-  hosts: monitoringservers
+# pinnwand
+- name: Install pinnwand
+  hosts: pinnwand
   become: true
   vars_files:
-    - vars/vaults/encpass.yml
-    - vars/monitoring.yml
-    - vars/monitoring/alertmanager.yml
-    - vars/monitoring/grafana.yml
-    - vars/monitoring/prometheus.yml
+    - vars/vaults/hostman.yml
+    - vars/vaults/pinnwand.yml
+    - vars/pinnwand.yml
 
   # This is to try to avoid the handler issue in pre/post tasks
   handlers:
@@ -36,23 +30,32 @@
         name: python3-policycoreutils.noarch
         state: present
 
+  tasks:
+      #- include_tasks: tasks/pinnwand.yml
+      #  tags: ['includetasks']
+
   roles:
-    #- role: rockylinux.ipagetcert
-    #  state: present
-    - role: cloudalchemy.prometheus
+    - role: rockylinux.ipagetcert
       state: present
-    - role: cloudalchemy.alertmanager
+      tags: ['certs']
+
+    - role: rockylinux.pinnwand
       state: present
-    - role: cloudalchemy.grafana
-      state: present
+      tags: ['role_pinnwand']
+
+    # Define variables in vars/matomo/nginx.yml
+    - role: nginxinc.nginx_core.nginx
+      tags: ['nginx']
+      #- role: nginxinc.nginx_core.nginx_config
+      #  tags: ['nginx']
 
   post_tasks:
     - name: Open firewalld ports
       ansible.posix.firewalld:
         port: "{{ item.port }}"
-        permanent: "{{ item.permanent }}"
-        state: "{{ item.state }}"
-      loop: "{{ monitoring_server_firewall_rules }}"
+        permanent: "{{ item.permanent | default(yes) }}"
+        state: "{{ item.state | default(present) }}"
+      loop: "{{ firewall_rules }}"
 
     - name: Touching run file that ansible has ran here
       file:

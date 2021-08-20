@@ -1,18 +1,11 @@
 ---
-# Creates the first monitoring server
-# Reccommended specs
-# CPU: 2 cores
-# Memory: 2GB
-# Storage: a piece of string
-- name: Install Prometheus
-  hosts: monitoringservers
+# Creates a Gitlab Instance
+- name: Install and Provision Gitlab
+  hosts: gitlabservers
   become: true
   vars_files:
-    - vars/vaults/encpass.yml
-    - vars/monitoring.yml
-    - vars/monitoring/alertmanager.yml
-    - vars/monitoring/grafana.yml
-    - vars/monitoring/prometheus.yml
+  - vars/common.yml
+  - vars/gitlab.yml
 
   # This is to try to avoid the handler issue in pre/post tasks
   handlers:
@@ -29,7 +22,7 @@
         that:
           - "not no_ansible.stat.exists"
         success_msg: "We are able to run on this node"
-        fail_msg: "/etc/no-ansible exists - skipping run on this node"
+        fail_msg: "/etc/no-ansible exists - skipping un on this node"
 
     - name: Install SELinux packages
       package:
@@ -37,22 +30,24 @@
         state: present
 
   roles:
-    #- role: rockylinux.ipagetcert
-    #  state: present
-    - role: cloudalchemy.prometheus
+    - role: rockylinux.ipagetcert
       state: present
-    - role: cloudalchemy.alertmanager
+      when:
+        - "not gitlab_create_self_signed_cert|bool"
+        - "gitlab_ipa_cert|bool"
+
+    - role: geerlingguy.certbot
       state: present
-    - role: cloudalchemy.grafana
+      when:
+        - "not gitlab_create_self_signed_cert|bool"
+        - "gitlab_certbot|bool"
+
+    - role: geerlingguy.gitlab
       state: present
 
   post_tasks:
-    - name: Open firewalld ports
-      ansible.posix.firewalld:
-        port: "{{ item.port }}"
-        permanent: "{{ item.permanent }}"
-        state: "{{ item.state }}"
-      loop: "{{ monitoring_server_firewall_rules }}"
+    - name: Reconfigure GitLab
+      import_tasks: tasks/gitlab-reconfigure.yml
 
     - name: Touching run file that ansible has ran here
       file:

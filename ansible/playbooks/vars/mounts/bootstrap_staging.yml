@@ -1,0 +1,18 @@
+---
+x-efs_fs_opts_common: &common_fs_opts
+  fstype: efs
+  fsopts:
+    - _netdev
+    - tls
+    - iam
+    - rw
+
+mounts:
+  - name: prod-build-compose
+    <<: *common_fs_opts
+    fsid: fs-XXXXXXXX
+    mount_point: /mnt/compose
+    ip_map:
+      us-east-2a: 10.100.100.250
+      us-east-2b: 10.100.101.250
+      us-east-2c: 10.100.102.250

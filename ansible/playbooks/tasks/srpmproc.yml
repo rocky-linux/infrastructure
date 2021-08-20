@@ -1,0 +1,9 @@
+---
+- name: Configure SELinux booleans
+  ansible.posix.seboolean:
+    name: "{{ item }}"
+    persistent: true
+    state: true
+  with_items:
+    - httpd_can_network_connect_db
+    - httpd_can_network_connect

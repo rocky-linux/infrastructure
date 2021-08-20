@@ -1,46 +1,23 @@
 ---
-- name: Install nginx normally
-  yum:
-    name: nginx
-    state: present
-
-- name: Reconfigure Main nginx configuration
-  template:
-    src: "etc/nginx/nginx.conf.j2"
-    dest: "/etc/nginx/nginx.conf"
-    owner: root
-    group: root
-    mode: '0644'
-    backup: true
-
-- name: Add omnibus nginx configuration
-  template:
-    src: "etc/nginx/conf.d/omnibus.conf.j2"
-    dest: "/etc/nginx/conf.d/omnibus.conf"
-    owner: root
-    group: root
-    mode: '0644'
-    backup: true
-
-- name: Copy self-signed certificates from GitLab
+- name: Copy certificates from ipa-getcert directory
   copy:
-    src: "/etc/gitlab/ssl/{{ gitlab_domain }}.crt"
-    dest: "/etc/nginx/ssl/{{ gitlab_domain }}.crt"
-    owner: root
+    src: "/etc/pki/tls/certs/{{ gitlab_domain }}.crt"
+    dest: "/etc/gitlab/ssl/{{ gitlab_domain }}.crt"
+    owner: gitlab-www
     group: root
     mode: '0644'
     remote_src: true
-  when: gitlab_create_self_signed_cert
+  when: "not gitlab_create_self_signed_cert|bool"
 
-- name: Copy self-signed certificate key
+- name: Copy keys from ipa-getcert directory
   copy:
-    src: "/etc/gitlab/ssl/{{ gitlab_domain }}.key"
-    dest: "/etc/nginx/ssl/{{ gitlab_domain }}.key"
-    owner: root
+    src: "/etc/pki/tls/private/{{ gitlab_domain }}.key"
+    dest: "/etc/gitlab/ssl/{{ gitlab_domain }}.key"
+    owner: gitlab-www
     group: root
-    mode: '0644'
+    mode: '0600'
     remote_src: true
-  when: gitlab_create_self_signed_cert
+  when: "not gitlab_create_self_signed_cert|bool"
 
 - name: Symlink the IPA CA
   file:
@@ -49,10 +26,6 @@
     owner: root
     group: root
     state: link
-
-- name: Symlink the hash
-  command: "openssl rehash /etc/gitlab/trusted-certs"
-  changed_when: "1 != 1"
 
 - name: Turn on necessary SELinux booleans
   ansible.posix.seboolean:
@@ -65,16 +38,12 @@
     - httpd_can_connect_ldap
     - httpd_read_user_content
 
-- name: Change fcontext to GitLab unix socket for nginx
-  community.general.sefcontext:
-    target: "/var/opt/gitlab/gitlab-workhorse/sockets/socket"
-    setype: httpd_var_run_t
-    state: present
-
-- name: Apply fcontext to GitLab unix socket for nginx
-  command: restorecon -v /var/opt/gitlab/gitlab-workhorse/sockets/socket
-  register: restorecon_result
-  changed_when: "restorecon_result.rc == 0"
+- name: Reconfigure gitlab is we're asked to
+  command: /usr/bin/gitlab-ctl reconfigure
+  register: gitlab_ctl_result
+  changed_when: "gitlab_ctl_result.rc == 0"
+  when:
+    - "gitlab_reconfigure_only is defined and (gitlab_reconfigure_only|bool)"
 
 - name: Add firewall rules - http/s
   ansible.posix.firewalld:
@@ -86,15 +55,10 @@
     - http
     - https
 
-- name: Add nginx user to git groups
-  user:
-    name: nginx
-    shell: /sbin/nologin
-    groups: gitlab-www,git
-    append: yes
-
-- name: Enable and Start nginx
-  service:
-    name: nginx
-    enabled: true
-    state: started
+- name: Deploy correct script
+  template:
+    src: "usr/local/bin/fix_gitlab_certs.sh"
+    dest: "/usr/local/bin/fix_gitlab_certs.sh"
+    owner: root
+    group: root
+    mode: '0750'

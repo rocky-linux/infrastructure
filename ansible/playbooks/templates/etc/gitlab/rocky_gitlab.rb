@@ -18,6 +18,7 @@ gitlab_rails['gitlab_default_theme'] = "{{ gitlab_default_theme }}"
 nginx['redirect_http_to_https'] = {{ gitlab_redirect_http_to_https }}
 nginx['ssl_certificate'] = "{{ gitlab_ssl_certificate }}"
 nginx['ssl_certificate_key'] = "{{ gitlab_ssl_certificate_key }}"
+letsencrypt['enable'] = false
 
 # The directory where Git repositories will be stored.
 git_data_dirs({"default" => {"path" => "{{ gitlab_git_data_dir }}"} })
@@ -95,8 +96,8 @@ nginx['ssl_client_certificate'] = "{{ gitlab_nginx_ssl_client_certificate }}"
 {% endif %}
 
 # GitLab registry.
-registry['enable'] = {{ gitlab_registry_enable }}
-{% if gitlab_registry_enable == "true" %}
+registry['enable'] = {{ gitlab_registry_enable | string | lower }}
+{% if gitlab_registry_enable %}
 registry_external_url "{{ gitlab_registry_external_url }}"
 registry_nginx['ssl_certificate'] = "{{ gitlab_registry_nginx_ssl_certificate }}"
 registry_nginx['ssl_certificate_key'] = "{{ gitlab_registry_nginx_ssl_certificate_key }}"
@@ -120,8 +121,8 @@ registry_nginx['ssl_certificate_key'] = "{{ gitlab_registry_nginx_ssl_certificat
 
 # To change other settings, see:
 # https://gitlab.com/gitlab-org/omnibus-gitlab/blob/master/README.md#changing-gitlab-yml-settings
-nginx['enable'] = false
-nginx['external_users'] = ['nginx']
+#nginx['enable'] = false
+#nginx['external_users'] = ['nginx']
 
 {% if gitlab_external_db %}
 postgresql['enable'] = false
@@ -134,8 +135,9 @@ gitlab_rails['db_password'] = '{{ gitlab_external_db_password }}'
 {% endif %}
 
 {% if gitlab_trusted_proxies %}
-gitlab_rails['trusted_proxies'] = '{{ gitlab_trusted_proxies | map("to_json") | join(", ") }}'
+gitlab_rails['trusted_proxies'] = [{{ gitlab_trusted_proxies | map("to_json") | join("', '") }}]
 {% endif %}
 
+gitlab_rails['gitlab_shell_ssh_port'] = "22220"
 gitlab_rails['gravatar_enabled'] = true
 gitlab_rails['gravatar_ssl_url'] = "https://seccdn.libravatar.org/avatar/%{hash}?s=%{size}&d=retro"

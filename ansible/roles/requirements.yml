@@ -9,6 +9,12 @@ roles:
   - name: cloudalchemy.grafana
   - name: geerlingguy.gitlab
   - name: geerlingguy.postgresql
+  - name: geerlingguy.php
+  - name: geerlingguy.nodejs
+  - name: geerlingguy.certbot
+  - name: riemers.gitlab-runner
+
+
   - name: rockylinux.ipagetcert
     src: https://github.com/rocky-linux/ansible-role-ipa-getcert
     version: main
@@ -30,16 +36,18 @@ roles:
   - name: rockylinux.matterbridge
     src: https://github.com/NeilHanlon/ansible-role-matterbridge
     version: master
+  - name: rockylinux.pinnwand
+    src: https://github.com/rocky-linux/ansible-role-pinnwand
+    version: main
   - name: rockylinux.wikijs
     src: https://git.rockylinux.org/infrastructure/public/ansible/ansible-role-wikijs.git
     scm: git
     version: develop
-  - name: riemers.gitlab-runner
 
 collections:
   # freeipa
   - name: freeipa.ansible_freeipa
-    version: 0.3.1
+    version: 0.3.6
   - name: community.general
   - name: community.mysql
   - name: community.rabbitmq

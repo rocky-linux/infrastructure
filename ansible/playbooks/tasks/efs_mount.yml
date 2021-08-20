@@ -1,0 +1,46 @@
+---
+# Requires amazon-efs-utils; included, but should probably be split out?
+#
+
+- name: "Installing amazon-efs-utils"
+  become: yes
+  become_user: root
+  yum:
+    name: 'https://git.rockylinux.org/neil/efs-utils/-/jobs/5/artifacts/raw/build/amazon-efs-utils-1.30.1-1.el8.noarch.rpm?inline=false'
+    disable_gpg_check: yes
+    validate_certs: yes
+    state: present
+  tags:
+    - amazon_efs_utils
+    - packages
+    - mounts
+
+
+- name: "Gathering ec2 facts"
+  amazon.aws.ec2_metadata_facts:
+  tags:
+    - mounts
+
+# "you can use /etc/hosts" https://github.com/aws/efs-utils/issues/1
+- name: "Install custom hosts file because fmlC-w amazon said so."
+  become: yes
+  become_user: root
+  ansible.builtin.lineinfile:
+    path: /etc/hosts
+    line: "{{ item.ip_map[ansible_ec2_placement_availability_zone] }} {{ item.fsid }}.efs.{{ ansible_ec2_placement_region }}.amazonaws.com"
+    create: yes
+  tags:
+    - mounts
+
+
+- name: "Creating and mounting {{ item.fsid }} at {{ item.mount_point }}"
+  become: yes
+  become_user: root
+  ansible.posix.mount:
+    path: "{{ item.mount_point }}"
+    src: "{{ item.fsid }}:/"
+    fstype: "{{ item.fstype }}"
+    opts: "{{ item.fsopts | join(',') }}"
+    state: "{{ item.state | default('mounted') }}"
+  tags:
+    - mounts

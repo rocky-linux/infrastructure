@@ -1,11 +1,11 @@
 ---
-# Creates a Gitlab Instance
-- name: Install and Provision Gitlab
-  hosts: gitlabservers
+# Manage bootstrap hosts
+#
+- name: Manage and configure bootstrap hosts
+  hosts: bootstrap_staging
   become: true
   vars_files:
-  - vars/common.yml
-  - vars/gitlab.yml
+    - vars/mounts/bootstrap_staging.yml
 
   # This is to try to avoid the handler issue in pre/post tasks
   handlers:
@@ -22,25 +22,15 @@
         that:
           - "not no_ansible.stat.exists"
         success_msg: "We are able to run on this node"
-        fail_msg: "/etc/no-ansible exists - skipping un on this node"
+        fail_msg: "/etc/no-ansible exists - skipping run on this node"
 
-    - name: Install SELinux packages
-      package:
-        name: python3-policycoreutils.noarch
-        state: present
+  tasks:
+    - include_tasks: tasks/efs_mount.yml
+      loop: "{{ mounts }}"
 
-  roles:
-    - role: geerlingguy.certbot
-      state: present
-      when: not gitlab_create_self_signed_cert
-
-    - role: geerlingguy.gitlab
-      state: present
+    - include_tasks: tasks/srpmproc.yml
 
   post_tasks:
-    - name: Reconfigure GitLab
-      import_tasks: tasks/gitlab-reconfigure.yml
-
     - name: Touching run file that ansible has ran here
       file:
         path: /var/log/ansible.run

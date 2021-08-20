@@ -188,11 +188,19 @@ role-rocky-ipa-client.yml
 init-rocky-system-config.yml
 ```
 
+### Initializing a base system
+
+```
+# All clients should be listed under [ipaclients]
+role-rocky-ipa-client.yml
+# All systems should be hardened
+init-rocky-system-config.yml
+```
+
 ## Current Set
 
 ```
 .
-├── README.md
 ├── ansible.cfg
 ├── collections
 │   └── Readme.md
@@ -231,6 +239,10 @@ init-rocky-system-config.yml
 │       └── hosts.ini
 ├── playbooks
 │   ├── adhoc-facts-refresh.yml
+│   ├── adhoc-gitlab-creategroup.yml
+│   ├── adhoc-gitlab-createproject.yml
+│   ├── adhoc-gitlab-deletegroup.yml
+│   ├── adhoc-gitlab-deleteproject.yml
 │   ├── adhoc-ipabinder.yml
 │   ├── adhoc-ipadnsrecord.yml
 │   ├── adhoc-ipadnszone.yml
@@ -238,6 +250,7 @@ init-rocky-system-config.yml
 │   ├── adhoc-ipagetkeytab.yml
 │   ├── adhoc-ipagroup.yml
 │   ├── adhoc-ipaservice.yml
+│   ├── adhoc-ipauser-disable-pdr.yml
 │   ├── adhoc-ipauser-disable.yml
 │   ├── adhoc-ipauser-enable.yml
 │   ├── adhoc-ipauser.yml
@@ -255,8 +268,11 @@ init-rocky-system-config.yml
 │   │   │   │   ├── CentOS-7-system-auth-ac -> RedHat-7-system-auth-ac
 │   │   │   │   └── RedHat-7-system-auth-ac
 │   │   │   ├── rockybanner
-│   │   │   └── sudoers.d
-│   │   │       └── cis
+│   │   │   ├── sudoers.d
+│   │   │   │   └── cis
+│   │   │   └── systemd
+│   │   │       └── system
+│   │   │           └── noggin.service
 │   │   ├── tmp
 │   │   └── usr
 │   │       └── local
@@ -277,15 +293,22 @@ init-rocky-system-config.yml
 │   ├── init-rocky-install-kvm-hosts.yml
 │   ├── init-rocky-ipa-internal-dns.yml
 │   ├── init-rocky-ipa-team.yml
+│   ├── init-rocky-koji-ecosystem.yml
+│   ├── init-rocky-mantisbt.yml
 │   ├── init-rocky-noggin-theme.yml
+│   ├── init-rocky-noggin.yml
+│   ├── init-rocky-repo-servers.yml
 │   ├── init-rocky-system-config.yml
 │   ├── rocky-rocky-gitlab-ee.yml
+│   ├── role-rocky-gitlab-runner.yml
 │   ├── role-rocky-graylog.yml
 │   ├── role-rocky-ipa-client.yml
 │   ├── role-rocky-ipa-replica.yml
 │   ├── role-rocky-ipa.yml
 │   ├── role-rocky-ipsilon.yml
+│   ├── role-rocky-kojid-staging.yml
 │   ├── role-rocky-kojid.yml
+│   ├── role-rocky-kojihub-staging.yml
 │   ├── role-rocky-kojihub.yml
 │   ├── role-rocky-monitoring.yml
 │   ├── role-rocky-mqtt.yml
@@ -293,19 +316,27 @@ init-rocky-system-config.yml
 │   ├── role-rocky-rabbitmq.yml
 │   ├── role-rocky-sigul-bridge.yml
 │   ├── role-rocky-sigul-server.yml
+│   ├── role-rocky-wikijs.yml
 │   ├── tasks
 │   │   ├── account_services.yml
 │   │   ├── auditd.yml
 │   │   ├── authentication.yml
+│   │   ├── bugzilla_install.yml
+│   │   ├── bugzilla.yml
 │   │   ├── chrony.yml
 │   │   ├── gitlab-reconfigure.yml
+│   │   ├── gitlab-runner.yml
 │   │   ├── grub.yml
 │   │   ├── harden.yml
+│   │   ├── init-koji.yml
 │   │   ├── koji_efs.yml
 │   │   ├── main.yml
+│   │   ├── mantispatch.yml
 │   │   ├── mantis.yml
+│   │   ├── noggin.yml
 │   │   ├── postfix_relay.yml
 │   │   ├── rabbitmq-reconfigure.yml
+│   │   ├── repository.yml
 │   │   ├── scripts.yml
 │   │   ├── ssh_config.yml
 │   │   └── variable_loader_common.yml
@@ -319,6 +350,7 @@ init-rocky-system-config.yml
 │   │   │   │   └── rocky_gitlab.rb
 │   │   │   ├── httpd
 │   │   │   │   └── conf.d
+│   │   │   │       ├── bugzilla.conf.j2
 │   │   │   │       ├── id.conf.j2
 │   │   │   │       └── mantis.conf.j2
 │   │   │   ├── modprobe.d
@@ -338,25 +370,34 @@ init-rocky-system-config.yml
 │   │   │   │   └── RedHat-8-sshd_config.j2
 │   │   │   └── sssd
 │   │   ├── hidden
-│   │   │   ├── README.md
-│   │   │   └── home
-│   │   │       └── noggin
-│   │   │           └── noggin.cfg
+│   │   │   ├── home
+│   │   │   │   └── noggin
+│   │   │   │       └── noggin.cfg
+│   │   │   └── README.md
+│   │   ├── opt
+│   │   │   └── noggin
+│   │   │       ├── noggin.cfg
+│   │   │       └── start_noggin.sh.j2
 │   │   ├── tmp
+│   │   │   ├── binder_template.update
 │   │   │   ├── binder.update
-│   │   │   └── binder_template.update
+│   │   │   └── mantis_import.sql.j2
 │   │   └── var
 │   │       └── www
+│   │           ├── bugzilla
+│   │           │   ├── answer
+│   │           │   └── localconfig.j2
 │   │           └── mantis
 │   │               └── config
 │   │                   └── config_inc.php.j2
 │   └── vars
-│       ├── CentOS.yml -> RedHat.yml
-│       ├── RedHat.yml
+│       ├── bugzilla.yml
 │       ├── buildsys.yml
-│       ├── chrony.yml
+│       ├── CentOS.yml -> RedHat.yml
 │       ├── chronyserver.yml
+│       ├── chrony.yml
 │       ├── common.yml
+│       ├── gitlab_runner.yml
 │       ├── gitlab.yml
 │       ├── graylog.yml
 │       ├── ipa
@@ -374,20 +415,28 @@ init-rocky-system-config.yml
 │       │   └── users.yml
 │       ├── ipaserver.yml
 │       ├── ipsilon.yml
-│       ├── koji-common.yml
-│       ├── kojid.yml
-│       ├── kojihub.yml
 │       ├── mantis.yml
 │       ├── matterbridge.yml
 │       ├── monitoring
 │       │   └── README.md
 │       ├── monitoring.yml
 │       ├── mqtt.yml
+│       ├── production
+│       │   ├── koji-common.yml
+│       │   ├── kojid.yml
+│       │   └── kojihub.yml
 │       ├── rabbitmq.yml
+│       ├── RedHat.yml
 │       ├── sigul_bridge.yml
 │       ├── sigul_server.yml
-│       └── vaults
-│           └── README.md
+│       ├── staging
+│       │   ├── koji-common.yml
+│       │   ├── kojid.yml
+│       │   └── kojihub.yml
+│       ├── vaults
+│       │   └── README.md
+│       └── wikijs.yml
+├── README.md
 ├── roles
 │   ├── local
 │   │   └── Readme.md
@@ -398,7 +447,7 @@ init-rocky-system-config.yml
 ├── tasks -> playbooks/tasks
 ├── templates -> playbooks/templates
 ├── tmp
-│   ├── Readme.md
-│   └── ansible.log
+│   ├── ansible.log
+│   └── Readme.md
 └── vars -> playbooks/vars
 ```

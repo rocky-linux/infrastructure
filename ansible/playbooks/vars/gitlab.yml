@@ -16,8 +16,10 @@ gitlab_create_self_signed_cert: "true"
 gitlab_self_signed_cert_subj: "/C=US/ST=Missouri/L=Saint Louis/O=IT/CN={{ gitlab_domain }}"
 gitlab_ssl_certificate: "/etc/gitlab/ssl/{{ gitlab_domain }}.crt"
 gitlab_ssl_certificate_key: "/etc/gitlab/ssl/{{ gitlab_domain }}.key"
-gitlab_ssl_cert: "/etc/nginx/ssl/{{ gitlab_domain }}.crt"
-gitlab_ssl_key: "/etc/nginx/ssl/{{ gitlab_domain }}.key"
+gitlab_ssl_cert: "/etc/pki/tls/certs/{{ gitlab_domain }}.crt"
+gitlab_ssl_key: "/etc/pki/tls/private/{{ gitlab_domain }}.key"
+gitlab_ipa_cert: "true"
+gitlab_certbot: "false"
 
 # LDAP Configuration
 gitlab_ldap_enabled: "true"
@@ -39,10 +41,10 @@ gitlab_download_validate_certs: true
 
 # Email and SMTP configuration (For the future)
 # Email configuration.
-gitlab_email_enabled: "false"
-gitlab_email_from: "gitlab@rockylinux.org"
+gitlab_email_enabled: "true"
+gitlab_email_from: "git@rockylinux.org"
 gitlab_email_display_name: "Gitlab"
-gitlab_email_reply_to: "gitlab@rockylinux.org"
+gitlab_email_reply_to: "noreply@rockylinux.org"
 # SMTP configuration
 gitlab_smtp_enable: "false"
 gitlab_smtp_address: "smtp.gmail.com"
@@ -58,8 +60,7 @@ gitlab_smtp_ca_path: "/etc/pki/tls/certs"
 gitlab_smtp_ca_file: "/etc/pki/tls/certs/ca-bundle.crt"
 
 # In case of reverse proxy
-gitlab_nginx_listen_port: 8080
-gitlab_nginx_listen_https: "false"
+gitlab_nginx_listen_https: "true"
 
 gitlab_default_theme: 2
 
@@ -68,5 +69,18 @@ gitlab_external_db_host: db.rockylinux.org
 gitlab_external_db_user: gitlab
 gitlab_external_db_password: "{{ gitlab_db_pass }}"
 
+gitlab_registry_enable: "true"
+gitlab_registry_external_url: "https://git.rockylinux.org:5050"
+gitlab_registry_nginx_ssl_certificate: "{{ gitlab_ssl_certificate }}"
+gitlab_registry_nginx_ssl_certificate_key: "{{ gitlab_ssl_certificate_key }}"
 gitlab_trusted_proxies:
   - 10.100.20.20/32
+
+ipa_getcert_requested_hostnames:
+  - name: "{{ ansible_fqdn }}"
+    owner: nginx
+    key_location: "{{ gitlab_ssl_key }}"
+    cert_location: "{{ gitlab_ssl_cert }}"
+    postcmd: "/usr/local/bin/fix_gitlab_certs.sh"
+    cnames:
+      - "git.rockylinux.org"

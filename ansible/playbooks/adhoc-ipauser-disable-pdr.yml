@@ -34,7 +34,7 @@
         - users
 
     - name: "Remove personal information attributes"
-      community.general.ldap_attr:
+      community.general.ldap_attrs:
         dn: "uid={{ ipa_name }},cn=users,cn=accounts,dc=rockylinux,dc=org"
         name: "{{ item }}"
         values: []
@@ -64,7 +64,7 @@
         - homePhone
 
     - name: "Set FAS Status Note"
-      community.general.ldap_attr:
+      community.general.ldap_attrs:
         dn: "uid={{ ipa_name }},cn=users,cn=accounts,dc=rockylinux,dc=org"
         name: "fasStatusNote"
         values: "Account Disabled: {{ ticket_id }}"
@@ -74,7 +74,7 @@
         bind_pw: "{{ ipaadmin_password }}"
 
     - name: "Set FAS Account Information to Private"
-      community.general.ldap_attr:
+      community.general.ldap_attrs:
         dn: "uid={{ ipa_name }},cn=users,cn=accounts,dc=rockylinux,dc=org"
         name: "fasisprivate"
         values: "TRUE"

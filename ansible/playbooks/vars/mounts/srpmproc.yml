@@ -1,0 +1,50 @@
+---
+x-efs_fs_opts_common: &common_fs_opts
+  fstype: efs
+  fsopts:
+    - _netdev
+    - tls
+    - iam
+    - rw
+
+mounts:
+  - name: prod-build-repos-internal
+    <<: *common_fs_opts
+    fsid: fs-XXXXXXX1
+    mount_point: /mnt/repos-internal
+    ip_map:
+      us-east-2a: 10.101.100.248
+      us-east-2b: 10.101.101.248
+      us-east-2c: 10.101.102.248
+  - name: prod-koji
+    <<: *common_fs_opts
+    fsid: fs-XXXXXXX2
+    mount_point: /mnt/koji
+    ip_map:
+      us-east-2a: 10.101.100.247
+      us-east-2b: 10.101.101.247
+      us-east-2c: 10.101.102.247
+  - name: prod-build-compose
+    <<: *common_fs_opts
+    fsid: fs-XXXXXXX3
+    mount_point: /mnt/compose
+    ip_map:
+      us-east-2a: 10.101.100.250
+      us-east-2b: 10.101.101.250
+      us-east-2c: 10.101.102.250
+  - name: prod-build-repos-staging
+    <<: *common_fs_opts
+    fsid: fs-XXXXXXX4
+    mount_point: /mnt/repos-staging
+    ip_map:
+      us-east-2a: 10.101.100.249
+      us-east-2b: 10.101.101.249
+      us-east-2c: 10.101.102.249
+  - name: prod-build-repos-production
+    <<: *common_fs_opts
+    fsid: fs-XXXXXXX5
+    mount_point: /mnt/repos-production
+    ip_map:
+      us-east-2a: 10.101.100.246
+      us-east-2b: 10.101.101.246
+      us-east-2c: 10.101.102.246
