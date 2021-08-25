@@ -9,6 +9,7 @@
 #  -> getcert_postcmd: command to run after a certificate renews
 #  -> getcert_chain: true/false, should cert and key be chained together
 #  -> getcert_chain_location: location for the chain
+#  -> getcert_service: service name (eg HTTP, host), defaults to host
 # TODO: Add CNAME/SAN support
 
 - name: Request and sign an IPA Certificate
@@ -23,6 +24,7 @@
         nss_db_dir: "{{ getcert_nss_db_dir|default('/etc/pki/tls/db') }}"
         nss_nickname: "{{ getcert_nss_nickname|default(ansible_fqdn) }}"
         postcmd: "{{ getcert_postcmd|default(false) }}"
+        service: "{{ getcert_service|default('host') }}"
     ipa_getcert_chain: "{{ getcert_chain|default(false) }}"
     ipa_getcert_chain_location: "{{ getcert_chain_location|default('/etc/pki/tls/chain') }}"
     ipa_getcert_nss: "{{ getcert_nss|default(false) }}"
