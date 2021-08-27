@@ -6,8 +6,6 @@ Each playbook should have comments or a name descriptor that explains what the p
 
 ## Management Node Structure
 
-Loosely copied from the CentOS ansible infrastructure.
-
 ```
 .
 ├── ansible.cfg
@@ -262,7 +260,8 @@ init-rocky-system-config.yml
 │   │   │   │   └── custom
 │   │   │   │       └── sssd-rocky
 │   │   │   │           ├── CentOS-8-system-auth -> RedHat-8-system-auth
-│   │   │   │           └── RedHat-8-system-auth
+│   │   │   │           ├── RedHat-8-system-auth
+│   │   │   │           └── Rocky-8-system-auth -> RedHat-8-system-auth
 │   │   │   ├── gitlab
 │   │   │   ├── pam.d
 │   │   │   │   ├── CentOS-7-system-auth-ac -> RedHat-7-system-auth-ac
@@ -299,7 +298,8 @@ init-rocky-system-config.yml
 │   ├── init-rocky-noggin.yml
 │   ├── init-rocky-repo-servers.yml
 │   ├── init-rocky-system-config.yml
-│   ├── rocky-rocky-gitlab-ee.yml
+│   ├── role-rocky-bootstrap_staging.yml
+│   ├── role-rocky-gitlab-ee.yml
 │   ├── role-rocky-gitlab-runner.yml
 │   ├── role-rocky-graylog.yml
 │   ├── role-rocky-ipa-client.yml
@@ -313,9 +313,12 @@ init-rocky-system-config.yml
 │   ├── role-rocky-monitoring.yml
 │   ├── role-rocky-mqtt.yml
 │   ├── role-rocky-node_exporter.yml
+│   ├── role-rocky-pinnwand.yml
 │   ├── role-rocky-rabbitmq.yml
+│   ├── role-rocky-repopool.yml
 │   ├── role-rocky-sigul-bridge.yml
 │   ├── role-rocky-sigul-server.yml
+│   ├── role-rocky-srpmproc.yml
 │   ├── role-rocky-wikijs.yml
 │   ├── tasks
 │   │   ├── account_services.yml
@@ -324,6 +327,7 @@ init-rocky-system-config.yml
 │   │   ├── bugzilla_install.yml
 │   │   ├── bugzilla.yml
 │   │   ├── chrony.yml
+│   │   ├── efs_mount.yml
 │   │   ├── gitlab-reconfigure.yml
 │   │   ├── gitlab-runner.yml
 │   │   ├── grub.yml
@@ -338,6 +342,7 @@ init-rocky-system-config.yml
 │   │   ├── rabbitmq-reconfigure.yml
 │   │   ├── repository.yml
 │   │   ├── scripts.yml
+│   │   ├── srpmproc.yml
 │   │   ├── ssh_config.yml
 │   │   └── variable_loader_common.yml
 │   ├── templates
@@ -367,7 +372,8 @@ init-rocky-system-config.yml
 │   │   │   │   ├── CentOS-7-sshd_config.j2 -> RedHat-7-sshd_config.j2
 │   │   │   │   ├── CentOS-8-sshd_config.j2 -> RedHat-8-sshd_config.j2
 │   │   │   │   ├── RedHat-7-sshd_config.j2
-│   │   │   │   └── RedHat-8-sshd_config.j2
+│   │   │   │   ├── RedHat-8-sshd_config.j2
+│   │   │   │   └── Rocky-8-sshd_config.j2 -> RedHat-8-sshd_config.j2
 │   │   │   └── sssd
 │   │   ├── hidden
 │   │   │   ├── home
@@ -382,6 +388,10 @@ init-rocky-system-config.yml
 │   │   │   ├── binder_template.update
 │   │   │   ├── binder.update
 │   │   │   └── mantis_import.sql.j2
+│   │   ├── usr
+│   │   │   └── local
+│   │   │       └── bin
+│   │   │           └── fix_gitlab_certs.sh
 │   │   └── var
 │   │       └── www
 │   │           ├── bugzilla
@@ -420,13 +430,19 @@ init-rocky-system-config.yml
 │       ├── monitoring
 │       │   └── README.md
 │       ├── monitoring.yml
+│       ├── mounts
+│       │   ├── bootstrap_staging.yml
+│       │   ├── repopool.yml
+│       │   └── srpmproc.yml
 │       ├── mqtt.yml
+│       ├── pinnwand.yml
 │       ├── production
 │       │   ├── koji-common.yml
 │       │   ├── kojid.yml
 │       │   └── kojihub.yml
 │       ├── rabbitmq.yml
 │       ├── RedHat.yml
+│       ├── Rocky.yml -> RedHat.yml
 │       ├── sigul_bridge.yml
 │       ├── sigul_server.yml
 │       ├── staging
