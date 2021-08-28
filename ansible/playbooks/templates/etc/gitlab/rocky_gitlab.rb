@@ -44,7 +44,7 @@ gitlab_rails['ldap_servers'] = YAML.load <<-'EOS'
     user_filter: '{{ gitlab_ldap_user_filter }}'
     group_base: '{{ gitlab_ldap_group_dn }}'
     admin_group: '{{ gitlab_ldap_admin_group }}'
-    sync_ssh_keys: true
+    sync_ssh_keys: 'ipaSshPubKey'
     attributes:
       username: ['uid']
       email: ['mail']
