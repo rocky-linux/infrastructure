@@ -10,8 +10,8 @@
     src: /etc/httpd/conf.d/{{ item }}.template
     dest: /etc/httpd/conf.d/{{ item }}
   loop:
-  - openqa.conf
-  - openqa-ssl.conf
+    - openqa.conf
+    - openqa-ssl.conf
   notify: restart_httpd
 
 - name: Template OpenQA configuration files
@@ -22,15 +22,11 @@
     group: "{{ openqa_group }}"
     mode: "0444"
   loop:
-  - openqa.ini
-  - client.conf
+    - openqa.ini
+    - client.conf
 
-- name: Check for running postgresql
-  command: systemctl is-active postgresql
-  register: postgresql_is_running
-  check_mode: false
-  failed_when: false
-  changed_when: false
+- name: Get service facts
+  service_facts:
 
 - name: Check for non-empty postgres data directory
   stat:
@@ -39,17 +35,22 @@
 
 - name: If postgresql is not already running, initialize database
   command: postgresql-setup --initdb
-  when: not ( postgresql_is_running.stdout == "active" ) and not postgres_data_dir.stat.exists
+  when: not ( ansible_facts.services["postgresql.service"]["state"] == "running" )
+        and not postgres_data_dir.stat.exists
 
 - name: Enable and start postgresql service
   systemd:
-    name: "{{ item }}"
+    name: postgresql
     state: started
     enabled: true
-  when: not ( postgresql_is_running.stdout == "active" ) and not postgres_data_dir.stat.exists
+  when: not ( ansible_facts.services["postgresql.service"]["state"] == "running" )
+        and not postgres_data_dir.stat.exists
 
 - name: Configure SELinux to allow httpd connection to network
-  command: setsebool -P httpd_can_network_connect 1
+  seboolean:
+    name: httpd_can_network_connect
+    state: true
+    persistent: true
 
 - name: Enable and start OpenQA services
   systemd:
@@ -58,17 +59,14 @@
     enabled: true
   loop: "{{ openqa_services }}"
 
-- name: Permit http traffic
+- name: Permit traffic for {{ item }} service
   ansible.posix.firewalld:
-    service: http
+    service: "{{ item }}"
     permanent: true
     state: enabled
-
-- name: Enable VNC firewalld service
-  ansible.posix.firewalld:
-    service: openqa-vnc
-    permanent: true
-    state: enabled
+  loop:
+    - httpd
+    - openqa-vnc
 
 - name: Permit VNC traffic for local workers
   ansible.posix.firewalld:
@@ -77,7 +75,9 @@
     state: enabled
 
 - name: Reload FirewallD
-  command: firewall-cmd --reload
+  systemd:
+    name: firewalld
+    state: reloaded
 
 - name: Check for existing repository
   stat:
@@ -121,10 +121,10 @@
     group: "{{ openqa_group }}"
     mode: "0775"
   loop:
-  - CHECKSUM
-  - Rocky-{{ rocky_version }}-{{ rocky_arch }}-boot.iso
-  - Rocky-{{ rocky_version }}-{{ rocky_arch }}-dvd1.iso
-  - Rocky-{{ rocky_version }}-{{ rocky_arch }}-minimal.iso
+    - CHECKSUM
+    - Rocky-{{ rocky_version }}-{{ rocky_arch }}-boot.iso
+    - Rocky-{{ rocky_version }}-{{ rocky_arch }}-dvd1.iso
+    - Rocky-{{ rocky_version }}-{{ rocky_arch }}-minimal.iso
 
 - name: Verify ISO checksums
   command: shasum -a 256 --ignore-missing -c CHECKSUM
