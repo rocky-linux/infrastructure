@@ -148,7 +148,7 @@ If you have to make your own role, that's understandable. There's going to be ca
 
 The pre-commit, yamllint, and ansible-lint configurations of this repository is a good starting point for your role.
 
-Right now, this is a good template to start with: https://github.com/Darkbat91/ansible-roletemplate - This will soon be under the rocky-linux umbrella.
+Please use [this role template](https://github.com/rocky-linux/ansible-role-template) to get started.
 
 ### Pre-commits / linting
 
