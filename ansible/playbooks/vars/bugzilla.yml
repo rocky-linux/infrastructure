@@ -50,3 +50,4 @@ ipa_getcert_requested_hostnames:
     postcmd: "/bin/systemctl reload httpd"
     cnames:
       - "bugs.rockylinux.org"
+...

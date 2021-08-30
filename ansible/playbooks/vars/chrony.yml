@@ -31,3 +31,4 @@ chrony_timeservers:
 
 # is chrony ntp server - allows client connections
 chrony_server: false
+...

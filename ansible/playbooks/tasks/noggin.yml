@@ -86,3 +86,4 @@
   lineinfile:
     path: "/opt/noggin/noggin/noggin/app.py"
     line: "app = create_app()"
+...

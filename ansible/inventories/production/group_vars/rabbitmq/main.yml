@@ -3,3 +3,4 @@
 rabbitmq_cluster_name: "rabbit"
 rabbitmq_cluster_list: "{{ groups['rabbitmq'] }}"
 rabbitmq_env: "production"
+...

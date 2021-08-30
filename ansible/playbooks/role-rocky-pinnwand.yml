@@ -31,8 +31,8 @@
         state: present
 
   tasks:
-      #- include_tasks: tasks/pinnwand.yml
-      #  tags: ['includetasks']
+      # - include_tasks: tasks/pinnwand.yml
+      #   tags: ['includetasks']
 
   roles:
     - role: rockylinux.ipagetcert
@@ -46,8 +46,8 @@
     # Define variables in vars/matomo/nginx.yml
     - role: nginxinc.nginx_core.nginx
       tags: ['nginx']
-      #- role: nginxinc.nginx_core.nginx_config
-      #  tags: ['nginx']
+      # - role: nginxinc.nginx_core.nginx_config
+      #   tags: ['nginx']
 
   post_tasks:
     - name: Open firewalld ports
@@ -64,3 +64,4 @@
         mode: '0644'
         owner: root
         group: root
+...

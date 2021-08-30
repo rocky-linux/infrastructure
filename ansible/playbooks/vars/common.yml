@@ -11,3 +11,4 @@ rocky_ipaserver_lb: "ipa-lb.rockylinux.org"
 rocky_ldap_bind_pw: "{{ ipa_binder_password }}"
 rocky_ldap_userman_dn: "uid=userman,cn=users,cn=accounts,dc=rockylinux,dc=org"
 rocky_ldap_userman_pw: "{{ ipa_userman_password }}"
+...

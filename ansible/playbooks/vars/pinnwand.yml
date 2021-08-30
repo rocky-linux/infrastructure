@@ -62,3 +62,4 @@ pinnwand_config:
       consume: 2
       refill: 1
   spamscore: 50
+...

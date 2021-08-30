@@ -30,3 +30,4 @@
         name: '{{ item }}'
         dynamic_update: true
       with_items: '{{ fdns }}'
+...

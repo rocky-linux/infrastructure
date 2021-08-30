@@ -38,3 +38,4 @@
         update_password: on_create
       tags:
         - users
+...

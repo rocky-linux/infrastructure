@@ -68,3 +68,4 @@
   file:
     path: "/tmp/binder.update"
     state: absent
+...

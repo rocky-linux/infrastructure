@@ -156,6 +156,22 @@ When pushing to your own forked version of this repository, pre-commit must run 
 
 When the linter passes, the push will complete and you will be able to open a PR.
 
+## General YAML Formatting
+
+It is recommended that each yaml file starts with `---` and ends with `...`. This can help with linting and also stating an obvious end to the file.
+
+### Plugin and Formatting Assistance
+
+The YAML format is extremely easy and can be generally followed without much to think about, the same goes with ansible's syntax. Ideally, your editor can assist with these things. If you are a vim user, the following plugins can be useful:
+
+```
+stephpy/vim-yaml
+pearofducks/ansible-vim
+vim-syntastic/syntastic
+```
+
+These can be installed using [vim-plug](https://github.com/junegunn/vim-plug).
+
 ## Initializing the Ansible Host
 
 When initializing the ansible host, you should be in `./infrastructure/ansible` so that the `ansible.cfg` is used. You will need to run the `init-rocky-ansible-host.yml` playbook and to get started, which will install all the roles and collections required for the playbooks to run.

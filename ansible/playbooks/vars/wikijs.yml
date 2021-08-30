@@ -107,3 +107,4 @@ nginx_config_http_template:
               custom_options:
                 - "proxy_pass http://localhost:3000/;"
           http_demo_conf: false
+...

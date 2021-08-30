@@ -23,3 +23,4 @@
     path: "/var/www/mantisbt-{{ mantis_version }}/login_page.php"
     state: absent
     regex: 'LDAP != config_get_global'
+...

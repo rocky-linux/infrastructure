@@ -9,16 +9,16 @@ rabbitmq_tls_key: "/etc/pki/tls/private/{{ ansible_fqdn }}.key"
 #rabbitmq_cookie: ...
 
 # Admin passwords - these should be in a vault
-#rabbitmq_admin_password: ...
+# rabbitmq_admin_password: ...
 
 # rabbitmq cluster list and information should be defined in hostvars to ensure
 # that the configuration is idempotent.
-#rabbitmq_cluster_name:
-#rabbitmq_env:
+# rabbitmq_cluster_name:
+# rabbitmq_env:
 
 # Federation / Public Queues
 rabbitmq_enable_public: false
-#pubsub_federation_pass:
+# pubsub_federation_pass:
 
 # THIS IS DYNAMIC. IT'S ADVISED IT NOT BE STATIC.
 # This should be changed depending on how inventory is managed. For example, if
@@ -42,3 +42,4 @@ ipa_getcert_requested_hostnames:
     postcmd: "/bin/systemctl restart rabbitmq-server"
     cnames:
       - "rabbitmq-{{ rabbitmq_env }}.rockylinux.org"
+...

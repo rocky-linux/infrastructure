@@ -8,3 +8,4 @@ ipaclient_mkhomedir: true
 ipaclient_ssh_trust_dns: true
 ipasssd_enable_dns_updates: true
 ipatype: client
+...

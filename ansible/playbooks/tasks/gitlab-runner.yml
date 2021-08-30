@@ -23,8 +23,9 @@
   become: true
 
 - name: Create gitlab-runner user
-  become: yes
+  become: true
   user:
     name: gitlab-runner
     shell: /bin/bash
-    system: yes
+    system: true
+...

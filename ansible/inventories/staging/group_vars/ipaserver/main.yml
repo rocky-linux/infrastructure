@@ -13,3 +13,4 @@ ipaclient_no_ntp: true
 ipaclient_mkhomedir: true
 ipaserver_no_hbac_allow: true
 ipaserver_reverse_zones: ["1.100.10.in-addr.arpa."]
+...

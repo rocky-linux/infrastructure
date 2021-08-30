@@ -1,7 +1,7 @@
 ---
 # koji hub settings
 # This should be the front-facing URL of koji
-#koji_url_name: koji.rockylinux.org
+# koji_url_name: koji.rockylinux.org
 
 # Use an internal CA (IPA)
 koji_internal_ca: true
@@ -117,3 +117,4 @@ postgresql_users:
 postgresql_global_config_options:
   - option: listen_addresses
     value: '*'
+...

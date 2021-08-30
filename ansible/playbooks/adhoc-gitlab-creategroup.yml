@@ -38,3 +38,4 @@
         visibility: "{{ gitlab_visibility|default('private') }}"
       delegate_to: localhost
       register: gitlab_group_return
+...

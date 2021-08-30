@@ -5,3 +5,4 @@
     - name: Force a fact refresh to have those available in local cache
       setup:
         gather_timeout: 30
+...

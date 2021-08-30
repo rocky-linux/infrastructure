@@ -7,3 +7,4 @@ gitlab_runner_runners:
     tags: []
 
 gitlab_runner_timeout_stop_seconds: 60
+...
