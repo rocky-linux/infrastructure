@@ -1,0 +1,67 @@
+---
+# Default OpenQA user and group
+openqa_user: geekotest
+openqa_group: geekotest
+
+# OpenQA data directory
+openqa_homedir: /var/lib/openqa
+
+# URL for the repository containing the RockyLinux test automation
+openqa_rocky_testing_repo: "https://github.com/rocky-linux/os-autoinst-distri-rocky.git"
+
+# The RockyLinux version to fetch for testing
+rocky_version: 8.4
+
+# The RockyLinux architecture to fetch for testing
+rocky_arch: x86_64
+
+# Public download URL for RockyLinux ISOs
+rocky_iso_download_url: "https://download.rockylinux.org/pub/rocky/8/isos/{{ rocky_arch }}"
+
+# The host the openqa-cli should access when it runs.
+# Change this if you want to access your OpenQA via an
+# alternative URL
+openqa_host: localhost
+
+# These are the default client credentials.
+# They will expire 24 hours after installation and must
+# be replaced with new ones.
+openqa_client_key: 1234567890ABCDEF
+openqa_client_secret: 1234567890ABCDEF
+
+# The number of workers to enable on this system
+openqa_worker_count: 1
+
+# Port range to open for VNC access to local workers.
+# The max port should be 5990 + n where n is the total
+# number of workers you want to enable on your system.
+openqa_min_vnc_port: 5991
+openqa_max_vnc_port: "{{ 5990 + openqa_worker_count|int }}"
+
+# Packages to install
+openqa_packages:
+- git
+- vim-enhanced
+- openqa
+- openqa-httpd
+- openqa-worker
+- fedora-messaging
+- guestfs-tools
+- libguestfs-xfs
+- python3-fedfind
+- python3-libguestfs
+- libvirt-daemon-config-network
+- virt-install
+- withlock
+- postgresql-server
+- perl-REST-Client
+
+# Services to start and enable
+openqa_services:
+- sshd
+- httpd
+- openqa-gru
+- openqa-scheduler
+- openqa-websockets
+- openqa-webui
+- fm-consumer@fedora_openqa_scheduler
