@@ -40,28 +40,28 @@ openqa_max_vnc_port: "{{ 5990 + openqa_worker_count|int }}"
 
 # Packages to install
 openqa_packages:
-- git
-- vim-enhanced
-- openqa
-- openqa-httpd
-- openqa-worker
-- fedora-messaging
-- guestfs-tools
-- libguestfs-xfs
-- python3-fedfind
-- python3-libguestfs
-- libvirt-daemon-config-network
-- virt-install
-- withlock
-- postgresql-server
-- perl-REST-Client
+  - git
+  - vim-enhanced
+  - openqa
+  - openqa-httpd
+  - openqa-worker
+  - fedora-messaging
+  - guestfs-tools
+  - libguestfs-xfs
+  - python3-fedfind
+  - python3-libguestfs
+  - libvirt-daemon-config-network
+  - virt-install
+  - withlock
+  - postgresql-server
+  - perl-REST-Client
 
 # Services to start and enable
 openqa_services:
-- sshd
-- httpd
-- openqa-gru
-- openqa-scheduler
-- openqa-websockets
-- openqa-webui
-- fm-consumer@fedora_openqa_scheduler
+  - sshd
+  - httpd
+  - openqa-gru
+  - openqa-scheduler
+  - openqa-websockets
+  - openqa-webui
+  - fm-consumer@fedora_openqa_scheduler
