@@ -9,6 +9,9 @@
     remote_src: true
     src: /etc/httpd/conf.d/{{ item }}.template
     dest: /etc/httpd/conf.d/{{ item }}
+    mode: '0644'
+    owner: root
+    group: root
   loop:
     - openqa.conf
     - openqa-ssl.conf
@@ -102,6 +105,7 @@
 
 - name: Run fifloader.py
   command: ./fifloader.py -l -c templates.fif.json templates-updates.fif.json
+  changed_when: "1 != 1"
   args:
     chdir: "{{ openqa_homedir }}/share/tests/rocky"
 
@@ -128,6 +132,7 @@
 
 - name: Verify ISO checksums
   command: shasum -a 256 --ignore-missing -c CHECKSUM
+  changed_when: "1 != 1"
   args:
     chdir: "{{ openqa_homedir }}/share/factory/iso/fixed"
 
@@ -146,3 +151,5 @@
       FLAVOR=minimal-iso \
       VERSION={{ rocky_version }} \
       BUILD="{{ '%Y%m%d.%H%M%S' | strftime }}.0"
+  changed_when: "1 != 1"
+...

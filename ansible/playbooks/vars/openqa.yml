@@ -65,3 +65,4 @@ openqa_services:
   - openqa-websockets
   - openqa-webui
   - fm-consumer@fedora_openqa_scheduler
+...
