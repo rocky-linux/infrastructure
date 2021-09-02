@@ -33,7 +33,7 @@
 
 - name: Check for non-empty postgres data directory
   stat:
-    path: /var/lib/pgsql/data
+    path: /var/lib/pgsql/data/base
   register: postgres_data_dir
 
 - name: If postgresql is not already running, initialize database
@@ -68,7 +68,7 @@
     permanent: true
     state: enabled
   loop:
-    - httpd
+    - http
     - openqa-vnc
 
 - name: Permit VNC traffic for local workers
@@ -102,6 +102,11 @@
     owner: "{{ openqa_user }}"
     group: "{{ openqa_group }}"
     mode: "0775"
+
+# fifloader.py will fail if the Demo user is not logged in
+- name: Authenticate to web UI the first time
+  uri:
+    url: "http://{{ openqa_host }}/login"
 
 - name: Run fifloader.py
   command: ./fifloader.py -l -c templates.fif.json templates-updates.fif.json
