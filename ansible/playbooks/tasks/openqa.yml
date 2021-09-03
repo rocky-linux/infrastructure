@@ -69,7 +69,6 @@
     state: enabled
   loop:
     - http
-    - openqa-vnc
 
 - name: Permit VNC traffic for local workers
   ansible.posix.firewalld:
