@@ -18,6 +18,15 @@ rocky_arch: x86_64
 # Public download URL for RockyLinux ISOs
 rocky_iso_download_url: "https://download.rockylinux.org/pub/rocky/8/isos/{{ rocky_arch }}"
 
+# Rocky Linux ISOs
+openqa_isos:
+  - name: "Rocky-{{ rocky_version }}-{{ rocky_arch }}-boot.iso"
+    checksum: "sha256:53a62a72881b931bdad6b13bcece7c3a2d4ca9c4a2f1e1a8029d081dd25ea61f"
+  - name: "Rocky-{{ rocky_version }}-{{ rocky_arch }}-dvd1.iso"
+    checksum: "sha256:ffe2fae67da6702d859cfb0b321561a5d616ce87a963d8a25b018c9c3d52d9a4"
+  - name: "Rocky-{{ rocky_version }}-{{ rocky_arch }}-minimal.iso"
+    checksum: "sha256:0de5f12eba93e00fefc06cdb0aa4389a0972a4212977362ea18bde46a1a1aa4f"
+
 # The host the openqa-cli should access when it runs.
 # Change this if you want to access your OpenQA via an
 # alternative URL
