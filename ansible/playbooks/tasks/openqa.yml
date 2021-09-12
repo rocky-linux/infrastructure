@@ -95,13 +95,13 @@
     version: develop
   when: not rocky_testing_repo.stat.exists
 
-- name: Set permissions on repo dir
+- name: Set owner/group/permissions on repo contents
   file:
     path: "{{ openqa_homedir }}/share/tests/rocky"
     recurse: true
     owner: "{{ openqa_user }}"
     group: "{{ openqa_group }}"
-    mode: "0775"
+    mode: "u+rwX,g+rwX,o+rX,o-w"
 
 # fifloader.py will fail if the Demo user is not logged in
 - name: Authenticate to web UI the first time
