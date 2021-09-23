@@ -52,6 +52,7 @@ collections:
   - name: community.mysql
   - name: community.rabbitmq
   - name: ansible.posix
+  - name: ansible.utils
   - name: ktdreyer.koji_ansible
   - name: netbox.netbox
   - name: community.aws
