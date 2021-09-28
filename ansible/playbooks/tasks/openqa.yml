@@ -62,6 +62,19 @@
     enabled: true
   loop: "{{ openqa_services }}"
 
+- name: Create openqa-vnc firewalld service
+  template:
+    src: etc/firewalld/services/openqa-vnc.xml.j2
+    dest: /etc/firewalld/services/openqa-vnc.xml
+    owner: root
+    group: root
+    mode: "0644"
+
+- name: Load openqa-vnc firewalld service
+  systemd:
+    name: firewalld
+    state: reloaded
+
 - name: Permit traffic for {{ item }} service
   ansible.posix.firewalld:
     service: "{{ item }}"
@@ -69,12 +82,7 @@
     state: enabled
   loop:
     - http
-
-- name: Permit VNC traffic for local workers
-  ansible.posix.firewalld:
-    port: "{{ openqa_min_vnc_port }}-{{ openqa_max_vnc_port }}/tcp"
-    permanent: true
-    state: enabled
+    - openqa-vnc
 
 - name: Reload FirewallD
   systemd:
