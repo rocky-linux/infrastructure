@@ -94,13 +94,13 @@
     version: develop
   when: not rocky_testing_repo.stat.exists
 
-- name: Set permissions on repo dir
+- name: Set owner/group/permissions on repo contents
   file:
     path: "{{ openqa_homedir }}/share/tests/rocky"
     recurse: true
     owner: "{{ openqa_user }}"
     group: "{{ openqa_group }}"
-    mode: "0775"
+    mode: "u+rwX,g+rwX,o+rX,o-w"
 
 # fifloader.py will fail if the Demo user is not logged in
 - name: Authenticate to web UI the first time
@@ -123,22 +123,14 @@
 
 - name: Download ISOs
   get_url:
-    dest: "{{ openqa_homedir }}/share/factory/iso/fixed/"
-    url: "{{ rocky_iso_download_url }}/{{ item }}"
+    dest: "{{ openqa_homedir }}/share/factory/iso/fixed/{{ item.name }}"
+    url: "{{ rocky_iso_download_url }}/{{ item.name }}"
+    checksum: "{{ item.checksum }}"
     owner: "{{ openqa_user }}"
     group: "{{ openqa_group }}"
-    mode: "0775"
-  loop:
-    - CHECKSUM
-    - Rocky-{{ rocky_version }}-{{ rocky_arch }}-boot.iso
-    - Rocky-{{ rocky_version }}-{{ rocky_arch }}-dvd1.iso
-    - Rocky-{{ rocky_version }}-{{ rocky_arch }}-minimal.iso
-
-- name: Verify ISO checksums
-  command: shasum -a 256 --ignore-missing -c CHECKSUM
-  changed_when: "1 != 1"
-  args:
-    chdir: "{{ openqa_homedir }}/share/factory/iso/fixed"
+    tmp_dest: "/var/tmp"
+    mode: "0644"
+  loop: "{{ openqa_isos }}"
 
 - name: Start {{ openqa_worker_count }} OpenQA workers
   ansible.builtin.systemd:
