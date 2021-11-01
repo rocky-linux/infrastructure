@@ -44,14 +44,14 @@
       tags:
         - packages
 
-    - name: Install arrfab ipsilon repo
+    - name: Install rocky ipsilon repo
       yum_repository:
-        name: copr:copr.fedorainfracloud.org:arrfab:noggin
-        description: Copr repo for noggin owned by arrfab
+        name: copr:copr.fedorainfracloud.org:nalika:rocky-idp
+        description: Copr repo for rocky-idp owned by nalika
         file: copr_repos
-        baseurl: https://download.copr.fedorainfracloud.org/results/arrfab/noggin/epel-8-$basearch/
+        baseurl: https://download.copr.fedorainfracloud.org/results/nalika/rocky-idp/epel-8-$basearch/
         gpgcheck: true
-        gpgkey: https://download.copr.fedorainfracloud.org/results/arrfab/noggin/pubkey.gpg
+        gpgkey: https://download.copr.fedorainfracloud.org/results/nalika/rocky-idp/pubkey.gpg
         enabled: true
 
   # For now, this is sufficient for testing with a localhost cert. In the
