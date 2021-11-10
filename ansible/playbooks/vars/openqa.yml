@@ -10,7 +10,7 @@ openqa_homedir: /var/lib/openqa
 openqa_rocky_testing_repo: "https://github.com/rocky-linux/os-autoinst-distri-rocky.git"
 
 # The RockyLinux version to fetch for testing
-rocky_version: 8.4
+rocky_version: 8.5
 
 # The RockyLinux architecture to fetch for testing
 rocky_arch: x86_64
