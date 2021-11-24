@@ -1,5 +1,17 @@
 # Sets up local OpenQA testing environment
 # This playbook is *NOT* intended for WAN-facing systems!
+#
+# Usages:
+#   # Install and configure an openQA developer host, download all current Rocky ISOs,
+#   # and POST a test job
+#   ansible-playbook playbooks/init-rocky-openqa-developer-host.yml
+#
+#   # Only perform ISO download tasks
+#   ansible-playbook playbooks/init-rocky-openqa-developer-host.yml --tags=download_isos
+#
+#   # Only perform configuration, do not download ISOs or POST a job
+#   ansible-playbook playbooks/init-rocky-openqa-developer-host.yml --tags=configure
+#
 # Created: @akatch
 ---
 - name: Rocky OpenQA Runbook
