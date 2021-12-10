@@ -11,3 +11,4 @@ ipareplica_setup_ca: true
 ipareplica_setup_kra: true
 ipareplica_setup_dns: true
 ipatype: replica
+...

@@ -56,7 +56,7 @@
         port: "{{ item.port }}"
         permanent: "{{ item.permanent }}"
         state: "{{ item.state }}"
-        immediate: yes
+        immediate: true
       loop: "{{ firewall_rules }}"
 
     - name: Touching run file that ansible has ran here
@@ -67,3 +67,4 @@
         mode: '0644'
         owner: root
         group: root
+...

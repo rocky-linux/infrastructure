@@ -8,16 +8,16 @@
     collection_installation_dir: collections
     installation_prefix: ../
   pre_tasks:
-# example prepare ansible box for execution
-#    - name: install required pip modules on the host running ansible
-#      pip:
-#        name:
-#          - jmespath
-#          - netaddr
-#          - python-consul
-#          - pyvmomi
-#          - python-ldap
-#          - twine
+    # example prepare ansible box for execution
+    #  - name: install required pip modules on the host running ansible
+    #    pip:
+    #      name:
+    #        - jmespath
+    #        - netaddr
+    #        - python-consul
+    #        - pyvmomi
+    #        - python-ldap
+    #        - twine
 
     - name: Remove existing public roles
       file:
@@ -54,3 +54,4 @@
         path: "../tmp/known_hosts"
         state: touch
         mode: "0644"
+...

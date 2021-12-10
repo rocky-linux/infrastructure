@@ -29,3 +29,4 @@ graylog_ipa_dnsrecord_name: graylog
 graylog_ipa_dnsrecord_record_type: CNAME
 graylog_ipa_dnsrecord_record_value: graylog002.rockylinux.org.
 graylog_ipa_dnsrecord_state: present
+...

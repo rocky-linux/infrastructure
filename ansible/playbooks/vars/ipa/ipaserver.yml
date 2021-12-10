@@ -13,3 +13,4 @@ ipaclient_mkhomedir: true
 ipaserver_no_hbac_allow: true
 ipaserver_reverse_zones: ["32.10.in-addr.arpa."]
 ipatype: server
+...

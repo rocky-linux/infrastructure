@@ -41,3 +41,4 @@
         validate_certs: true
         visibility: "{{ gitlab_visibility|default('private') }}"
       delegate_to: localhost
+...

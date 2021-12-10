@@ -20,7 +20,7 @@
   ansible.builtin.lineinfile:
     path: /etc/hosts
     line: "{{ koji_efs_fs_ip_map[ansible_ec2_placement_availability_zone] }} {{ koji_efs_fsid }}"
-    create: yes
+    create: true
   tags:
     - mounts
 
@@ -33,3 +33,4 @@
     state: "{{ koji_efs_fs_state | default('mounted') }}"
   tags:
     - mounts
+...

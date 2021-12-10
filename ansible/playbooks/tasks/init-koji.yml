@@ -4,7 +4,7 @@
   shell: "set -o pipefail && echo \"{{ rockykoji_password }}\" | kinit rockykoji@ROCKYLINUX.ORG"
   check_mode: false
   changed_when: "1 != 1"
-  become: yes
+  become: true
   become_user: koji
   when: rockykoji_has_password | bool
 
@@ -12,14 +12,14 @@
   shell: "set -o pipefail && kinit -kt /home/koji/.koji/keytab koji/rockykoji@ROCKYLINUX.ORG"
   check_mode: false
   changed_when: "1 != 1"
-  become: yes
+  become: true
   become_user: koji
   when: not rockykoji_has_password | bool
 
 - name: Import current necessary tags
   shell: "set -o pipefail && koji add-tag {{ item }}"
   changed_when: "1 != 1"
-  become: yes
+  become: true
   become_user: koji
   loop:
     - build-modules
@@ -60,3 +60,4 @@
     - module-rocky-8.4.0-build
     - trash
     - trashcan
+...

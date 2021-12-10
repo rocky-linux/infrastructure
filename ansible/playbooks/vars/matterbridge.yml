@@ -14,3 +14,4 @@ mbridge_mattermost_ignore_nicks:
 mbridge_mattermost_label: MM
 mbridge_mattermost_server: ws.chat.rockylinux.org
 mbridge_mattermost_team: rocky-linux
+...

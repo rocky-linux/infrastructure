@@ -84,3 +84,4 @@ ipa_getcert_requested_hostnames:
     postcmd: "/usr/local/bin/fix_gitlab_certs.sh"
     cnames:
       - "git.rockylinux.org"
+...

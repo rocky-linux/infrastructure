@@ -85,3 +85,4 @@
         loop_var: routing_item
       tags:
         - rabbitmq
+...

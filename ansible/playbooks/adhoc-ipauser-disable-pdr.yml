@@ -82,3 +82,4 @@
         server_uri: ldap://localhost/
         bind_dn: "uid={{ ipa_admin }},cn=users,cn=accounts,dc=rockylinux,dc=org"
         bind_pw: "{{ ipaadmin_password }}"
+...

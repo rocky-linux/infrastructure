@@ -159,3 +159,4 @@ enable_svc:
 
 syslog_packages:
   - rsyslog
+...

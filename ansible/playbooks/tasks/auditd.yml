@@ -33,3 +33,4 @@
     - regenerate_auditd_rules
   tags:
     - harden
+...

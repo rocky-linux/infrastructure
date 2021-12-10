@@ -43,3 +43,4 @@
   with_items:
     - /etc/ssh/ssh_host_dsa_key.pub
     - /etc/ssh/ssh_host_dsa_key
+...

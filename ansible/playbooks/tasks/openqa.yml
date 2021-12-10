@@ -1,0 +1,192 @@
+---
+- name: Install OpenQA packages
+  yum:
+    name: "{{ openqa_packages }}"
+    state: present
+  tags:
+    - packages
+
+- name: Copy httpd configuration files
+  copy:
+    remote_src: true
+    src: /etc/httpd/conf.d/{{ item }}.template
+    dest: /etc/httpd/conf.d/{{ item }}
+    mode: '0644'
+    owner: root
+    group: root
+  loop:
+    - openqa.conf
+    - openqa-ssl.conf
+  notify: restart_httpd
+  tags:
+    - configure
+
+- name: Template OpenQA configuration files
+  template:
+    src: etc/openqa/{{ item }}.j2
+    dest: /etc/openqa/{{ item }}
+    owner: "{{ openqa_user }}"
+    group: "{{ openqa_group }}"
+    mode: "0444"
+  loop:
+    - openqa.ini
+    - client.conf
+  tags:
+    - configure
+
+- name: Get service facts
+  service_facts:
+
+- name: Check for non-empty postgres data directory
+  stat:
+    path: /var/lib/pgsql/data/base
+  register: postgres_data_dir
+
+- name: If postgresql is not already running, initialize database
+  command: postgresql-setup --initdb
+  when: not ( ansible_facts.services["postgresql.service"]["state"] == "running" )
+        and not postgres_data_dir.stat.exists
+
+- name: Enable and start postgresql service
+  systemd:
+    name: postgresql
+    state: started
+    enabled: true
+  when: not ( ansible_facts.services["postgresql.service"]["state"] == "running" )
+        and not postgres_data_dir.stat.exists
+
+- name: Configure SELinux to allow httpd connection to network
+  seboolean:
+    name: httpd_can_network_connect
+    state: true
+    persistent: true
+  tags:
+    - configure
+
+- name: Enable and start OpenQA services
+  systemd:
+    name: "{{ item }}"
+    state: started
+    enabled: true
+  loop: "{{ openqa_services }}"
+  tags:
+    - configure
+
+- name: Create openqa-vnc firewalld service
+  template:
+    src: etc/firewalld/services/openqa-vnc.xml.j2
+    dest: /etc/firewalld/services/openqa-vnc.xml
+    owner: root
+    group: root
+    mode: "0644"
+  tags:
+    - configure
+
+- name: Load openqa-vnc firewalld service
+  systemd:
+    name: firewalld
+    state: reloaded
+  tags:
+    - configure
+
+- name: Permit traffic for {{ item }} service
+  ansible.posix.firewalld:
+    service: "{{ item }}"
+    permanent: true
+    state: enabled
+  loop:
+    - http
+    - openqa-vnc
+  tags:
+    - configure
+
+- name: Reload FirewallD
+  systemd:
+    name: firewalld
+    state: reloaded
+  tags:
+    - configure
+
+- name: Check for existing repository
+  stat:
+    path: "{{ openqa_homedir }}/share/tests/rocky"
+  register: rocky_testing_repo
+  tags:
+    - configure
+
+- name: Clone repository if it does not already exist
+  git:
+    accept_hostkey: true
+    dest: "{{ openqa_homedir }}/share/tests/rocky"
+    repo: "{{ openqa_rocky_testing_repo }}"
+    version: develop
+  when: not rocky_testing_repo.stat.exists
+  tags:
+    - configure
+
+- name: Set owner/group/permissions on repo contents
+  file:
+    path: "{{ openqa_homedir }}/share/tests/rocky"
+    recurse: true
+    owner: "{{ openqa_user }}"
+    group: "{{ openqa_group }}"
+    mode: "u+rwX,g+rwX,o+rX,o-w"
+  tags:
+    - configure
+
+# fifloader.py will fail if the Demo user is not logged in
+- name: Authenticate to web UI the first time
+  uri:
+    url: "http://{{ openqa_host }}/login"
+
+- name: Run fifloader.py
+  command: ./fifloader.py -l -c templates.fif.json templates-updates.fif.json
+  changed_when: "1 != 1"
+  args:
+    chdir: "{{ openqa_homedir }}/share/tests/rocky"
+
+- name: Create ISO directory
+  file:
+    path: "{{ openqa_homedir }}/share/factory/iso/fixed"
+    state: directory
+    owner: "{{ openqa_user }}"
+    group: "{{ openqa_group }}"
+    mode: "0775"
+  tags:
+    - download_isos
+
+- name: Download ISOs
+  get_url:
+    dest: "{{ openqa_homedir }}/share/factory/iso/fixed/{{ item.name }}"
+    url: "{{ rocky_iso_download_url }}/{{ item.name }}"
+    checksum: "{{ item.checksum }}"
+    owner: "{{ openqa_user }}"
+    group: "{{ openqa_group }}"
+    tmp_dest: "/var/tmp"
+    mode: "0644"
+  loop: "{{ openqa_isos }}"
+  tags:
+    - download_isos
+
+- name: Start {{ openqa_worker_count }} OpenQA workers
+  ansible.builtin.systemd:
+    name: "openqa-worker@{{ item }}"
+    state: started
+    enabled: true
+  # range 'end' parameter is exclusive, so add 1
+  loop: "{{ range(1, (openqa_worker_count|int + 1)) | list }}"
+  tags:
+    - start_workers
+    - configure
+
+- name: POST a job
+  command: |
+    openqa-cli api -X POST isos \
+      ISO=Rocky-{{ rocky_version }}-{{ rocky_arch }}-minimal.iso \
+      ARCH={{ rocky_arch }} \
+      DISTRI=rocky \
+      FLAVOR=minimal-iso \
+      VERSION={{ rocky_version }} \
+      BUILD="{{ '%Y%m%d.%H%M%S' | strftime }}.0"
+  changed_when: "1 != 1"
+...
