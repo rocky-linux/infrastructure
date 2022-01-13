@@ -47,7 +47,7 @@ roles:
 collections:
   # freeipa
   - name: freeipa.ansible_freeipa
-    version: 0.4.2
+    version: 1.5.3
   - name: community.general
   - name: community.mysql
   - name: community.rabbitmq
