@@ -34,7 +34,7 @@
     # I also couldn't find an ansible built-in to do this
     - name: Enable the PowerTools repository
       ini_file:
-        dest: /etc/yum.repos.d/CentOS-Linux-PowerTools.repo
+        dest: /etc/yum.repos.d/Rocky-PowerTools.repo
         section: powertools
         option: enabled
         value: 1
