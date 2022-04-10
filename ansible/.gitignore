@@ -8,6 +8,7 @@ roles/public/*
 
 #keep folder holding ansible collections empty
 collections/*
+!collections/requirements.yml
 !README.md
 
 # Ignore all vaults

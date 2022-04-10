@@ -1,0 +1,22 @@
+---
+collections:
+  # freeipa
+  - name: freeipa.ansible_freeipa
+    version: 1.5.3
+  - name: community.general
+  - name: community.mysql
+  - name: community.rabbitmq
+  - name: ansible.posix
+  - name: ansible.utils
+  - name: ktdreyer.koji_ansible
+  - name: netbox.netbox
+  - name: community.aws
+  - name: community.libvirt
+  - name: containers.podman
+  - name: nginxinc.nginx_core
+    version: 0.3.0
+# - name: rockylinux.taiga
+#   source: https://github.com/rocky-linux/taiga-ansible.git
+#   type: git
+#   version: master
+...
