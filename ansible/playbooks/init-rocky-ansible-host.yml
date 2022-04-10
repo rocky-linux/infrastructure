@@ -38,7 +38,7 @@
       command: >
         ansible-galaxy collection install
         {{ ( force_purge | bool ) | ternary('--force-with-deps','') }}
-        -r {{ installation_prefix }}roles/requirements.yml
+        -r {{ installation_prefix }}collections/requirements.yml
         -p {{ installation_prefix }}{{ collection_installation_dir }}
       register: galaxy_install_collection
       changed_when: '"Installing " in galaxy_install_collection.stdout'
