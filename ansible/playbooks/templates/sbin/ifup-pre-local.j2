@@ -1,0 +1,19 @@
+#!/bin/sh
+
+if=$(echo "$1" | sed -e 's,ifcfg-,,')
+iftype=$(echo "$if" | sed -e 's,[0-9]\+$,,')
+
+# if the interface being brought up is tap[n], create
+# the tap device first
+if [ "$iftype" == "tap" ]; then
+    tunctl -u _openqa-worker -p -t "$if"
+fi
+
+# if the interface being brough up is br0, create
+# the gre tunnels
+#if [ "$if" == "br0" ]; then
+#    ovs-vsctl set bridge br0 stp_enable=true
+{% for w in range(1, openqa_worker_count+1) %}
+#    ovs-vsctl --may-exist add-port br0 gre{{ w }} -- set interface gre{{ w }} type=gre options:remote_ip=172.16.2.{{ 2 + w|int }}
+{% endfor %}
+#fi

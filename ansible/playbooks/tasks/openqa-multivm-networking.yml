@@ -1,0 +1,115 @@
+---
+- name: dnf install os-autoinst-openvswitch tunctl network-scripts
+  dnf:
+    pkg:
+      - os-autoinst-openvswitch
+      - tunctl
+      - network-scripts
+
+- name: create /etc/sysconfig/os-autoinst-openvswitch
+  copy:
+    dest: /etc/sysconfig/os-autoinst-openvswitch
+    content: |
+      OS_AUTOINST_BRIDGE_LOCAL_IP=172.16.2.2
+      OS_AUTOINST_BRIDGE_REWRITE_TARGET=172.17.0.0
+
+- name: create /etc/sysconfig/network-scripts/br0
+  copy:
+    dest: /etc/sysconfig/network-scripts/ifcfg-br0
+    content: |
+      DEVICETYPE='ovs'
+      TYPE='OVSBridge'
+      BOOTPROTO='static'
+      IPADDR='172.16.2.2'
+      NETMASK='255.254.0.0'
+      DEVICE=br0
+      STP=off
+      ONBOOT='yes'
+      NAME='br0'
+      HOTPLUG='no'
+
+- name: create worker tap interface configs
+  copy:
+    dest: /etc/sysconfig/network-scripts/ifcfg-tap{{ item }}
+    content: |
+      DEVICETYPE='ovs'
+      TYPE='OVSPort'
+      OVS_BRIDGE='br0'
+      DEVICE='tap{{ item }}'
+      ONBOOT='yes'
+      BOOTPROTO='none'
+      HOTPLUG='no'
+  loop: "{{ range(openqa_worker_count) | list }}"
+
+# TODO is this needed for single-machine multivm setups?
+- name: Update /sbin/ifup-pre-local
+  template:
+    src: sbin/ifup-pre-local.j2
+    dest: /sbin/ifup-pre-local
+    mode: 'ug+x'
+
+- name: Enable bridge interface for internal zone
+  ansible.posix.firewalld:
+    permanent: true
+    interface: br0
+    state: enabled
+    zone: internal
+
+- name: Enable masquerade for public and internal zones
+  ansible.posix.firewalld:
+    masquerade: true
+    permanent: true
+    state: enabled
+    zone: '{{ item }}'
+  loop:
+    - public
+    - internal
+
+- name: Enable ipv4 IP forwarding
+  sysctl:
+    name: net.ipv4.ip_forward
+    value: '1'
+    state: present
+    sysctl_file: /etc/sysctl.d/ip-forward.conf
+    sysctl_set: true
+
+- name: set-target ACCEPT on public zone
+  ansible.posix.firewalld:
+    permanent: true
+    state: present
+    zone: public
+    target: ACCEPT
+
+# TODO is this needed for single-machine multivm setups?
+- name: add port for GRE tunnel
+  ansible.posix.firewalld:
+    permanent: true
+    port: 1723/tcp
+    state: enabled
+
+- name: Enable openvswitch services
+  ansible.builtin.systemd:
+    name: "{{ item }}"
+    state: started
+    enabled: true
+  loop:
+    - openvswitch
+    - network
+    - os-autoinst-openvswitch
+  ignore_errors: "{{ ansible_check_mode }}"
+
+- name: Reload FirewallD
+  systemd:
+    name: firewalld
+    state: reloaded
+
+- name: Set WORKER_CLASS for tap interfaces
+  community.general.ini_file:
+    path: /etc/openqa/workers.ini
+    section: global
+    option: WORKER_CLASS
+    value: qemu_x86_64,tap
+    state: present
+
+- command: ovs-vsctl --may-exist add-br br0
+- command: setcap CAP_NET_ADMIN=ep /usr/bin/qemu-system-x86_64

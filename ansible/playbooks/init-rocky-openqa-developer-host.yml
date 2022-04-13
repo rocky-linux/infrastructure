@@ -42,6 +42,11 @@
     - name: Install and configure OpenQA
       import_tasks: tasks/openqa.yml
 
+    - name: Install and configure OpenQA multivm networking
+      import_tasks: tasks/openqa-multivm-networking.yml
+      when: openqa_worker_count|int > 1
+      tags: multivm
+
   post_tasks:
     - name: Touching run file that ansible has ran here
       file:
