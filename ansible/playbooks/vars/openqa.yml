@@ -16,7 +16,7 @@ rocky_version: 8.5
 rocky_arch: x86_64
 
 # Public download URL for RockyLinux ISOs
-rocky_iso_download_url: "https://download.rockylinux.org/pub/rocky/8.5/isos/{{ rocky_arch }}"
+rocky_iso_download_url: "https://download.rockylinux.org/pub/rocky/{{ rocky_version }}/isos/{{ rocky_arch }}"
 
 # Rocky Linux ISOs
 openqa_isos:
@@ -46,6 +46,9 @@ openqa_worker_count: 1
 # number of workers you want to enable on your system.
 openqa_min_vnc_port: 5991
 openqa_max_vnc_port: "{{ 5990 + openqa_worker_count|int }}"
+
+# The name of the bridge interface to use for multivm networking
+openqa_multivm_bridge_interface: br0
 
 # Packages to install
 openqa_packages:

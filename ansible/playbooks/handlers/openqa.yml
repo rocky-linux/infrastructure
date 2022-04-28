@@ -1,0 +1,36 @@
+---
+- name: reload_firewalld
+  systemd:
+    name: firewalld
+    state: reloaded
+
+# restart os-autoinst-openvswitch followed immediately by `network` (not NetworkManager)
+- name: restart_os-autoinst-openvswitch
+  systemd:
+    name: os-autoinst-openvswitch
+    state: restarted
+
+- name: restart_network
+  systemd:
+    name: network
+    state: restarted
+  listen: restart_os-autoinst-openvswitch
+
+- name: restart_openqa_services
+  systemd:
+    name: "{{ item }}"
+    state: restarted
+  loop:
+    - openqa-gru
+    - openqa-scheduler
+    - openqa-websockets
+    - openqa-webui
+    - fm-consumer@fedora_openqa_scheduler
+
+- name: restart_openqa_workers
+  systemd:
+    name: "openqa-worker@{{ item }}"
+    state: restarted
+  loop: "{{ range(openqa_worker_count) | list }}"
+  listen: restart_openqa_services
+...

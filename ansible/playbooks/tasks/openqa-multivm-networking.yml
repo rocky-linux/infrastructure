@@ -1,4 +1,12 @@
 ---
+# {{ openqa_multivm_bridge_interface }} should not exist or we should use a different name
+- name: Assert {{ openqa_multivm_bridge_interface }} does not exist
+  assert:
+    that:
+      - 'openqa_multivm_bridge_interface not in ansible_interfaces'
+    success_msg: 'interface does not exist, can proceed'
+    fail_msg: '{{ openqa_multivm_bridge_interface }} already exists, please supply an alternative'
+
 - name: dnf install os-autoinst-openvswitch tunctl network-scripts
   dnf:
     pkg:
@@ -12,20 +20,22 @@
     content: |
       OS_AUTOINST_BRIDGE_LOCAL_IP=172.16.2.2
       OS_AUTOINST_BRIDGE_REWRITE_TARGET=172.17.0.0
+      OS_AUTOINST_USE_BRIDGE={{ openqa_multivm_bridge_interface }}
+  notify: restart_os-autoinst-openvswitch
 
-- name: create /etc/sysconfig/network-scripts/br0
+- name: create /etc/sysconfig/network-scripts/ifcfg-{{ openqa_multivm_bridge_interface }}
   copy:
-    dest: /etc/sysconfig/network-scripts/ifcfg-br0
+    dest: /etc/sysconfig/network-scripts/ifcfg-{{ openqa_multivm_bridge_interface }}
     content: |
       DEVICETYPE='ovs'
       TYPE='OVSBridge'
       BOOTPROTO='static'
       IPADDR='172.16.2.2'
       NETMASK='255.254.0.0'
-      DEVICE=br0
+      DEVICE={{ openqa_multivm_bridge_interface }}
       STP=off
       ONBOOT='yes'
-      NAME='br0'
+      NAME='{{ openqa_multivm_bridge_interface }}'
       HOTPLUG='no'
 
 - name: create worker tap interface configs
@@ -34,14 +44,13 @@
     content: |
       DEVICETYPE='ovs'
       TYPE='OVSPort'
-      OVS_BRIDGE='br0'
+      OVS_BRIDGE='{{ openqa_multivm_bridge_interface }}'
       DEVICE='tap{{ item }}'
       ONBOOT='yes'
       BOOTPROTO='none'
       HOTPLUG='no'
   loop: "{{ range(openqa_worker_count) | list }}"
 
-# TODO is this needed for single-machine multivm setups?
 - name: Update /sbin/ifup-pre-local
   template:
     src: sbin/ifup-pre-local.j2
@@ -51,9 +60,10 @@
 - name: Enable bridge interface for internal zone
   ansible.posix.firewalld:
     permanent: true
-    interface: br0
+    interface: '{{ openqa_multivm_bridge_interface }}'
     state: enabled
     zone: internal
+  notify: reload_firewalld
 
 - name: Enable masquerade for public and internal zones
   ansible.posix.firewalld:
@@ -64,6 +74,7 @@
   loop:
     - public
     - internal
+  notify: reload_firewalld
 
 - name: Enable ipv4 IP forwarding
   sysctl:
@@ -79,8 +90,9 @@
     state: present
     zone: public
     target: ACCEPT
+  notify: reload_firewalld
 
-# TODO is this needed for single-machine multivm setups?
+# Only needed for multi-host setups
 - name: add port for GRE tunnel
   ansible.posix.firewalld:
     permanent: true
@@ -88,7 +100,7 @@
     state: enabled
 
 - name: Enable openvswitch services
-  ansible.builtin.systemd:
+  systemd:
     name: "{{ item }}"
     state: started
     enabled: true
@@ -98,11 +110,6 @@
     - os-autoinst-openvswitch
   ignore_errors: "{{ ansible_check_mode }}"
 
-- name: Reload FirewallD
-  systemd:
-    name: firewalld
-    state: reloaded
-
 - name: Set WORKER_CLASS for tap interfaces
   community.general.ini_file:
     path: /etc/openqa/workers.ini
@@ -110,6 +117,11 @@
     option: WORKER_CLASS
     value: qemu_x86_64,tap
     state: present
+  notify: restart_openqa_services
 
-- command: ovs-vsctl --may-exist add-br br0
-- command: setcap CAP_NET_ADMIN=ep /usr/bin/qemu-system-x86_64
+- name: Enable bridge {{ openqa_multivm_bridge_interface }} for openvswitch
+  command: ovs-vsctl add-br {{ openqa_multivm_bridge_interface }}
+
+- name: Enable capability
+  command: setcap CAP_NET_ADMIN=ep /usr/bin/qemu-system-x86_64
+...

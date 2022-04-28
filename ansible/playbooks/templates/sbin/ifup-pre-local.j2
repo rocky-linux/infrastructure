@@ -9,11 +9,12 @@ if [ "$iftype" == "tap" ]; then
     tunctl -u _openqa-worker -p -t "$if"
 fi
 
-# if the interface being brough up is br0, create
+# if the interface being brough up is {{ openqa_multivm_bridge_interface }}, create
 # the gre tunnels
-#if [ "$if" == "br0" ]; then
-#    ovs-vsctl set bridge br0 stp_enable=true
+if [ "$if" == "{{ openqa_multivm_bridge_interface }}" ]; then
+    ovs-vsctl set bridge {{ openqa_multivm_bridge_interface }} stp_enable=true
+    # This is only needed for multi-host setups
 {% for w in range(1, openqa_worker_count+1) %}
-#    ovs-vsctl --may-exist add-port br0 gre{{ w }} -- set interface gre{{ w }} type=gre options:remote_ip=172.16.2.{{ 2 + w|int }}
+    #ovs-vsctl --may-exist add-port {{ openqa_multivm_bridge_interface }} gre{{ w }} -- set interface gre{{ w }} type=gre options:remote_ip=172.16.2.{{ 2 + w|int }}
 {% endfor %}
-#fi
+fi
