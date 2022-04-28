@@ -1,0 +1,42 @@
+---
+- name: Uninstall OpenQA packages
+  yum:
+    name: "{{ openqa_packages }}"
+    state: absent
+
+- name: Delete OpenQA files and directories
+  file:
+    path: "{{ item }}"
+    state: absent
+  loop:
+    - "{{ openqa_homedir }}"
+    - /var/lib/pgsql
+    - /etc/openqa
+    - /etc/httpd/conf.d/openqa.conf
+    - /etc/httpd/conf.d/openqa-ssl.conf
+
+- name: Disable httpd_can_network_connect
+  seboolean:
+    name: httpd_can_network_connect
+    state: false
+    persistent: true
+
+- name: Deny traffic for services
+  ansible.posix.firewalld:
+    service: "{{ item }}"
+    permanent: true
+    state: disabled
+  loop:
+    - http
+    - openqa-vnc
+
+- name: Deny VNC traffic for local workers
+  ansible.posix.firewalld:
+    port: "{{ openqa_min_vnc_port }}-{{ openqa_max_vnc_port }}/tcp"
+    permanent: true
+    state: disabled
+
+- name: Reload FirewallD
+  systemd:
+    name: firewalld
+    state: reloaded

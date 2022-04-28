@@ -1,0 +1,90 @@
+---
+- name: remove files
+  file:
+    path: '{{ item }}'
+    state: absent
+  loop:
+    - /etc/sysconfig/os-autoinst-openvswitch
+    - /etc/sysconfig/network-scripts/ifcfg-{{ openqa_multivm_bridge_interface }}
+
+- name: remove tap interface configurations
+  file:
+    path: /etc/sysconfig/network-scripts/ifcfg-tap{{ item }}
+    state: absent
+  loop: "{{ range(openqa_worker_count|int) | list }}"
+
+- name: Delete bridge interface
+  command: ovs-vsctl del-br {{ openqa_multivm_bridge_interface }}
+
+- name: Disable openvswitch services
+  ansible.builtin.systemd:
+    name: "{{ item }}"
+    state: stopped
+    enabled: false
+  loop:
+    - os-autoinst-openvswitch
+    - openvswitch
+
+- name: remove packages
+  dnf:
+    pkg:
+      - os-autoinst-openvswitch
+      - tunctl
+      - network-scripts
+    state: absent
+
+- name: Remove /sbin/ifup-pre-local
+  file:
+    path: /sbin/ifup-pre-local
+    state: absent
+
+- name: Disable bridge interface for internal zone
+  ansible.posix.firewalld:
+    permanent: true
+    interface: br0
+    state: disabled
+    zone: internal
+  notify: reload_firewalld
+
+- name: Disable masquerade for public and internal zones
+  ansible.posix.firewalld:
+    masquerade: true
+    permanent: true
+    state: disabled
+    zone: '{{ item }}'
+  loop:
+    - public
+    - internal
+  notify: reload_firewalld
+
+- name: Disable ipv4 IP forwarding
+  sysctl:
+    name: net.ipv4.ip_forward
+    value: '1'
+    state: absent
+    sysctl_file: /etc/sysctl.d/ip-forward.conf
+    sysctl_set: true
+
+- name: set-target ACCEPT on public zone
+  ansible.posix.firewalld:
+    permanent: true
+    state: absent
+    zone: public
+    target: ACCEPT
+  notify: reload_firewalld
+
+- name: Remove port for GRE tunnel
+  ansible.posix.firewalld:
+    permanent: true
+    port: 1723/tcp
+    state: disabled
+  notify: reload_firewalld
+
+- name: Set WORKER_CLASS for tap interfaces
+  community.general.ini_file:
+    path: /etc/openqa/workers.ini
+    section: global
+    option: WORKER_CLASS
+    value: qemu_x86_64,tap
+    state: absent
+...
