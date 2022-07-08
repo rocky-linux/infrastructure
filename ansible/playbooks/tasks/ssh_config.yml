@@ -13,7 +13,7 @@
 - name: SSH daemon configuration - global
   block:
     - name: SSH daemon configuration - base
-      template:
+      ansible.builtin.template:
         src: "etc/ssh/{{ ansible_distribution }}-{{ ansible_distribution_major_version }}-sshd_config.j2"
         dest: "/etc/ssh/sshd_config"
         owner: root
@@ -22,6 +22,56 @@
         validate: /usr/sbin/sshd -t -f %s
         backup: true
       notify: restart_sshd
+      when:
+        - ansible_distribution_major_version == '8'
+
+    - name: Ensure an empty file exists
+      ansible.builtin.template:
+        state: touch
+        path: "/etc/ssh/sshd_config.d/99-end.conf"
+        owner: root
+        group: root
+        mode: '0600'
+      notify: restart_sshd
+      when:
+        - ansible_distribution_major_version == '8'
+
+    - name: Ensure sshd_config.d dir exists
+      ansible.builtin.file:
+        state: directory
+        path: "/etc/ssh/sshd_config.d"
+        owner: root
+        group: root
+        mode: '0700'
+      notify: restart_sshd
+
+    - name: Default Modular Configuration
+      when:
+        - (ansible_facts['distribution'] == 'Fedora') or
+          (ansible_facts['distribution'] in el_distro_name and ansible_facts['distribution_major_version']|int >= 9)
+      block:
+        #- name: Modular configuration (redhat)
+        #  template:
+        #    src: "etc/ssh/{{ ansible_distribution }}-{{ ansible_distribution_major_version }}-50-redhat.conf.j2"
+        #    dest: "{{ ssh_modular_config }}"
+        #    owner: root
+        #    group: root
+        #    mode: '0600'
+        #    validate: /usr/sbin/sshd -t -f %s
+        #    backup: yes
+        #  notify: restart_sshd
+
+        - name: Custom Modular Configuration
+          template:
+            src: "etc/ssh/{{ ansible_distribution }}-{{ ansible_distribution_major_version }}-60-infra.conf.j2"
+            dest: "/etc/ssh/sshd_config.d/60-infra.conf"
+            owner: root
+            group: root
+            mode: '0600'
+            validate: /usr/sbin/sshd -t -f %s
+            backup: yes
+          notify: restart_sshd
+
   rescue:
     - name: Print errors for configuration and validation
       debug:
@@ -30,7 +80,7 @@
 - name: SSH banner
   copy:
     src: "etc/rockybanner"
-    dest: "/etc/rockybanner"
+    dest: "/etc/banner"
     owner: root
     group: root
     mode: '0644'

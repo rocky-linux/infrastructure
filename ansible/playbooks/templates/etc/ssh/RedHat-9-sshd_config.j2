@@ -1,4 +1,4 @@
-#	$OpenBSD: sshd_config,v 1.103 2018/04/09 20:41:22 tj Exp $
+#	$OpenBSD: sshd_config,v 1.104 2021/07/02 05:11:21 dtucker Exp $
 
 # This is the sshd server system-wide configuration file.  See
 # sshd_config(5) for more information.
@@ -10,6 +10,10 @@
 # possible, but leave them commented.  Uncommented options override the
 # default value.
 
+# To modify the system-wide sshd configuration, create a  *.conf  file under
+#  /etc/ssh/sshd_config.d/  which will be automatically included below
+Include /etc/ssh/sshd_config.d/*.conf
+
 # If you want to change the port on a SELinux system, you have to tell
 # SELinux about this change.
 # semanage port -a -t ssh_port_t -p tcp #PORTNUMBER
@@ -19,31 +23,21 @@
 #ListenAddress 0.0.0.0
 #ListenAddress ::
 
-HostKey /etc/ssh/ssh_host_rsa_key
-HostKey /etc/ssh/ssh_host_ecdsa_key
-HostKey /etc/ssh/ssh_host_ed25519_key
+#HostKey /etc/ssh/ssh_host_rsa_key
+#HostKey /etc/ssh/ssh_host_ecdsa_key
+#HostKey /etc/ssh/ssh_host_ed25519_key
 
 # Ciphers and keying
 #RekeyLimit default none
 
-# System-wide Crypto policy:
-# This system is following system-wide crypto policy. The changes to
-# Ciphers, MACs, KexAlgoritms and GSSAPIKexAlgorithsm will not have any
-# effect here. They will be overridden by command-line options passed on
-# the server start up.
-# To opt out, uncomment a line with redefinition of  CRYPTO_POLICY=
-# variable in  /etc/sysconfig/sshd  to overwrite the policy.
-# For more information, see manual page for update-crypto-policies(8).
-
 # Logging
 #SyslogFacility AUTH
-SyslogFacility AUTHPRIV
 #LogLevel INFO
 
 # Authentication:
 
 #LoginGraceTime 2m
-#PermitRootLogin yes
+#PermitRootLogin prohibit-password
 #StrictModes yes
 #MaxAuthTries 6
 #MaxSessions 10
@@ -72,8 +66,7 @@ AuthorizedKeysFile	.ssh/authorized_keys
 #PermitEmptyPasswords no
 
 # Change to no to disable s/key passwords
-#ChallengeResponseAuthentication yes
-#ChallengeResponseAuthentication no
+#KbdInteractiveAuthentication yes
 
 # Kerberos options
 #KerberosAuthentication no
@@ -83,44 +76,39 @@ AuthorizedKeysFile	.ssh/authorized_keys
 #KerberosUseKuserok yes
 
 # GSSAPI options
-GSSAPIAuthentication yes
-GSSAPICleanupCredentials no
+#GSSAPIAuthentication no
+#GSSAPICleanupCredentials yes
 #GSSAPIStrictAcceptorCheck yes
 #GSSAPIKeyExchange no
 #GSSAPIEnablek5users no
 
 # Set this to 'yes' to enable PAM authentication, account processing,
 # and session processing. If this is enabled, PAM authentication will
-# be allowed through the ChallengeResponseAuthentication and
+# be allowed through the KbdInteractiveAuthentication and
 # PasswordAuthentication.  Depending on your PAM configuration,
-# PAM authentication via ChallengeResponseAuthentication may bypass
+# PAM authentication via KbdInteractiveAuthentication may bypass
 # the setting of "PermitRootLogin without-password".
 # If you just want the PAM account and session checks to run without
 # PAM authentication, then enable this but set PasswordAuthentication
-# and ChallengeResponseAuthentication to 'no'.
+# and KbdInteractiveAuthentication to 'no'.
 # WARNING: 'UsePAM no' is not supported in Fedora and may cause several
 # problems.
-UsePAM yes
+#UsePAM no
 
 #AllowAgentForwarding yes
 #AllowTcpForwarding yes
 #GatewayPorts no
-X11Forwarding yes
+#X11Forwarding no
 #X11DisplayOffset 10
 #X11UseLocalhost yes
 #PermitTTY yes
-
-# It is recommended to use pam_motd in /etc/pam.d/sshd instead of PrintMotd,
-# as it is more configurable and versatile than the built-in version.
-PrintMotd no
-
+#PrintMotd yes
 #PrintLastLog yes
 #TCPKeepAlive yes
 #PermitUserEnvironment no
 #Compression delayed
 #ClientAliveInterval 0
 #ClientAliveCountMax 3
-#ShowPatchLevel no
 #UseDNS no
 #PidFile /var/run/sshd.pid
 #MaxStartups 10:30:100
@@ -131,12 +119,6 @@ PrintMotd no
 # no default banner path
 #Banner none
 
-# Accept locale-related environment variables
-AcceptEnv LANG LC_CTYPE LC_NUMERIC LC_TIME LC_COLLATE LC_MONETARY LC_MESSAGES
-AcceptEnv LC_PAPER LC_NAME LC_ADDRESS LC_TELEPHONE LC_MEASUREMENT
-AcceptEnv LC_IDENTIFICATION LC_ALL LANGUAGE
-AcceptEnv XMODIFIERS
-
 # override default of no subsystems
 Subsystem	sftp	/usr/libexec/openssh/sftp-server
 
@@ -146,27 +128,3 @@ Subsystem	sftp	/usr/libexec/openssh/sftp-server
 #	AllowTcpForwarding no
 #	PermitTTY no
 #	ForceCommand cvs server
-
-################################################################################
-# Below managed by {{ ansible_managed }}
-#
-Banner /etc/banner
-PermitRootLogin no
-X11Forwarding no
-LoginGraceTime 1m
-
-# FIPS Compliant
-# This has no effect in RHEL 8 or Fedora. However, in the case of compliance
-# higher than that of PCI, it may be a good idea to override it.
-MACs hmac-sha2-512,hmac-sha2-256
-Ciphers aes256-ctr,aes192-ctr,aes128-ctr
-
-# IPA
-AuthorizedKeysCommand /usr/bin/sss_ssh_authorizedkeys
-AuthorizedKeysCommandUser nobody
-ChallengeResponseAuthentication yes
-PasswordAuthentication no
-
-{% if 'gitlabservers' in group_names %}
-AllowUsers git@* *@10.*
-{% endif %}

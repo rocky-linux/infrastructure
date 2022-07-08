@@ -1,0 +1,19 @@
+################################################################################
+# Below managed by Rocky Infrastructure
+#
+Banner /etc/banner
+PermitRootLogin no
+Port 22
+X11Forwarding no
+LoginGraceTime 1m
+
+# IPA
+AuthorizedKeysCommand /usr/bin/sss_ssh_authorizedkeys
+AuthorizedKeysCommandUser nobody
+ChallengeResponseAuthentication yes
+
+# IPA Automatic
+PubkeyAuthentication yes
+KerberosAuthentication no
+GSSAPIAuthentication yes
+UsePAM yes
