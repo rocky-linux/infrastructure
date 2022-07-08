@@ -10,22 +10,22 @@ openqa_homedir: /var/lib/openqa
 openqa_rocky_testing_repo: "https://github.com/rocky-linux/os-autoinst-distri-rocky.git"
 
 # The RockyLinux version to fetch for testing
-rocky_version: 8.5
+rocky_version: 8.6
 
 # The RockyLinux architecture to fetch for testing
 rocky_arch: x86_64
 
 # Public download URL for RockyLinux ISOs
-rocky_iso_download_url: "https://download.rockylinux.org/pub/rocky/8.5/isos/{{ rocky_arch }}"
+rocky_iso_download_url: "https://download.rockylinux.org/pub/rocky/{{ rocky_version }}/isos/{{ rocky_arch }}"
 
 # Rocky Linux ISOs
 openqa_isos:
   - name: "Rocky-{{ rocky_version }}-{{ rocky_arch }}-boot.iso"
-    checksum: "sha256:5a0dc65d1308e47b51a49e23f1030b5ee0f0ece3702483a8a6554382e893333c"
+    checksum: "sha256:fe77cc293a2f2fe6ddbf5d4bc2b5c820024869bc7ea274c9e55416d215db0cc5"
   - name: "Rocky-{{ rocky_version }}-{{ rocky_arch }}-dvd1.iso"
-    checksum: "sha256:0081f8b969d0cef426530f6d618b962c7a01e71eb12a40581a83241f22dfdc25"
+    checksum: "sha256:1d48e0af63d07ff4e582a1819348e714c694e7fd33207f48879c2bc806960786"
   - name: "Rocky-{{ rocky_version }}-{{ rocky_arch }}-minimal.iso"
-    checksum: "sha256:4eb2ae6b06876205f2209e4504110fe4115b37540c21ecfbbc0ebc11084cb779"
+    checksum: "sha256:a9ece0e810275e881abfd66bb0e59ac05d567a5ec0bc2f108b9a3e90bef5bf94"
 
 # The host the openqa-cli should access when it runs.
 # Change this if you want to access your OpenQA via an
