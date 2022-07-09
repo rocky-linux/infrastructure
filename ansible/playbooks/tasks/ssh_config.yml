@@ -25,6 +25,15 @@
       when:
         - ansible_distribution_major_version == '8'
 
+    - name: Ensure sshd_config.d dir exists
+      ansible.builtin.file:
+        state: directory
+        path: "/etc/ssh/sshd_config.d"
+        owner: root
+        group: root
+        mode: '0700'
+      notify: restart_sshd
+
     - name: Ensure an empty file exists
       ansible.builtin.template:
         state: touch
@@ -35,15 +44,6 @@
       notify: restart_sshd
       when:
         - ansible_distribution_major_version == '8'
-
-    - name: Ensure sshd_config.d dir exists
-      ansible.builtin.file:
-        state: directory
-        path: "/etc/ssh/sshd_config.d"
-        owner: root
-        group: root
-        mode: '0700'
-      notify: restart_sshd
 
     - name: Default Modular Configuration
       when:
