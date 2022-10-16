@@ -2,7 +2,7 @@
 
 ![Rocky Linux Infrastructure (develop)](https://img.shields.io/github/last-commit/rocky-linux/infrastructure/develop) ![Rocky Linux Infrastructure repo issues](https://img.shields.io/github/issues/rocky-linux/infrastructure) ![GitHub Workflow Status - Ansible Lint](https://img.shields.io/github/workflow/status/rocky-linux/infrastructure/Ansible%20Lint) ![GitHub Workflow Status - YAML Lint](https://img.shields.io/github/workflow/status/rocky-linux/infrastructure/YAML%20Lint)
 
-We will add more data here soon
+**This repository is being deprecated. Please see our WIP [wiki page](https://wiki.rockylinux.org/team/infrastructure/awx_scm_guidelines/) on guidelines for building playbooks for AWX.**
 
 ```
 ansible -> All ansible playbooks, modules, etc are here
