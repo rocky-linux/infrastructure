@@ -1,0 +1,63 @@
+---
+- name: 'install tftp, nginx for serving kickstart configuration'
+  package:
+    name:
+      - tftp-server
+      - nginx
+
+- name: 'ensure /var/www'
+  file:
+    path: '/var/www'
+    state: directory
+    mode: '0755'
+    owner: root
+    group: root
+
+- name: 'ensure /var/www/html'
+  file:
+    path: '/var/www/html'
+    state: directory
+    mode: '0755'
+    owner: root
+    group: nginx
+
+- name: 'nginx configuration'
+  template:
+    src: nginx.conf.j2
+    dest: /etc/nginx/nginx.conf
+  notify: 'reload nginx'
+
+- name: 'Ensure nginx is running'
+  service:
+    name: nginx
+    state: started
+    enabled: true
+
+- name: Enable tftp server socket
+  systemd:
+    name: tftp.socket
+    state: started
+    enabled: true
+
+- name: 'Create UEFI PXE-boot configuration directory'
+  file:
+    mode: '0755'
+    path: '/var/lib/tftpboot/uefi'
+    state: directory
+
+# Are there better ways to get these same files into the tftpboot directory?
+# Downloading things from the internet feels wrong...
+- name: 'Download CentOS 8 UEFI boot files into the tftpboot directory'
+  get_url:
+    mode: '0644'
+    url: '{{ centos_8_kickstart_mirror | mandatory }}/{{ item.value }}'
+    dest: '/var/lib/tftpboot/{{ item.key }}'
+  loop: "{{ bootfiles | dict2items }}"
+  vars:
+    bootfiles:
+      # values are relative to the value of the mirror
+      'uefi/BOOTX64.EFI': 'EFI/BOOT/BOOTX64.EFI'
+      'uefi/grubx64.efi': 'EFI/BOOT/grubx64.efi'
+      'centos-8-x86_64-vmlinuz': 'images/pxeboot/vmlinuz'
+      'centos-8-x86_64-initrd.img': 'images/pxeboot/initrd.img'
+    
