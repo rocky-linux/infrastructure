@@ -61,5 +61,5 @@ pinnwand_config:
       capacity: 2
       consume: 2
       refill: 1
-  spamscore: 50
+  spamscore: 100
 ...
