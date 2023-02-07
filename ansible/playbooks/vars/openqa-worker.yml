@@ -1,0 +1,30 @@
+---
+# Default OpenQA user and group
+openqa_user: geekotest
+openqa_group: geekotest
+
+# The number of workers to enable on this system
+openqa_worker_count: 1
+
+# Port range to open for VNC access to local workers.
+# The max port should be 5990 + n where n is the total
+# number of workers you want to enable on your system.
+openqa_min_vnc_port: 5991
+openqa_max_vnc_port: "{{ 5990 + openqa_worker_count|int }}"
+
+# Port range to open for socket connections from the primary host.
+openqa_min_socket_port: 20000
+openqa_max_socket_port: 20089
+
+# Packages to install
+openqa_worker_packages:
+  - guestfs-tools
+  - libguestfs-xfs
+  - libvirt-daemon-config-network
+  - virt-install
+  - openqa-worker
+  - perl-REST-Client
+  - python3-libguestfs
+  - virt-install
+  - withlock
+...

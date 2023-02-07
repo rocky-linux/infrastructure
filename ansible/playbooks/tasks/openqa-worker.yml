@@ -1,0 +1,52 @@
+---
+- name: Install OpenQA packages
+  yum:
+    name: "{{ openqa_packages }}"
+    state: present
+  tags:
+    - packages
+
+- name: Configure firewalld for openQA worker connections
+  template:
+    src: etc/firewalld/services/{{ item }}.xml.j2
+    dest: /etc/firewalld/services/{{ item }}.xml
+    owner: root
+    group: root
+    mode: "0644"
+  loop:
+    - openqa-socket
+    - openqa-vnc
+  tags:
+    - configure
+
+- name: Reload FirewallD
+  systemd:
+    name: firewalld
+    state: reloaded
+  tags:
+    - configure
+
+- name: Write openQA configuration file
+  template:
+    src: etc/openqa/{{ item }}.j2
+    dest: /etc/openqa/{{ item }}
+    owner: "{{ openqa_user }}"
+    group: "{{ openqa_group }}"
+    mode: "0444"
+  loop:
+    - client.conf
+    - workers.conf
+  tags:
+    - configure
+
+- name: Start {{ openqa_worker_count }} openQA workers
+  ansible.builtin.systemd:
+    name: "openqa-worker@{{ item }}"
+    state: started
+    enabled: true
+  # range 'end' parameter is exclusive, so add 1
+  loop: "{{ range(1, (openqa_worker_count|int + 1)) | list }}"
+  tags:
+    - start_workers
+    - configure
+...
