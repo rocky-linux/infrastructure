@@ -4,8 +4,9 @@
 # Created: @akatch
 ---
 - name: Rocky openQA Worker Runbook
-  hosts: localhost
+  hosts: openqa_workers
   become: true
+  gather_facts: false
   vars_files:
     - vars/openqa-worker.yml
 

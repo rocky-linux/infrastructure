@@ -1,10 +1,15 @@
 ---
+# The primary openQA host
+openqa_host: openqa.rockylinux.org
+openqa_client_key: 1234567890ABCDEF
+openqa_client_secret: 1234567890ABCDEF
+
 # Default OpenQA user and group
 openqa_user: geekotest
 openqa_group: geekotest
 
 # The number of workers to enable on this system
-openqa_worker_count: 1
+openqa_worker_count: 2
 
 # Port range to open for VNC access to local workers.
 # The max port should be 5990 + n where n is the total
@@ -27,4 +32,5 @@ openqa_worker_packages:
   - python3-libguestfs
   - virt-install
   - withlock
+  - firewalld
 ...

@@ -1,10 +1,22 @@
 ---
-- name: Install OpenQA packages
-  yum:
-    name: "{{ openqa_packages }}"
+- name: Install OpenQA worker packages
+  dnf:
+    name: "{{ openqa_worker_packages }}"
     state: present
   tags:
     - packages
+
+- name: Create openQA group
+  group:
+    name: '{{ openqa_group }}'
+    system: true
+
+- name: Create openQA user
+  user:
+    name: '{{ openqa_user }}'
+    groups: '{{ openqa_group }}'
+    append: true
+    system: true
 
 - name: Configure firewalld for openQA worker connections
   template:
@@ -19,12 +31,13 @@
   tags:
     - configure
 
-- name: Reload FirewallD
+- name: Reload firewalld
   systemd:
     name: firewalld
     state: reloaded
   tags:
     - configure
+  ignore_errors: '{{ ansible_check_mode }}'
 
 - name: Write openQA configuration file
   template:
@@ -49,4 +62,5 @@
   tags:
     - start_workers
     - configure
+  ignore_errors: '{{ ansible_check_mode }}'
 ...
